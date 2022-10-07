@@ -14,4 +14,6 @@ strategy to play this game.
     Will be added soon.
 
 ### Authors:
-https://github.com/Stanleyowskiki
+[Stanisław Maliński](https://github.com/Stanleyowskiki) <br/>
+[Jan Stachurski](https://github.com/opprotossball) <br/>
+[Alicja Oczkowska](https://github.com/alicjaoczkowska)
