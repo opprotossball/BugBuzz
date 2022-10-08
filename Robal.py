@@ -1,42 +1,20 @@
 from abc import ABC, abstractmethod
 from array import *
 
-class Robal(ABC):
 
+class Robal(ABC):
     lastID = 0
 
-    @property
     @abstractmethod
-    def cost(self):
-        pass
+    def __init__(self, side):
+        self.move = 0
+        self.attack = 0
+        self.toughnss = 0
+        self.ID = 0
+        self.side = side
 
-    @property
-    @abstractmethod
-    def move(self):
-        pass
-
-    @property
-    @abstractmethod
-    def attack(self):
-        pass
-
-    @property
-    @abstractmethod
-    def toughness(self):
-        pass
-
-    @property
-    @abstractmethod
-    def ID(self):
-        pass
-
-    #@abstractmethod
-    #def __init__(self):
-    #    pass
-
-    @abstractmethod
     def getID(self):
-        return self.ID()
+        return self.ID
 
     def getNewID(self):
         self.lastID = self.lastID + 1
@@ -45,33 +23,39 @@ class Robal(ABC):
 
 class Konik(Robal):
 
-    cost = 1
-    move = 3
-    attack = 0
-    toughness = array('i', [1])
-    ID = Robal.getNewID()
+    def __init__(self, side):
+        self.move = 3
+        self.attack = 0
+        self.toughnss = array('i', [1])
+        self.ID = Robal.getNewID(self)
+        self.side = side
+
 
 class Mrowka(Robal):
 
-    cost = 1
-    move = 4
-    attack = 1
-    toughness = array('i', [3, 4])
-    ID = Robal.getNewID()
+    def __init__(self, side):
+        self.move = 4
+        self.attack = 1
+        self.toughnss = array('i', [3, 4])
+        self.ID = Robal.getNewID(self)
+        self.side = side
+
 
 class Pajak(Robal):
 
-    cost = 2
-    move = 4
-    attack = 3
-    toughness = array('i', [1, 2, 3])
-    ID = Robal.getNewID()
+    def __init__(self, side):
+        self.move = 4
+        self.attack = 3
+        self.toughnss = array('i', [1, 2, 3])
+        self.ID = Robal.getNewID(self)
+        self.side = side
+
 
 class Zuk(Robal):
 
-    cost = 3
-    move = 2
-    attack = 5
-    toughness = array('i', [4, 5, 6])
-    ID = Robal.getNewID()
-
+    def __init__(self, side):
+        self.move = 2
+        self.attack = 5
+        self.toughnss = array('i', [4, 5, 6])
+        self.ID = Robal.getNewID(self)
+        self.side = side
