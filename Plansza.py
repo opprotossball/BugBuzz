@@ -62,7 +62,7 @@ class Plansza:
         self.blacksHatchery = [pole, pole.ES, pole.EN]
 
     def setRecources(self):
-        pola = [[1, 0, -1], [-1, 2, -1], [1, -2, 1]]
+        pola = [[1+ self.size, 0+ self.size, -1+ self.size], [-1+ self.size, 2+ self.size, -1+ self.size], [1+ self.size, -2+ self.size, 1+ self.size]]
         for pole in self.iterList:
             if pole.cor() in pola:
                 pole.setResources(True)
@@ -85,4 +85,5 @@ class Plansza:
         for pole in self.iterList:
             print(pole.toString())
         print(self.numberOfPole)
-        default = 2
+
+plan = Plansza()
