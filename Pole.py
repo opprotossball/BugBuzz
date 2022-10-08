@@ -7,8 +7,12 @@ class Pole:
         self.hatchery = False
         self.size = size
 
-    def setHatchery(self, isHa):
+    def setHatchery(self, isHa, hatcheryID):
         self.hatchery = isHa
+        self.hatcheryID = hatcheryID
+
+    def setResources(self, isRes):
+        self.resources = isRes
 
     def setWN(self, Pole):
         self.WN = Pole
@@ -30,3 +34,6 @@ class Pole:
 
     def toString(self):
         return "[" + str(self.q - self.size) + "," + str(self.r - self.size) + "," + str(self.s - self.size) + "]"
+
+    def cor(self):
+        return [self.q,self.r,self.s]

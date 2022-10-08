@@ -1,12 +1,16 @@
 from Pole import Pole
 
 
-class Planasza:
+class Plansza:
     def __init__(self, size=None):
         self.plane = [[[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)] for x in range(2 * size + 1)]
         ##TODO optimize self.plan. A lot of memory is wasted.
         self.iterList = []
         self.queue = []
+
+        self.whitesHatchery = []
+        self.blacksHatchery = []
+
         self.size = size
         for q in range(0, 2 * size + 1):
             for r in range(0, 2 * size + 1):
@@ -22,6 +26,7 @@ class Planasza:
             self.addNaigbours(self.plane[q][r][s])
         self.root = self.plane[size][size][size]
         self.setHatchery()
+        self.setRecources()
 
     def addNaigbours(self, pole):
         size = self.size
@@ -42,15 +47,26 @@ class Planasza:
         pole = self.root
         while (hasattr(pole, "E")):
             pole = pole.E
-        pole.setHatchery(True)
-        pole.WS.setHatchery(True)
-        pole.WN.setHatchery(True)
+        pole.setHatchery(True, 2)
+        pole.WS.setHatchery(True, 1)
+        pole.WE.setHatchery(True, 3)
+        self.whitesHatchery = [pole, pole.WS, pole.WE]
+
+
         pole = self.root
         while (hasattr(pole, "W")):
             pole = pole.W
-        pole.setHatchery(True)
-        pole.ES.setHatchery(True)
-        pole.EN.setHatchery(True)
+        pole.setHatchery(True, 2)
+        pole.ES.setHatchery(True, 3)
+        pole.EN.setHatchery(True, 1)
+        self.blacksHatchery = [pole, pole.ES, pole.EN]
+
+    def setRecources(self):
+        pola = [[1, 0, -1], [-1, 2, -1], [1, -2, 1]]
+        for pole in self.iterList:
+            if pole.cor() in pola:
+                pole.setResources(True)
+
 
     def TEST(self):
         pole = self.root
@@ -69,7 +85,3 @@ class Planasza:
         for pole in self.iterList:
             print(pole.toString())
         print(self.numberOfPole)
-
-
-plan = Planasza(5)
-plan.getPlansza()
