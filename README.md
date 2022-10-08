@@ -9,10 +9,7 @@ created in their spar time. After implementing mechanics of the game we will try
 to learn AI to play this game. Our goal is rather to learn more about this 
 amazing field of science then to succeed and create program with most optimal
 strategy to play this game.
-
-### Game instruction:
-    Will be added soon.
-
+    
 ### Authors:
 [Stanisław Maliński](https://github.com/Stanleyowskiki) <br/>
 [Jan Stachurski](https://github.com/opprotossball) <br/>
