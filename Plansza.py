@@ -2,7 +2,7 @@ from Pole import Pole
 
 
 class Plansza:
-    def __init__(self, size=5):
+    def __init__(self, size=4):
         self.plane = [[[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)] for x in range(2 * size + 1)]
         ##TODO optimize self.plan. A lot of memory is wasted.
         self.iterList = []
@@ -52,7 +52,6 @@ class Plansza:
         pole.WN.setHatchery(True, 3)
         self.whitesHatchery = [pole, pole.WS, pole.WN]
 
-
         pole = self.root
         while (hasattr(pole, "W")):
             pole = pole.W
@@ -62,7 +61,7 @@ class Plansza:
         self.blacksHatchery = [pole, pole.ES, pole.EN]
 
     def setRecources(self):
-        pola = [[1+ self.size, 0+ self.size, -1+ self.size], [-1+ self.size, 2+ self.size, -1+ self.size], [1+ self.size, -2+ self.size, 1+ self.size]]
+        pola = [[1 + self.size, 0 + self.size, -1 + self.size], [-2 + self.size, 3 + self.size, -1 + self.size], [1 + self.size, -3 + self.size, 2 + self.size]]
         for pole in self.iterList:
             if pole.cor() in pola:
                 pole.setResources(True)

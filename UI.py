@@ -53,10 +53,12 @@ class UI:
 
 
 if __name__ == '__main__':
+    screenWidth = 1000
+    screenHeight = 800
     pygame.init()
-    ui = UI(1000, 800)
-    pl = Plansza()
-    ui.drawBoard(pl, 500, 400, 40, 3)
+    ui = UI(screenWidth, screenHeight)
+    board = Plansza()
+    ui.drawBoard(board, screenWidth / 2, screenHeight / 2, 40, 3)
     ui.updateWindow()
 
 
