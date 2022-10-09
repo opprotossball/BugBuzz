@@ -7,7 +7,7 @@ class UI:
 
     def __init__(self, windowWidth, windowHeight):
         self.backgroundColor = (80, 80, 80)
-        self.tileColor = (190, 190, 190)
+        self.tileColor = (153, 153, 153)
         self.resourcesColor = (0, 160, 0)
         self.hatcheryColor = (150, 45, 45)
 
@@ -53,12 +53,12 @@ class UI:
 
 
 if __name__ == '__main__':
-    screenWidth = 1000
-    screenHeight = 800
+    screenWidth = 1920
+    screenHeight = 1080
     pygame.init()
     ui = UI(screenWidth, screenHeight)
     board = Plansza()
-    ui.drawBoard(board, screenWidth / 2, screenHeight / 2, 40, 3)
+    ui.drawBoard(board, screenWidth / 2, screenHeight / 2, 60, 4.5)
     ui.updateWindow()
 
 
