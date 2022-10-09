@@ -11,6 +11,15 @@ class Pole:
         self.hatchery = isHa
         self.hatcheryID = hatcheryID
 
+    def setBug(self, bug):
+        self.bug = bug
+        bug.setField(self)
+
+    def resetBug(self):
+        if self.bug is not None:
+            self.bug.setField(None)
+            self.bug = None
+
     def setResources(self, isRes):
         self.resources = isRes
 
