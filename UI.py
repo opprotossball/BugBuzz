@@ -1,8 +1,28 @@
 import pygame
+from pygame.locals import *
 import math
 from Plansza import Plansza
 from Pole import Pole
 from Robal import *
+from random import randrange
+
+
+class TileButton:
+
+    def __init__(self, pole, polygon):
+        self.tile = pole
+        self.polygon = polygon
+        self.clicked = False
+
+    def isClicked(self):
+        mousePosition = pygame.mouse.get_pos()
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+        elif self.polygon.collidepoint(mousePosition) and pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+            self.clicked = True
+            return True
+        else:
+            return False
 
 
 class UI:
@@ -13,35 +33,42 @@ class UI:
         self.resourcesColor = (0, 160, 0)
         self.hatcheryColor = (150, 45, 45)
 
+        pygame.display.set_caption('Robale')
+        self.xCenter = int(windowWidth / 2)
+        self.yCenter = int(windowHeight / 2)
+        self.tiltAngle = math.pi / 2
+
         self.margin = margin
         self.tileRadius = tileRadius
         self.width = windowWidth
         self.height = windowHeight
-        self.xCenter = int(windowWidth / 2)
-        self.yCenter = int(windowHeight / 2)
         self.running = True
         self.cos30 = math.cos(math.pi / 6)
         self.sin30 = math.sin(math.pi / 6)
+        self.cos60 = math.cos(math.pi / 3)
+        self.sin60 = math.sin(math.pi / 3)
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.tiltAngle = math.pi / 2
-        pygame.display.set_caption('Robale')
         self.screen.fill(self.backgroundColor)
+        self.tileButtons = []
 
-        self.beetleWhite = pygame.image.load("Assets/Bugs/BeetleWhite.png")
+        self.beetleWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/BeetleWhite.png"), True, False)
         self.beetleBlack = pygame.image.load("Assets/Bugs/BeetleBlack.png")
-        self.spiderWhite = pygame.image.load("Assets/Bugs/SpiderWhite.png")
+        self.spiderWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/SpiderWhite.png"), True, False)
         self.spiderBlack = pygame.image.load("Assets/Bugs/SpiderBlack.png")
-        self.antWhite = pygame.image.load("Assets/Bugs/AntWhite.png")
+        self.antWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/AntWhite.png"), True, False)
         self.antBlack = pygame.image.load("Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.image.load("Assets/Bugs/GrasshooperWhite.png")
+        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/GrasshooperWhite.png"), True, False)
         self.grasshooperBlack = pygame.image.load("Assets/Bugs/GrasshooperBlack.png")
-
 
     def updateWindow(self):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+            for tileButton in self.tileButtons:
+                if tileButton.isClicked():
+                    tile = tileButton.tile
+                    self.drawRandomBug(tile)
             pygame.display.update()
 
     def drawHex(self, xCenter, yCenter, radius, color):
@@ -50,7 +77,7 @@ class UI:
             x = xCenter + radius * math.cos(self.tiltAngle + math.pi * 2 * i / 6)
             y = yCenter + radius * math.sin(self.tiltAngle + math.pi * 2 * i / 6)
             vertices.append([int(x), int(y)])
-        pygame.draw.polygon(self.screen, color, vertices)
+        return pygame.draw.polygon(self.screen, color, vertices)
 
     def transformToRealCoordinates(self, pole, xCenter, yCenter, tileRadius, margin):
         x = int(xCenter + (tileRadius + margin) * self.cos30 * (pole.s - pole.q))
@@ -60,22 +87,65 @@ class UI:
     def drawBoard(self, plansza):
         for pole in plansza.iterList:
             coordinates = self.transformToRealCoordinates(pole, self.xCenter, self.yCenter, self.tileRadius, self.margin)
+            color = None
             if pole.hatchery:
-                self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.hatcheryColor)
+                color = self.hatcheryColor
             elif pole.resources:
-                self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.resourcesColor)
+                color = self.resourcesColor
             else:
-                self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.tileColor)
+                color = self.tileColor
+            tileButton = TileButton(pole, self.drawHex(coordinates[0], coordinates[1], self.tileRadius, color))
+            self.tileButtons.append(tileButton)
 
     def drawBug(self, bug, tile):
+        coordinates = self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin)
+        image = None
         if isinstance(bug, Konik):
-            self.screen.blit(self.grasshooperWhite, self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin))
+            if bug.side == 'W':
+                image = self.grasshooperWhite
+            elif bug.side == 'B':
+                image = self.grasshooperBlack
         elif isinstance(bug, Mrowka):
-            self.screen.blit(self.antWhite, self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin))
+            if bug.side == 'W':
+                image = self.antWhite
+            elif bug.side == 'B':
+                image = self.antBlack
         elif isinstance(bug, Pajak):
-            self.screen.blit(self.spiderWhite, self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin))
+            if bug.side == 'W':
+                image = self.spiderWhite
+            elif bug.side == 'B':
+                image = self.spiderBlack
         elif isinstance(bug, Zuk):
-            self.screen.blit(self.beetleWhite, self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin))
+            if bug.side == 'W':
+                image = self.beetleWhite
+            elif bug.side == 'B':
+                image = self.beetleBlack
+        if image is None:
+            print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")
+            return
+        self.screen.blit(image, (int(coordinates[0] - image.get_width() / 2), int(coordinates[1] - image.get_height() / 2)))
+
+    # Useless test function
+    def drawRandomBug(self, tile):
+        x = randrange(8)
+        bug = None
+        if x == 0:
+            bug = Zuk("W")
+        elif x == 1:
+            bug = Zuk("B")
+        elif x == 2:
+            bug = Pajak("W")
+        elif x == 3:
+            bug = Pajak("B")
+        elif x == 4:
+            bug = Mrowka("W")
+        elif x == 5:
+            bug = Mrowka("B")
+        elif x == 6:
+            bug = Konik("W")
+        elif x == 7:
+            bug = Konik("B")
+        self.drawBug(bug, tile)
 
 
 if __name__ == '__main__':
@@ -85,13 +155,4 @@ if __name__ == '__main__':
     ui = UI(screenWidth, screenHeight, 60, 4.5)
     board = Plansza()
     ui.drawBoard(board)
-    p = Pole(2, 2, -4, -1)
-    m = Mrowka(1)
-    ui.drawBug(m, p)
     ui.updateWindow()
-    pl = Plansza()
-    pl.getPlansza()
-
-
-
-
