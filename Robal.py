@@ -11,6 +11,7 @@ class Robal(ABC):
         self.attack = 0
         self.toughness = 0
         self.ID = 0
+        self.armyID = 0
         self.side = side
 
     def getID(self):
