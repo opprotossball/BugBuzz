@@ -1,25 +1,24 @@
 import pygame
-from pygame.locals import *
 import math
 from Plansza import Plansza
-from Pole import Pole
 from Robal import *
 from random import randrange
+from pygame.locals import *
 
 
 class TileButton:
+    clicked = False
 
     def __init__(self, pole, polygon):
         self.tile = pole
         self.polygon = polygon
-        self.clicked = False
 
     def isClicked(self):
         mousePosition = pygame.mouse.get_pos()
         if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
-        elif self.polygon.collidepoint(mousePosition) and pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-            self.clicked = True
+            TileButton.clicked = False
+        elif self.polygon.collidepoint(mousePosition) and pygame.mouse.get_pressed()[0] == 1 and not TileButton.clicked:
+            TileButton.clicked = True
             return True
         else:
             return False
@@ -27,28 +26,32 @@ class TileButton:
 
 class UI:
 
-    def __init__(self, windowWidth, windowHeight, tileRadius, margin):
-        self.backgroundColor = (80, 80, 80)
-        self.tileColor = (153, 153, 153)
-        self.resourcesColor = (0, 160, 0)
-        self.hatcheryColor = (150, 45, 45)
+    def __init__(self, startBoard, windowScreenRatio = 4 / 5, bugRadiusRatio = 1.2, marginRadiusRatio = 1/8, caption='Robale', backgroundColor = (80, 80, 80), tileColor = (153, 153, 153), resourcesColor = (0, 160, 0), hatcheryColor = (150, 45, 45)):
+        pygame.init()
 
-        pygame.display.set_caption('Robale')
-        self.xCenter = int(windowWidth / 2)
-        self.yCenter = int(windowHeight / 2)
+        self.backgroundColor = backgroundColor
+        self.tileColor = tileColor
+        self.resourcesColor = resourcesColor
+        self.hatcheryColor = hatcheryColor
+
+        self.width = int(pygame.display.Info().current_w * windowScreenRatio)
+        self.height = int(pygame.display.Info().current_h * windowScreenRatio)
+        self.xCenter = int(self.width / 2)
+        self.yCenter = int(self.height / 2)
+
         self.tiltAngle = math.pi / 2
-
-        self.margin = margin
-        self.tileRadius = tileRadius
-        self.width = windowWidth
-        self.height = windowHeight
+        self.board = startBoard
+        self.screen = None
+        self.bugRadiusRatio = bugRadiusRatio
+        self.marginRadiusRatio = marginRadiusRatio
+        self.bugScale = None
+        self.margin = None
         self.running = True
+        self.tileRadius = None
         self.cos30 = math.cos(math.pi / 6)
         self.sin30 = math.sin(math.pi / 6)
         self.cos60 = math.cos(math.pi / 3)
         self.sin60 = math.sin(math.pi / 3)
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        self.screen.fill(self.backgroundColor)
         self.tileButtons = []
 
         self.beetleWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/BeetleWhite.png"), True, False)
@@ -60,16 +63,41 @@ class UI:
         self.grasshooperWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/GrasshooperWhite.png"), True, False)
         self.grasshooperBlack = pygame.image.load("Assets/Bugs/GrasshooperBlack.png")
 
+        self.resize(self.width, self.height)
+        self.screen.fill(self.backgroundColor)
+        pygame.display.set_caption(caption)
+
     def updateWindow(self):
+        self.resize(self.width, self.height)
+        self.drawBoard()
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize(event.w, event.h)
             for tileButton in self.tileButtons:
                 if tileButton.isClicked():
-                    tile = tileButton.tile
-                    self.drawRandomBug(tile)
+                    buttonTile = tileButton.tile
+                    self.drawRandomBug(buttonTile)
             pygame.display.update()
+
+    def resize(self, newWidth, newHeight):
+        self.screen = pygame.display.set_mode((newWidth, newHeight), HWSURFACE | DOUBLEBUF | RESIZABLE)
+        self.screen.fill(self.backgroundColor)
+        self.width = newWidth
+        self.height = newHeight
+        self.xCenter = int(newWidth / 2)
+        self.yCenter = int(newHeight / 2)
+        newRadius = int((0.7 * newWidth / (2 * self.board.size + 1)) / (2 * self.cos30))
+        newMargin = int(newRadius * self.marginRadiusRatio)
+        if (newRadius * 2 * (self.board.size * 2 + 1) - self.board.size * (2 * (newRadius + newMargin) * self.cos30 * self.cos60)) > newHeight:
+            newRadius = int((newHeight / (4 * self.board.size + 1)) / (2 * self.sin30))
+            newMargin = int(newRadius * self.marginRadiusRatio)
+        self.tileRadius = newRadius
+        self.margin = newMargin
+        self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
+        self.drawBoard()
 
     def drawHex(self, xCenter, yCenter, radius, color):
         vertices = []
@@ -84,8 +112,9 @@ class UI:
         y = int(yCenter + (tileRadius + margin) * (self.sin30 * (pole.q + pole.s) - pole.r))
         return (x, y)
 
-    def drawBoard(self, plansza):
-        for pole in plansza.iterList:
+    def drawBoard(self):
+        self.tileButtons = []
+        for pole in self.board.iterList:
             coordinates = self.transformToRealCoordinates(pole, self.xCenter, self.yCenter, self.tileRadius, self.margin)
             color = None
             if pole.hatchery:
@@ -95,6 +124,8 @@ class UI:
             else:
                 color = self.tileColor
             tileButton = TileButton(pole, self.drawHex(coordinates[0], coordinates[1], self.tileRadius, color))
+            if pole.bug is not None:
+                self.drawBug(pole.bug, pole)
             self.tileButtons.append(tileButton)
 
     def drawBug(self, bug, tile):
@@ -123,6 +154,7 @@ class UI:
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")
             return
+        image = pygame.transform.smoothscale(image.convert_alpha(), (int(image.get_width() * self.bugScale), int(image.get_height() * self.bugScale)))
         self.screen.blit(image, (int(coordinates[0] - image.get_width() / 2), int(coordinates[1] - image.get_height() / 2)))
 
     # Useless test function
@@ -147,12 +179,12 @@ class UI:
             bug = Konik("B")
         self.drawBug(bug, tile)
 
+    def updateBoard(self, board):
+        self.board = board
+        self.drawBoard()
+
 
 if __name__ == '__main__':
-    screenWidth = 1920
-    screenHeight = 1080
-    pygame.init()
-    ui = UI(screenWidth, screenHeight, 60, 4.5)
     board = Plansza()
-    ui.drawBoard(board)
+    ui = UI(board)
     ui.updateWindow()
