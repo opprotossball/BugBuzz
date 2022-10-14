@@ -1,3 +1,4 @@
+from AI.MoveAI import Konik
 from Pole import Pole
 
 
@@ -27,6 +28,8 @@ class Plansza:
         self.root = self.plane[size][size][size]
         self.setHatchery()
         self.setRecources()
+
+        sorted(self.iterList,key=getKeyFor)
 
     def addNaigbours(self, pole):
         size = self.size
@@ -85,4 +88,14 @@ class Plansza:
             print(pole.toString())
         print(self.numberOfPole)
 
-plan = Plansza()
+    def getPositionWithoutToMoveNorResourcesInfo(self):
+        position = ''
+        for i in self.iterList:
+            if i.bug is None:
+                position += '.'
+            position += i.bug.short_name
+        return position
+
+
+def getKeyFor(Pole):
+    return Pole.r*60 - Pole.q
