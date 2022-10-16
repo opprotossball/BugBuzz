@@ -13,14 +13,17 @@ class Robal(ABC):
         self.ID = 0
         self.armyID = 0
         self.side = side
+        self.field = None
 
-    def getID(self):
+    def getID(self):    # pozbyć się ID
         return self.ID
 
     def getNewID(self):
         self.lastID = self.lastID + 1
         return self.lastID
 
+    def setField(self, field):
+        self.field = field
 
 class Konik(Robal):
 
