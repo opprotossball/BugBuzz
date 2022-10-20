@@ -1,6 +1,4 @@
-from time import sleep
-
-from Trader import Trader
+from BackEnd.Trader import Trader
 
 
 class InterfejsGracza:

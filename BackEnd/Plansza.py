@@ -1,4 +1,3 @@
-from AI.MoveAI import Konik
 from Pole import Pole
 
 
