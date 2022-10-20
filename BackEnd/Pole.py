@@ -9,6 +9,18 @@ class Pole:
         self.size = size
         self.iterating_list = [self.WN, self.W, self.WS, self.ES, self.E, self.EN]
 
+        self.direction = {
+            "WN" : self.WN,
+            "EN" : self.EN,
+            "E" : self.E,
+            "ES" : self.ES,
+            "WS" : self.WS,
+            "W" : self.W
+        }
+
+        self.neighbours = [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
+        self.directions = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
+
     def setHatchery(self, isHa, hatcheryID):
         self.hatchery = isHa
         self.hatcheryID = hatcheryID
