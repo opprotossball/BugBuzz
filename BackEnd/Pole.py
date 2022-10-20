@@ -7,6 +7,18 @@ class Pole:
         self.hatchery = False
         self.size = size
 
+        self.direction = {
+            "WN" : self.WN,
+            "EN" : self.EN,
+            "E" : self.E,
+            "ES" : self.ES,
+            "WS" : self.WS,
+            "W" : self.W
+        }
+
+        self.neighbours = [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
+        self.directions = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
+
     def setHatchery(self, isHa, hatcheryID):
         self.hatchery = isHa
         self.hatcheryID = hatcheryID
