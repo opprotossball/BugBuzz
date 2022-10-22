@@ -1,6 +1,6 @@
 import pygame
 import math
-from Plansza import Plansza
+from BackEnd.Plansza import Plansza
 
 
 class UI:
