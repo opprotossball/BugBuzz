@@ -1,4 +1,4 @@
-from Pole import Pole
+from BackEnd.Pole import Pole
 
 
 class Plansza:
@@ -28,6 +28,8 @@ class Plansza:
         self.setHatchery()
         self.setRecources()
 
+        sorted(self.iterList,key=getKeyFor)
+
     def addNaigbours(self, pole):
         size = self.size
         if pole.r - 1 >= 0 and pole.s + 1 < size * 2 + 1:
@@ -45,7 +47,7 @@ class Plansza:
 
     def setHatchery(self):
         pole = self.root
-        while (hasattr(pole, "E")):
+        while pole.E is not None:
             pole = pole.E
         pole.setHatchery(True, 2)
         pole.WS.setHatchery(True, 1)
@@ -53,7 +55,7 @@ class Plansza:
         self.whitesHatchery = [pole, pole.WS, pole.WN]
 
         pole = self.root
-        while (hasattr(pole, "W")):
+        while pole.W is not None:
             pole = pole.W
         pole.setHatchery(True, 2)
         pole.ES.setHatchery(True, 3)
@@ -85,4 +87,14 @@ class Plansza:
             print(pole.toString())
         print(self.numberOfPole)
 
-plan = Plansza()
+    def getPositionWithoutToMoveNorResourcesInfo(self):
+        position = ''
+        for i in self.iterList:
+            if i.bug is None:
+                position += '.'
+            position += i.bug.short_name
+        return position
+
+
+def getKeyFor(Pole):
+    return Pole.r*60 - Pole.q

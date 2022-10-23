@@ -1,4 +1,5 @@
 from BackEnd.Plansza import Plansza
+from BackEnd.Robal import Robal
 from InterfejsGracza import InterfejsGracza
 
 import time
@@ -45,7 +46,7 @@ class GameMaster:
         return False
 
 
-    def GetAvialabelSpaceForHatch(self, side):
+    def getAvialabelSpaceForHatch(self, side):
         if side == "B":
             hatchery = self.plansza.blacksHatchery
         elif side == "C":

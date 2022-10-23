@@ -11,6 +11,6 @@ amazing field of science then to succeed and create program with most optimal
 strategy to play this game.
     
 ### Authors:
-[Stanisław Maliński](https://github.com/Stanleyowskiki) <br/>
+[Stanisław Maliński](https://github.com/StanislawMalinski) <br/>
 [Jan Stachurski](https://github.com/opprotossball) <br/>
 [Alicja Oczkowska](https://github.com/alicjaoczkowska)
