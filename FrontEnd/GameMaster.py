@@ -1,7 +1,5 @@
-from Plansza import Plansza
+from BackEnd.Plansza import Plansza
 from InterfejsGracza import InterfejsGracza
-
-from threading import Thread
 
 import time
 

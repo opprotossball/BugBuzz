@@ -1,7 +1,7 @@
 import pygame
 import math
-from Plansza import Plansza
-from Robal import *
+from BackEnd.Plansza import Plansza
+from BackEnd.Robal import *
 from random import randrange
 from pygame.locals import *
 
@@ -54,14 +54,14 @@ class UI:
         self.sin60 = math.sin(math.pi / 3)
         self.tileButtons = []
 
-        self.beetleWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/BeetleWhite.png"), True, False)
-        self.beetleBlack = pygame.image.load("Assets/Bugs/BeetleBlack.png")
-        self.spiderWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/SpiderWhite.png"), True, False)
-        self.spiderBlack = pygame.image.load("Assets/Bugs/SpiderBlack.png")
-        self.antWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/AntWhite.png"), True, False)
-        self.antBlack = pygame.image.load("Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/GrasshooperWhite.png"), True, False)
-        self.grasshooperBlack = pygame.image.load("Assets/Bugs/GrasshooperBlack.png")
+        self.beetleWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/BeetleWhite.png"), True, False)
+        self.beetleBlack = pygame.image.load("../Assets/Bugs/BeetleBlack.png")
+        self.spiderWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/SpiderWhite.png"), True, False)
+        self.spiderBlack = pygame.image.load("../Assets/Bugs/SpiderBlack.png")
+        self.antWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/AntWhite.png"), True, False)
+        self.antBlack = pygame.image.load("../Assets/Bugs/AntBlack.png")
+        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/GrasshooperWhite.png"), True, False)
+        self.grasshooperBlack = pygame.image.load("../Assets/Bugs/GrasshooperBlack.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)
