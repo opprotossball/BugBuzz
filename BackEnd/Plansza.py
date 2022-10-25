@@ -1,3 +1,4 @@
+from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
 from Pole import Pole
 
 
@@ -23,14 +24,14 @@ class Plansza:
         self.numberOfPole = len(self.queue)
         while len(self.queue) > 0:
             q, r, s = self.queue.pop(0)
-            self.addNaigbours(self.plane[q][r][s])
+            self.addNeighbours(self.plane[q][r][s])
         self.root = self.plane[size][size][size]
         self.setHatchery()
         self.setRecources()
 
-        sorted(self.iterList,key=getKeyFor)
+        sorted(self.iterList, key=getKeyFor)
 
-    def addNaigbours(self, pole):
+    def addNeighbours(self, pole):
         size = self.size
         if pole.r - 1 >= 0 and pole.s + 1 < size * 2 + 1:
             pole.setES(self.plane[pole.q][pole.r - 1][pole.s + 1])
@@ -63,11 +64,11 @@ class Plansza:
         self.blacksHatchery = [pole, pole.ES, pole.EN]
 
     def setRecources(self):
-        pola = [[1 + self.size, 0 + self.size, -1 + self.size], [-2 + self.size, 3 + self.size, -1 + self.size], [1 + self.size, -3 + self.size, 2 + self.size]]
+        pola = [[1 + self.size, 0 + self.size, -1 + self.size], [-2 + self.size, 3 + self.size, -1 + self.size],
+                [1 + self.size, -3 + self.size, 2 + self.size]]
         for pole in self.iterList:
             if pole.cor() in pola:
                 pole.setResources(True)
-
 
     def TEST(self):
         pole = self.root
@@ -95,6 +96,24 @@ class Plansza:
             position += i.bug.short_name
         return position
 
+    def loadPosition(self, position):
+        for actual_field, position_content in zip(self.iterList, position):
+            if position_content == "K":
+                actual_field.bug = Konik("B")
+            elif position_content == "M":
+                actual_field.bug = Mrowka("B")
+            elif position_content == "P":
+                actual_field.bug = Pajak("B")
+            elif position_content == "Z":
+                actual_field.bug = Zuk("B")
+            elif position_content == "k":
+                actual_field.bug = Konik("C")
+            elif position_content == "m":
+                actual_field.bug = Mrowka("C")
+            elif position_content == "p":
+                actual_field.bug = Pajak("C")
+            elif position_content == "z":
+                actual_field.bug = Zuk("C")
 
 def getKeyFor(Pole):
-    return Pole.r*60 - Pole.q
+    return Pole.r * 60 - Pole.q
