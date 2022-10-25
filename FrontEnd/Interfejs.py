@@ -46,22 +46,27 @@ class Interfejs:
         choice = ""
         while choice != "end" and self.GameMaster.isAvailableSpaceForHatch(self.side):
             trader = Trader()
-            possible_to_hatch = trader.getOptions()
+            possible_to_hatch = trader.getOptions(self.resources)
             hatchery_fields = []
             if self.side == "C":
                 hatchery_fields = self.GameMaster.plansza.blacksHatchery
             elif self.side == "B":
                 hatchery_fields = self.GameMaster.plansza.whitesHatchery
-            for field in hatchery_fields:
-                if field.bug is not None:
-                    hatchery_fields.remove(field)
 
-            possible_to_hatch = concatenate_moves(hatchery_fields, possible_to_hatch)
+            options = []
+
+            for i in range(len(hatchery_fields)):
+                if hatchery_fields[i].bug is None:
+                    options.append(i)
+
+            possible_to_hatch = concatenate_moves(options, possible_to_hatch)
             possible_to_hatch.append("end")
-            picked = self.getHatch(possible_to_hatch)
-            if picked != "end":
-                field, bug = picked
-                trader.buyBug(bug, field)
+            choice = self.getHatch(possible_to_hatch)
+            if choice != "end":
+                field, bug = choice
+                bug, price = trader.buyBug(bug, self.resources, self.side)
+                self.resources -= price
+                hatchery_fields[field].bug = bug
 
 
     # abstract

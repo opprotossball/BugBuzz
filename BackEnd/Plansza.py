@@ -9,6 +9,8 @@ class Plansza:
         self.iterList = []
         self.queue = []
 
+        self.resources = []
+
         self.whitesHatchery = []
         self.blacksHatchery = []
 
@@ -69,6 +71,7 @@ class Plansza:
         for pole in self.iterList:
             if pole.cor() in pola:
                 pole.setResources(True)
+                self.resources.append(pole)
 
     def TEST(self):
         pole = self.root

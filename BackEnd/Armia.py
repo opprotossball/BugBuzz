@@ -7,14 +7,14 @@ from Util import Information
 
 
 class Armia:
-    def __init__(self, pole):
+    def __init__(self):
         self.numberOfMoves = 0
         self.bugList = []
-        if pole.bug is not None:
-            self.bugList.append(pole.bug)
-            pole.bug.army = self
+        self.numberOfGrassHoppers = 0;
 
     def addRobal(self, bug):
+        if isinstance(bug, Konik):
+            self.numberOfGrassHoppers += 1
         self.bugList.append(bug)
         bug.army = self
 

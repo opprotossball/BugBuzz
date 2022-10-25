@@ -1,3 +1,6 @@
+from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
+
+
 class Trader:
     def __init__(self):
         self.GrassHopperPrice = 1
@@ -17,15 +20,20 @@ class Trader:
             options.append("Beetle")
         return options
 
-    def buyBug(self, option, available):
+    def buyBug(self, option, available, side):
         if option in self.getOptions(available):
+            robal = 0
             price = 0
             if option == "GrassHopper":
+                robal = Konik(side)
                 price = 1
             elif option == "Ant":
+                robal = Mrowka(side)
                 price = 1
             elif option == "Spider":
+                robal = Pajak(side)
                 price = 2
             elif option == "Beetle":
+                robal = Zuk(side)
                 price = 3
-            return option, price
+            return robal, price

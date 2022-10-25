@@ -14,9 +14,9 @@ class GameMaster:
     def newGame(self, player_white, player_black):
         self.BlackPlayer = player_black
         self.WhitePlayer = player_white
-
         while(True):
             print("Tura białego atak.")
+            self.WhitePlayer.resources = self.getResourcesForSide("B")
             self.WhitePlayer.performAttack()
             time.sleep(0.5)
             print("Tura białego ruch.")
@@ -25,6 +25,7 @@ class GameMaster:
             print("Tura białego wylęganie.")
             self.WhitePlayer.performHatchery()
             time.sleep(0.5)
+            self.BlackPlayer.resources = self.getResourcesForSide("C")
             print("Tura czarnego atak.")
             self.BlackPlayer.performAttack()
             time.sleep(0.5)
@@ -50,6 +51,15 @@ class GameMaster:
                         fields_of_plane.remove(direction.bug)
                 armies.append(army)
 
+    def getResourcesForSide(self, side):
+        resources = self.plansza.resources
+        self.getArmies(side)
+        n = 1
+        for field in resources:
+            if field.bug is not None and field.bug.side == side:
+                n += field.bug.army.numberOfGrassHopppers
+        return n
+
 
     def isAvailableSpaceForHatch(self, side):
         hatchery = []
@@ -58,7 +68,7 @@ class GameMaster:
         elif side == "C":
             hatchery = self.plansza.whitesHatchery
         for hatch in hatchery:
-            if hatch.bug is not None:
+            if hatch.bug is None:
                 return True
         return False
 
