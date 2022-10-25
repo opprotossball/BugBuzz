@@ -8,25 +8,24 @@ class Trader:
     def getOptions(self, available):
         options = []
         if (available >= self.GrassHopperPrice):
-            options.append(0)
+            options.append("GrassHopper")
         if available >= self.AntPrice:
-            options.append(1)
+            options.append("Ant")
         if available >= self.SpiderPrice:
-            options.append(2)
+            options.append("Spider")
         if available >= self.BeetlePrice:
-            options.append(3)
-        options.append(4)  # Pass
+            options.append("Beetle")
         return options
 
     def buyBug(self, option, available):
         if option in self.getOptions(available):
             price = 0
-            if option == 0:
+            if option == "GrassHopper":
                 price = 1
-            elif option == 1:
+            elif option == "Ant":
                 price = 1
-            elif option == 2:
+            elif option == "Spider":
                 price = 2
-            elif option == 3:
+            elif option == "Beetle":
                 price = 3
             return option, price

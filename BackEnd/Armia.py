@@ -1,7 +1,6 @@
 import random
 
 from Robal import *
-from Pole import *
 from collections import Counter
 
 from Util import Information
@@ -14,6 +13,10 @@ class Armia:
         if pole.bug is not None:
             self.bugList.append(pole.bug)
             pole.bug.army = self
+
+    def addRobal(self, bug):
+        self.bugList.append(bug)
+        bug.army = self
 
     def performMove(self, direction):
         for bug in self.bugList:

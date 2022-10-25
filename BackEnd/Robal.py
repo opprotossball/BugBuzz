@@ -8,7 +8,7 @@ class Robal(ABC):
         self.move = 0
         self.attack = 0
         self.toughness = 0
-        self.ID = 0
+        self.army = None
         self.side = side
         self.field = None
 
