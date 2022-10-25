@@ -1,3 +1,4 @@
+from BackEnd.Armia import Armia
 from BackEnd.Plansza import Plansza
 from BackEnd.Robal import Robal
 from InterfejsGracza import InterfejsGracza
@@ -33,8 +34,23 @@ class GameMaster:
             self.BlackPlayer.Hatch()
             time.sleep(0.5)
 
+    def getArmies(self, side):
+        armies = []
 
-    def isAvialabelSpaceForHatch(self, side):
+        fields_of_plane = self.plansza.iterList
+
+        for pole in fields_of_plane:
+            if pole.bug is not None and pole.bug.side == side:
+                army = Armia()
+                army.addRobal(pole.bug)
+                for direction in pole.neighbours:
+                    if direction is not None and direction.bug.side == side:
+                        army.addRobal(direction.bug)
+                        fields_of_plane.remove(direction.bug)
+                armies.append(army)
+
+
+    def isAvailableSpaceForHatch(self, side):
         hatchery = []
         if side == "B":
             hatchery = self.plansza.blacksHatchery
@@ -60,8 +76,6 @@ class GameMaster:
     def addBug(self, selectedPlacmentField, bugID):
         bug = Robal(bugID)
         selectedPlacmentField.addBug(bug)
-
-
 
 
 GM = GameMaster()
