@@ -20,6 +20,8 @@ class Interfejs:
         while choice != "end":
             armies = self.GameMaster.getArmies(self.side)
             moves = []
+            if armies is None:
+                return
             for i in range(len(armies)):
                 moves += self.create_moves([i], armies[i].getValidMoves)
             moves.append("end")
@@ -32,6 +34,8 @@ class Interfejs:
         while choice != "end":
             armies = self.GameMaster.getArmies(self.side)
             attacks = []
+            if armies is None:
+                return
             for i in range(len(armies)):
                 attacks += self.create_moves([i], armies[i].getAttacks())
             attacks.append("end")

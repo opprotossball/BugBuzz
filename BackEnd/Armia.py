@@ -1,6 +1,6 @@
 import random
 
-from Robal import *
+from BackEnd.Robal import *
 from collections import Counter
 
 from Util import Information

@@ -11,27 +11,28 @@ class GameMaster:
         self.plansza = Plansza(5)
         self.turn = 0
 
-    def newGame(self):
-        self.BlackPlayer = InterfejsGracza("C", self)
-        self.WhitePlayer = InterfejsGracza("B", self)
+    def newGame(self, player_white, player_black):
+        self.BlackPlayer = player_black
+        self.WhitePlayer = player_white
+
         while(True):
             print("Tura białego atak.")
-            self.WhitePlayer.Attack()
+            self.WhitePlayer.performAttack()
             time.sleep(0.5)
             print("Tura białego ruch.")
-            self.WhitePlayer.Move()
+            self.WhitePlayer.performMove()
             time.sleep(0.5)
             print("Tura białego wylęganie.")
-            self.WhitePlayer.Hatch()
+            self.WhitePlayer.performHatchery()
             time.sleep(0.5)
             print("Tura czarnego atak.")
-            self.BlackPlayer.Attack()
+            self.BlackPlayer.performAttack()
             time.sleep(0.5)
             print("Tura czarnego ruch.")
-            self.BlackPlayer.Move()
+            self.BlackPlayer.performMove()
             time.sleep(0.5)
             print("Tura czarnego wylęganie.")
-            self.BlackPlayer.Hatch()
+            self.BlackPlayer.performHatchery()
             time.sleep(0.5)
 
     def getArmies(self, side):
@@ -57,7 +58,7 @@ class GameMaster:
         elif side == "C":
             hatchery = self.plansza.whitesHatchery
         for hatch in hatchery:
-            if not hatch.hasBug():
+            if hatch.bug is not None:
                 return True
         return False
 
@@ -68,16 +69,19 @@ class GameMaster:
         elif side == "C":
             hatchery = self.plansza.whitesHatchery
             option = []
-        for field in hatchery:
-            if not field.hasBug():
-                option.append(field)
+        for hatch in hatchery:
+            if hatch.bug is not None:
+                option.append(hatch)
         return option
 
     def addBug(self, selectedPlacmentField, bugID):
         bug = Robal(bugID)
         selectedPlacmentField.addBug(bug)
 
+    def setUI(self, ui):
+        self.ui = ui
+        ui.drawBoard(self.plansza, ui.width / 2, ui.height / 2, 40, 3)
+        ui.updateWindow()
 
-GM = GameMaster()
-
-GM.newGame()
+    def updateWindow(self):
+        self.ui.updateWindow()

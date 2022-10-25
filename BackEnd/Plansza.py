@@ -1,5 +1,5 @@
 from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
-from Pole import Pole
+from BackEnd.Pole import Pole
 
 
 class Plansza:
@@ -48,7 +48,7 @@ class Plansza:
 
     def setHatchery(self):
         pole = self.root
-        while (hasattr(pole, "E")):
+        while pole.E is not None:
             pole = pole.E
         pole.setHatchery(True, 2)
         pole.WS.setHatchery(True, 1)
@@ -56,7 +56,7 @@ class Plansza:
         self.whitesHatchery = [pole, pole.WS, pole.WN]
 
         pole = self.root
-        while (hasattr(pole, "W")):
+        while pole.W is not None:
             pole = pole.W
         pole.setHatchery(True, 2)
         pole.ES.setHatchery(True, 3)

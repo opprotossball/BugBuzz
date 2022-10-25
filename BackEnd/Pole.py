@@ -7,6 +7,15 @@ class Pole:
         self.hatchery = False
         self.size = size
 
+        self.bug = None
+
+        self.WN = None
+        self.EN = None
+        self.E = None
+        self.ES = None
+        self.WS = None
+        self.W = None
+
         self.direction = {
             "WN" : self.WN,
             "EN" : self.EN,

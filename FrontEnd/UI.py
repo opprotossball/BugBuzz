@@ -1,6 +1,7 @@
 import pygame
 import math
-from BackEnd.Plansza import Plansza
+from FrontEnd.GameMaster import GameMaster
+from FrontEnd.InterfejsGracza import InterfejsGracza
 
 
 class UI:
@@ -22,11 +23,10 @@ class UI:
         self.screen.fill(self.backgroundColor)
 
     def updateWindow(self):
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-            pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+        pygame.display.update()
 
     def drawHex(self, xCenter, yCenter, radius, color):
         vertices = []
@@ -51,15 +51,5 @@ class UI:
             else:
                 self.drawHex(coordinates[0], coordinates[1], tileRadius, self.tileColor)
 
-
-if __name__ == '__main__':
-    screenWidth = 1000
-    screenHeight = 800
-    pygame.init()
-    ui = UI(screenWidth, screenHeight)
-    board = Plansza()
-    ui.drawBoard(board, screenWidth / 2, screenHeight / 2, 40, 3)
-    ui.updateWindow()
-
-
-
+    def createNewGameWindow(self):
+        pygame.init()
