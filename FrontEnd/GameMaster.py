@@ -16,7 +16,7 @@ class GameMaster:
         self.WhitePlayer = player_white
         while(True):
             print("Tura białego atak.")
-            self.WhitePlayer.resources = self.getResourcesForSide("B")
+            self.WhitePlayer.resources += self.getResourcesForSide("B")
             self.WhitePlayer.performAttack()
             time.sleep(0.5)
             print("Tura białego ruch.")
@@ -25,8 +25,8 @@ class GameMaster:
             print("Tura białego wylęganie.")
             self.WhitePlayer.performHatchery()
             time.sleep(0.5)
-            self.BlackPlayer.resources = self.getResourcesForSide("C")
             print("Tura czarnego atak.")
+            self.BlackPlayer.resources += self.getResourcesForSide("C")
             self.BlackPlayer.performAttack()
             time.sleep(0.5)
             print("Tura czarnego ruch.")
@@ -64,9 +64,10 @@ class GameMaster:
     def isAvailableSpaceForHatch(self, side):
         hatchery = []
         if side == "B":
-            hatchery = self.plansza.blacksHatchery
-        elif side == "C":
             hatchery = self.plansza.whitesHatchery
+        elif side == "C":
+            hatchery = self.plansza.blacksHatchery
+
         for hatch in hatchery:
             if hatch.bug is None:
                 return True
@@ -75,10 +76,10 @@ class GameMaster:
 
     def getAvialabelSpaceForHatch(self, side):
         if side == "B":
-            hatchery = self.plansza.blacksHatchery
-        elif side == "C":
             hatchery = self.plansza.whitesHatchery
-            option = []
+        elif side == "C":
+            hatchery = self.plansza.blacksHatchery
+        option = []
         for hatch in hatchery:
             if hatch.bug is not None:
                 option.append(hatch)

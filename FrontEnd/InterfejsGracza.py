@@ -18,4 +18,5 @@ class InterfejsGracza(Interfejs):
         choice = -1
         while 0 > choice or choice >= len(possible_hatch):
             choice = int(input("Możliwe ruchy:" + str(possible_hatch)))
+
         return possible_hatch[choice]
