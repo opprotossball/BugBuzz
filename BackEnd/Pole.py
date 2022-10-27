@@ -16,7 +16,11 @@ class Pole:
         self.WS = None
         self.W = None
 
-        self.direction = {
+    def getNeighbours(self):
+        return [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
+
+    def getDictionary(self):
+        direction = {
             "WN" : self.WN,
             "EN" : self.EN,
             "E" : self.E,
@@ -24,9 +28,7 @@ class Pole:
             "WS" : self.WS,
             "W" : self.W
         }
-
-        self.neighbours = [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
-        self.directions = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
+        return direction
 
     def setHatchery(self, isHa, hatcheryID):
         self.hatchery = isHa
