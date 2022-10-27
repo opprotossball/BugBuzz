@@ -15,32 +15,35 @@ class Interfejs:
         self.resources = 0
         self.GameMaster = GM
 
+        self.bugList = []
+
     def performMove(self):
         choice = ""
         while choice != "end":
             armies = self.GameMaster.getArmies(self.side)
             moves = []
-            if armies is None:
-                return
-            for i in range(len(armies)):
-                moves += self.create_moves([i], armies[i].getValidMoves)
+            for index_army in range(len(armies)):
+                if armies[index_army].numberOfMoves == 0:
+                    continue
+                moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
             moves.append("end")
-            move = self.getMove(moves)
-            armies .performeMove(move)
-
+            choice = self.getMove(moves)
+            if choice != "end":
+                army_index, direction = choice
+                armies[army_index].performMove(direction)
 
     def performAttack(self):
         choice = ""
         while choice != "end":
             armies = self.GameMaster.getArmies(self.side)
             attacks = []
-            if armies is None:
-                return
             for i in range(len(armies)):
-                attacks += self.create_moves([i], armies[i].getAttacks())
+                attacks += concatenate_moves([i], armies[i].getAttacks())
             attacks.append("end")
-            attack = self.getAttack(attacks)
-            armies .performeMove(attack)
+            choice = self.getAttack(attacks)
+            if choice != "end":
+                index, attacked_army = choice
+                armies[index].performeMove(attacked_army)
 
     def performHatchery(self):
         choice = ""
@@ -65,9 +68,9 @@ class Interfejs:
             if choice != "end":
                 field, bug = choice
                 bug, price = trader.buyBug(bug, self.resources, self.side)
+                self.bugList.append(bug)
                 self.resources -= price
-                hatchery_fields[field].bug = bug
-
+                bug.moveBugTo(hatchery_fields[field])
 
     # abstract
     def getMove(self, possible_moves):

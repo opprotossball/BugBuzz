@@ -28,7 +28,8 @@ class Robal(ABC):
         self.field = field
 
     def moveBugTo(self, field):
-        self.field.bug = None
+        if self.field is not None:
+            self.field.bug = None
         self.field = field
         self.field.bug = self
 
