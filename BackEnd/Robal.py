@@ -11,6 +11,7 @@ class Robal(ABC):
         self.ID = 0
         self.side = side
         self.field = None
+        self.army = None
 
     def setField(self, field):
         self.field = field
@@ -23,6 +24,8 @@ class Konik(Robal):
         self.attack = 0
         self.toughness = array('i', [1])
         self.side = side
+        self.army = None
+
 
 class Mrowka(Robal):
 
@@ -31,6 +34,7 @@ class Mrowka(Robal):
         self.attack = 1
         self.toughness = array('i', [3, 4])
         self.side = side
+        self.army = None
 
 
 class Pajak(Robal):
@@ -40,6 +44,7 @@ class Pajak(Robal):
         self.attack = 3
         self.toughness = array('i', [1, 2, 3])
         self.side = side
+        self.army = None
 
 
 class Zuk(Robal):
@@ -49,3 +54,5 @@ class Zuk(Robal):
         self.attack = 5
         self.toughness = array('i', [4, 5, 6])
         self.side = side
+        self.army = None
+

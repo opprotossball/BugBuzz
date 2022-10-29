@@ -28,7 +28,7 @@ class Plansza:
         self.setHatchery()
         self.setRecources()
 
-        sorted(self.iterList,key=getKeyFor)
+        sorted(self.iterList, key=getKeyFor)
 
     def addNaigbours(self, pole):
         size = self.size
@@ -67,7 +67,6 @@ class Plansza:
         for pole in self.iterList:
             if pole.cor() in pola:
                 pole.setResources(True)
-
 
     def TEST(self):
         pole = self.root

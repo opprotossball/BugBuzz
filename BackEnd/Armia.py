@@ -1,7 +1,7 @@
 import random
 
-from Robal import *
-from Pole import *
+from BackEnd.Robal import *
+from BackEnd.Pole import *
 from collections import Counter
 
 from Util import Information
@@ -12,8 +12,15 @@ class Armia:
         self.numberOfMoves = 0
         self.bugList = []
         if pole.bug is not None:
-            self.bugList.append(pole.bug)
-            pole.bug.army = self
+            self.unite(pole, pole.bug.side)
+
+    def unite(self, tile, side):
+        if tile.bug is not None and tile.bug.side == side and tile.bug not in self.bugList:
+            self.bugList.append(tile.bug)
+            tile.bug.army = self
+            for neighbour in tile.getNeighbours():
+                if neighbour is not None:
+                    self.unite(neighbour, side)
 
     def performMove(self, direction):
         for bug in self.bugList:
@@ -29,7 +36,7 @@ class Armia:
         validMoves = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
 
         for bug in self.bugList:
-            for neighbour, name_of_direction in zip(bug.field.neighbours, bug.field.directions):
+            for neighbour, name_of_direction in zip(bug.field.getNeighbours(), bug.field.directions):
                 if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
                     validMoves.remove(name_of_direction)
                 elif neighbour is None:
@@ -39,7 +46,7 @@ class Armia:
 
     def hasAttack(self):
         for bug in self.bugList:
-            for neighbour in bug.field.neighbours:
+            for neighbour in bug.field.getNeighbours():
                 if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
                     return True
         return False
@@ -47,7 +54,7 @@ class Armia:
     def getAttacks(self):
         attackArray = []
         for bug in self.bugList:
-            for neighbour in bug.field.neighbours:
+            for neighbour in bug.field.getNeighbours():
                 if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
                     if neighbour.bug.army in attackArray:
                         continue
@@ -99,7 +106,7 @@ class Armia:
         diceCounter = 0
 
         for bug in opponentArmy.bugList:
-            for neighbour in bug.field.neighbours:
+            for neighbour in bug.field.getNeighbours():
                 if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
                     if bug in attackers:
                         continue

@@ -2,6 +2,9 @@ import pygame
 import math
 from BackEnd.Plansza import Plansza
 from BackEnd.Robal import *
+from BackEnd.Armia import Armia
+#from FrontEnd.InterfejsGracza import InterfejsGracza
+#from FrontEnd.GameMaster import GameMaster
 from random import randrange
 from pygame.locals import *
 
@@ -26,13 +29,14 @@ class TileButton:
 
 class UI:
 
-    def __init__(self, startBoard, windowScreenRatio = 4 / 5, bugRadiusRatio = 1.2, marginRadiusRatio = 1/8, caption='Robale', backgroundColor = (80, 80, 80), tileColor = (153, 153, 153), resourcesColor = (0, 160, 0), hatcheryColor = (150, 45, 45)):
+    def __init__(self, startBoard, windowScreenRatio = 4 / 5, bugRadiusRatio = 1.2, marginRadiusRatio = 1/8, caption='Robale', backgroundColor = (80, 80, 80), tileColor = (153, 153, 153), resourcesColor = (0, 160, 0), hatcheryColor = (150, 45, 45), highlightedColor = (81, 210, 252)):
         pygame.init()
 
         self.backgroundColor = backgroundColor
         self.tileColor = tileColor
         self.resourcesColor = resourcesColor
         self.hatcheryColor = hatcheryColor
+        self.highlightedColor = highlightedColor
 
         self.width = int(pygame.display.Info().current_w * windowScreenRatio)
         self.height = int(pygame.display.Info().current_h * windowScreenRatio)
@@ -67,7 +71,7 @@ class UI:
         self.screen.fill(self.backgroundColor)
         pygame.display.set_caption(caption)
 
-    def updateWindow(self):
+    def update(self):
         self.resize(self.width, self.height)
         self.drawBoard()
         while self.running:
@@ -76,12 +80,14 @@ class UI:
                     self.running = False
                 if event.type == pygame.VIDEORESIZE:
                     self.resize(event.w, event.h)
-            for tileButton in self.tileButtons:
-                if tileButton.isClicked():
-                    buttonTile = tileButton.tile
-                    self.drawRandomBug(buttonTile)
+                self.checkClikedTiles()
             pygame.display.update()
 
+    def checkClikedTiles(self):
+        for tileButton in self.tileButtons:
+            if tileButton.isClicked():
+                buttonTile = tileButton.tile
+                self.selectArmy(buttonTile)
     def resize(self, newWidth, newHeight):
         self.screen = pygame.display.set_mode((newWidth, newHeight), HWSURFACE | DOUBLEBUF | RESIZABLE)
         self.screen.fill(self.backgroundColor)
@@ -127,6 +133,13 @@ class UI:
             if pole.bug is not None:
                 self.drawBug(pole.bug, pole)
             self.tileButtons.append(tileButton)
+
+    def selectArmy(self, tile):
+        bug = tile.bug
+        if bug is not None and bug.army is not None:
+            for anotherBug in bug.army.bugList:
+                coordinates = self.transformToRealCoordinates(anotherBug.field, self.xCenter, self.yCenter, self.tileRadius, self.margin)
+                self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.highlightedColor)
 
     def drawBug(self, bug, tile):
         coordinates = self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin)
@@ -186,5 +199,17 @@ class UI:
 
 if __name__ == '__main__':
     board = Plansza()
+    board.iterList[0].setBug(Mrowka("W"))
+    board.iterList[1].setBug(Zuk("W"))
+    board.iterList[2].setBug(Pajak("W"))
+    board.iterList[3].setBug(Pajak("W"))
+    board.iterList[8].setBug(Pajak("W"))
+    board.iterList[20].setBug(Pajak("W"))
+    board.iterList[25].setBug(Pajak("W"))
+    board.iterList[15].setBug(Pajak("B"))
+    board.iterList[16].setBug(Pajak("B"))
+    for tile in board.iterList:
+        testArmy = Armia(tile)
+
     ui = UI(board)
-    ui.updateWindow()
+    ui.update()
