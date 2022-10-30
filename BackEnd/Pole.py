@@ -9,7 +9,20 @@ class Pole:
         self.size = size
         self.iterating_list = [self.WN, self.W, self.WS, self.ES, self.E, self.EN]
 
-        self.direction = {
+        self.bug = None
+
+        self.WN = None
+        self.EN = None
+        self.E = None
+        self.ES = None
+        self.WS = None
+        self.W = None
+
+    def getNeighbours(self):
+        return [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
+
+    def getDictionary(self):
+        direction = {
             "WN" : self.WN,
             "EN" : self.EN,
             "E" : self.E,
@@ -17,9 +30,7 @@ class Pole:
             "WS" : self.WS,
             "W" : self.W
         }
-
-        self.neighbours = [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
-        self.directions = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
+        return direction
 
     def setHatchery(self, isHa, hatcheryID):
         self.hatchery = isHa

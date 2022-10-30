@@ -1,5 +1,8 @@
 import pygame
 import math
+
+from FrontEnd.GameMaster import GameMaster
+from FrontEnd.InterfejsGracza import InterfejsGracza
 from BackEnd.Plansza import Plansza
 from BackEnd.Robal import *
 from random import randrange
@@ -68,6 +71,10 @@ class UI:
         pygame.display.set_caption(caption)
 
     def updateWindow(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+        pygame.display.update()
         self.resize(self.width, self.height)
         self.drawBoard()
         while self.running:
@@ -81,6 +88,7 @@ class UI:
                     buttonTile = tileButton.tile
                     self.drawRandomBug(buttonTile)
             pygame.display.update()
+
 
     def resize(self, newWidth, newHeight):
         self.screen = pygame.display.set_mode((newWidth, newHeight), HWSURFACE | DOUBLEBUF | RESIZABLE)
@@ -127,6 +135,10 @@ class UI:
             if pole.bug is not None:
                 self.drawBug(pole.bug, pole)
             self.tileButtons.append(tileButton)
+
+
+    def createNewGameWindow(self):
+        pygame.init()
 
     def drawBug(self, bug, tile):
         coordinates = self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin)
@@ -188,3 +200,4 @@ if __name__ == '__main__':
     board = Plansza()
     ui = UI(board)
     ui.updateWindow()
+
