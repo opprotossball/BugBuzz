@@ -7,7 +7,6 @@ class Pole:
         self.resources = False
         self.hatchery = False
         self.size = size
-        self.iterating_list = [self.WN, self.W, self.WS, self.ES, self.E, self.EN]
 
         self.bug = None
 
