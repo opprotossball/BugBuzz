@@ -1,11 +1,13 @@
 class Pole:
     def __init__(self, q, r, s, size):
+        self.bug = None
         self.q = q
         self.r = r
         self.s = s
         self.resources = False
         self.hatchery = False
         self.size = size
+        self.iterating_list = [self.WN, self.W, self.WS, self.ES, self.E, self.EN]
 
         self.bug = None
 

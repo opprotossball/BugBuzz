@@ -6,6 +6,7 @@ from BackEnd.Armia import Armia
 
 class UI:
 
+
     def __init__(self, gameMaster):
         self.tileButtons = []
         self.gameMaster = gameMaster
@@ -40,6 +41,8 @@ class UI:
             bug = Konik("W")
         elif x == 7:
             bug = Konik("B")
+            
+
         for pole in self.gameMaster.board.iterList:
             if pole == tile:
                 pole.setBug(bug)

@@ -1,51 +1,61 @@
 import random
 
 from BackEnd.Robal import *
-from BackEnd.Pole import *
 from collections import Counter
 
 from Util import Information
 
 
 class Armia:
-    def __init__(self, pole):
+    def __init__(self):
         self.numberOfMoves = 0
         self.bugList = []
-        if pole.bug is not None:
-            self.unite(pole, pole.bug.side)
+        self.numberOfGrassHoppers = 0
 
-    def unite(self, tile, side):
-        if tile.bug is not None and tile.bug.side == side and tile.bug not in self.bugList:
-            self.bugList.append(tile.bug)
-            tile.bug.army = self
-            for neighbour in tile.getNeighbours():
-                if neighbour is not None:
-                    self.unite(neighbour, side)
+    def addBug(self, bug):
+        if isinstance(bug, Konik):
+            self.numberOfGrassHoppers += 1
+        self.bugList.append(bug)
+        bug.army = self
 
-    def performMove(self, direction):
-        for bug in self.bugList:
-            if bug.move != 0:
-                if direction not in Information.directionOptions:
-                    print('Cannot change direction')
-                    return
-                destination = bug.field.direction(direction)
-                if destination is not None:
-                    bug.field.bug = None
-                    bug.setField(destination)
-                    destination.setBug(bug)
-                    bug.move -= 1
 
     def getValidMoves(self):
-        validMoves = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
-
         for bug in self.bugList:
-            for neighbour, name_of_direction in zip(bug.field.getNeighbours(), bug.field.directions):
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    validMoves.remove(name_of_direction)
-                elif neighbour is None:
-                    validMoves.remove(name_of_direction)
+            bug.moveToExamine = Information.directionOptions.copy()
+            bug.validMoves = []
+            bug.invalidMoves = []
 
-        return validMoves
+        while self.has_bug_with_moves_to_examine():
+            for bug in self.bugList:
+                for name_of_direction in bug.moveToExamine: # replace with 'in bug.moveToExamine:'
+                    neighbour = bug.field.getDictionary()[name_of_direction]
+                    if neighbour is None:                                       #Pole nie istnieje
+                        bug.moveToExamine.remove(name_of_direction)
+                        bug.invalidMoves.append(name_of_direction)
+                    elif neighbour.bug is not None:                             #Pole istnieje i znajduje się na nim robal
+                        if neighbour.bug.side != bug.side:                      #Przeciwnika
+                            bug.moveToExamine = []
+                            bug.validMoves = []
+                            bug.invalidMoves = Information.directionOptions.copy()
+                        elif name_of_direction in neighbour.bug.validMoves:     #Nasz i może on się ruszyć w kierunku
+                            bug.moveToExamine.remove(name_of_direction)
+                            bug.validMoves.append(name_of_direction)
+                        elif name_of_direction in neighbour.bug.invalidMoves:   #Nasz i nie może on się ruszyć w kierunku
+                            bug.moveToExamine.remove(name_of_direction)
+                            bug.invalidMoves.append(name_of_direction)
+                    else:                                                       #Na polu nic nie ma
+                        bug.moveToExamine.remove(name_of_direction)
+                        bug.validMoves.append(name_of_direction)
+
+        armyValidMoves = []
+        for bug in self.bugList:
+            for move in bug.validMoves:
+                if move not in armyValidMoves:
+                    armyValidMoves.append(move)
+                if armyValidMoves == Information.directionOptions:
+                    return armyValidMoves
+        return armyValidMoves
+
 
     def hasAttack(self):
         for bug in self.bugList:
@@ -75,14 +85,14 @@ class Armia:
         bugCount = 0
         for count, value in attackValue.items():
             bugCount += count
-            if bugCount > attackValue.total()*0.5:
+            if bugCount > attackValue.total() * 0.5:
                 finalValue = value
                 break
 
         return finalValue
 
     def rollDice(self, diceCount):
-        rollArray = []*diceCount
+        rollArray = [] * diceCount
         i = 0
         while i < diceCount:
             rollArray[i] = random.randint(1, 10)
@@ -101,6 +111,34 @@ class Armia:
                 toughnessInterval += newElement
 
         return toughnessInterval
+
+    def performMove(self, direction):
+        for bug in self.bugList:
+            bug.state = "to move"
+
+        while not self.haveEveryBugMoved():
+            for bug in self.bugList:
+                if bug.state == "to move":
+                    dict = bug.field.getDictionary()
+                    if bug.hasEnemyInSurrounding():
+                        bug.state = "won't move"
+
+                    if dict[direction] is not None:
+                        if dict[direction].bug is None:
+                            field = dict[direction]
+                            bug.moveBugTo(field)
+                            bug.state = "moved"
+                        elif dict[direction].bug.state == "won't move":
+                            bug.state = "won't move"
+                    else:
+                        bug.state = "won't move"
+        self.numberOfMoves -= 1
+
+    def haveEveryBugMoved(self):
+        for bug in self.bugList:
+            if bug.state == "to move":
+                return False
+        return True
 
     def performAttack(self, opponentArmy):
         myArmies = []
@@ -143,10 +181,23 @@ class Armia:
     def getNumberOfResources(self):
         grassHopperCounter = 0
         hatcheryCounter = 0
-        for bugg in self.bugList:
-            if type(bugg) == Konik:
+        for bug in self.bugList:
+            if type(bug) == Konik:
                 grassHopperCounter = grassHopperCounter + 1
-            if bugg.field.hatchery:
+            if bug.field.hatchery:
                 hatcheryCounter = hatcheryCounter + 1
 
-        return grassHopperCounter*hatcheryCounter
+        return grassHopperCounter * hatcheryCounter
+
+    def has_bug_with_moves_to_examine(self):
+        for bug in self.bugList:
+            if len(bug.moveToExamine) > 0:
+                return True
+        return False
+
+    def setMoves(self):
+        moves = 20
+        for bug in self.bugList:
+            if moves > bug.move:
+                moves = bug.move
+        self.numberOfMoves = moves
