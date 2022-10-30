@@ -1,6 +1,5 @@
 import pygame
 import math
-from Plansza import Plansza
 from Robal import *
 from random import randrange
 from pygame.locals import *
@@ -60,8 +59,8 @@ class UI:
         self.spiderBlack = pygame.image.load("Assets/Bugs/SpiderBlack.png")
         self.antWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/AntWhite.png"), True, False)
         self.antBlack = pygame.image.load("Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/GrasshooperWhite.png"), True, False)
-        self.grasshooperBlack = pygame.image.load("Assets/Bugs/GrasshooperBlack.png")
+        self.grasshopperWhite = pygame.transform.flip(pygame.image.load("Assets/Bugs/GrasshooperWhite.png"), True, False)
+        self.grasshopperBlack = pygame.image.load("Assets/Bugs/GrasshooperBlack.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)
@@ -70,17 +69,18 @@ class UI:
     def updateWindow(self):
         self.resize(self.width, self.height)
         self.drawBoard()
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == pygame.VIDEORESIZE:
-                    self.resize(event.w, event.h)
-            for tileButton in self.tileButtons:
-                if tileButton.isClicked():
-                    buttonTile = tileButton.tile
-                    self.drawRandomBug(buttonTile)
-            pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.VIDEORESIZE:
+                self.resize(event.w, event.h)
+
+        for tileButton in self.tileButtons:
+            if tileButton.isClicked():
+                buttonTile = tileButton.tile
+                self.drawRandomBug(buttonTile)
+
+        pygame.display.update()
 
     def resize(self, newWidth, newHeight):
         self.screen = pygame.display.set_mode((newWidth, newHeight), HWSURFACE | DOUBLEBUF | RESIZABLE)
@@ -116,13 +116,14 @@ class UI:
         self.tileButtons = []
         for pole in self.board.iterList:
             coordinates = self.transformToRealCoordinates(pole, self.xCenter, self.yCenter, self.tileRadius, self.margin)
-            color = None
             if pole.hatchery:
                 color = self.hatcheryColor
             elif pole.resources:
                 color = self.resourcesColor
             else:
                 color = self.tileColor
+            if pole.bug is not None:
+                self.drawBug(pole.bug, pole)
             tileButton = TileButton(pole, self.drawHex(coordinates[0], coordinates[1], self.tileRadius, color))
             if pole.bug is not None:
                 self.drawBug(pole.bug, pole)
@@ -131,25 +132,25 @@ class UI:
     def drawBug(self, bug, tile):
         coordinates = self.transformToRealCoordinates(tile, self.xCenter, self.yCenter, self.tileRadius, self.margin)
         image = None
-        if isinstance(bug, Konik):
-            if bug.side == 'W':
-                image = self.grasshooperWhite
-            elif bug.side == 'B':
-                image = self.grasshooperBlack
-        elif isinstance(bug, Mrowka):
-            if bug.side == 'W':
+        if bug.short_name == "K":
+            if bug.side == 'B':
+                image = self.grasshopperWhite
+            elif bug.side == 'C':
+                image = self.grasshopperBlack
+        elif bug.short_name == "M":
+            if bug.side == 'B':
                 image = self.antWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.antBlack
-        elif isinstance(bug, Pajak):
-            if bug.side == 'W':
+        elif bug.short_name == "P":
+            if bug.side == 'B':
                 image = self.spiderWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.spiderBlack
-        elif isinstance(bug, Zuk):
-            if bug.side == 'W':
+        elif bug.short_name == "Z":
+            if bug.side == 'B':
                 image = self.beetleWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.beetleBlack
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")
@@ -162,29 +163,19 @@ class UI:
         x = randrange(8)
         bug = None
         if x == 0:
-            bug = Zuk("W")
-        elif x == 1:
             bug = Zuk("B")
+        elif x == 1:
+            bug = Zuk("C")
         elif x == 2:
-            bug = Pajak("W")
-        elif x == 3:
             bug = Pajak("B")
+        elif x == 3:
+            bug = Pajak("C")
         elif x == 4:
-            bug = Mrowka("W")
-        elif x == 5:
             bug = Mrowka("B")
+        elif x == 5:
+            bug = Mrowka("C")
         elif x == 6:
-            bug = Konik("W")
-        elif x == 7:
             bug = Konik("B")
+        elif x == 7:
+            bug = Konik("C")
         self.drawBug(bug, tile)
-
-    def updateBoard(self, board):
-        self.board = board
-        self.drawBoard()
-
-
-if __name__ == '__main__':
-    board = Plansza()
-    ui = UI(board)
-    ui.updateWindow()

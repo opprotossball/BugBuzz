@@ -10,16 +10,19 @@ def concatenate_moves(table1, table2):
 
 
 class Interfejs:
-    def __init__(self, GM, side):
+    def __init__(self, GM, side, updateMethod):
         self.side = side
         self.resources = 0
         self.GameMaster = GM
+
+        self.update = updateMethod
 
         self.bugList = []
 
     def performMove(self):
         choice = ""
         while choice != "end":
+            self.update()
             armies = self.GameMaster.getArmies(self.side)
             moves = []
             for index_army in range(len(armies)):
@@ -31,10 +34,12 @@ class Interfejs:
             if choice != "end":
                 army_index, direction = choice
                 armies[army_index].performMove(direction)
+        self.update()
 
     def performAttack(self):
         choice = ""
         while choice != "end":
+            self.update()
             armies = self.GameMaster.getArmies(self.side)
             attacks = []
             for i in range(len(armies)):
@@ -44,10 +49,12 @@ class Interfejs:
             if choice != "end":
                 index, attacked_army = choice
                 armies[index].performeMove(attacked_army)
+        self.update()
 
     def performHatchery(self):
         choice = ""
         while choice != "end" and self.GameMaster.isAvailableSpaceForHatch(self.side):
+            self.update()
             trader = Trader()
             possible_to_hatch = trader.getOptions(self.resources)
             hatchery_fields = []
@@ -71,6 +78,7 @@ class Interfejs:
                 self.bugList.append(bug)
                 self.resources -= price
                 bug.moveBugTo(hatchery_fields[field])
+        self.update()
 
     # abstract
     def getMove(self, possible_moves):

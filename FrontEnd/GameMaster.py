@@ -8,33 +8,38 @@ class GameMaster:
     def __init__(self):
         self.plansza = Plansza(4)
 
+        self.turn = 0
+
         self.BlackPlayer = None
         self.WhitePlayer = None
 
     def newGame(self, player_white, player_black):
         self.BlackPlayer = player_black
         self.WhitePlayer = player_white
-        while True:
+
+    def nextMove(self):
+        if self.turn == 0:
             print("Tura białego atak.")
             self.WhitePlayer.resources += self.getResourcesForSide("B")
             self.WhitePlayer.performAttack()
-            #time.sleep(0.5)
+        elif self.turn == 1:
             print("Tura białego ruch.")
             self.WhitePlayer.performMove()
-            #time.sleep(0.5)
+        elif self.turn == 2:
             print("Tura białego wylęganie.")
             self.WhitePlayer.performHatchery()
-            #time.sleep(0.5)
+        elif self.turn == 3:
             print("Tura czarnego atak.")
             self.BlackPlayer.resources += self.getResourcesForSide("C")
             self.BlackPlayer.performAttack()
-            #time.sleep(0.5)
+        elif self.turn == 4:
             print("Tura czarnego ruch.")
             self.BlackPlayer.performMove()
-            #time.sleep(0.5)
+        elif self.turn == 5:
             print("Tura czarnego wylęganie.")
             self.BlackPlayer.performHatchery()
-            #time.sleep(0.5)
+            self.turn = -1
+        self.turn += 1
 
     def getArmies(self, side):
         armies = []
@@ -94,8 +99,3 @@ class GameMaster:
 
     def setUI(self, ui):
         self.ui = ui
-        ui.drawBoard(self.plansza, ui.width / 2, ui.height / 2, 40, 3)
-        ui.updateWindow()
-
-    def updateWindow(self):
-        self.ui.updateWindow()
