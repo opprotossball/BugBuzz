@@ -33,6 +33,10 @@ class Robal(ABC):
         self.field = field
         self.field.bug = self
 
+    def clone(self):
+        clone = self.__class__.__init__(self.side)
+        return clone
+
     def hasEnemyInSurrounding(self):
         for field in self.field.getNeighbours():
             if field is not None and field.bug is not None and field.bug.side != self.side:

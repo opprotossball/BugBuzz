@@ -1,3 +1,5 @@
+from numpy.core.defchararray import upper, lower
+
 from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
 from BackEnd.Pole import Pole
 
@@ -73,30 +75,23 @@ class Plansza:
                 pole.setResources(True)
                 self.resources.append(pole)
 
-    def TEST(self):
-        pole = self.root
-        pole = pole.WS
-        pole = pole.E
-        pole = pole.WN
-        return self.root == pole
-
-    def TEST2(self):
-        pole = self.root
-        while (hasattr(pole, "E")):
-            print(pole.toString())
-            pole = pole.E
-
-    def getPlansza(self):
-        for pole in self.iterList:
-            print(pole.toString())
-        print(self.numberOfPole)
+    def clone(self):
+        clone = Plansza(self.size)
+        for i in range(len(self.iterList)):
+            if self.iterList[i].bug is not None:
+                clone.iterList[i].bug = self.iterList[i].bug.clone()
+        return clone
 
     def getPositionWithoutToMoveNorResourcesInfo(self):
         position = ''
         for i in self.iterList:
             if i.bug is None:
                 position += '.'
-            position += i.bug.short_name
+            else:
+                if i.bug.side == "B":
+                    position += upper(i.bug.short_name)
+                elif i.bug.side == "C":
+                    position += lower(i.bug.short_name)
         return position
 
     def loadPosition(self, position):
@@ -117,6 +112,29 @@ class Plansza:
                 actual_field.bug = Pajak("C")
             elif position_content == "z":
                 actual_field.bug = Zuk("C")
+
+    def getInput(self):
+        input = []
+        for field in self.iterList:
+            if field.bug is None:
+                input += [0, 0, 0, 0]
+            elif field.bug.short_name == 'k' and field.bug.side == "B":
+                input += [0, 0, 0, 1]
+            elif field.bug.short_name == 'm' and field.bug.side == "B":
+                input += [0, 0, 1, 0]
+            elif field.bug.short_name == 'p' and field.bug.side == "B":
+                input += [0, 0, 1, 1]
+            elif field.bug.short_name == 'z' and field.bug.side == "B":
+                input += [0, 1, 0, 0]
+            elif field.bug.short_name == 'k' and field.bug.side == "C":
+                input += [1, 0, 0, 1]
+            elif field.bug.short_name == 'm' and field.bug.side == "C":
+                input += [1, 0, 1, 0]
+            elif field.bug.short_name == 'p' and field.bug.side == "C":
+                input += [1, 0, 1, 1]
+            elif field.bug.short_name == 'z' and field.bug.side == "C":
+                input += [1, 1, 0, 0]
+        return input
 
 def getKeyFor(Pole):
     return Pole.r * 60 - Pole.q

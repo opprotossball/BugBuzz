@@ -1,11 +1,12 @@
+import sys
+
 from BackEnd.Armia import Armia
 from BackEnd.Plansza import Plansza
 
 
 class GameMaster:
     def __init__(self):
-        self.plansza = Plansza(5)
-        self.turn = 0
+        self.plansza = Plansza(4)
 
         self.BlackPlayer = None
         self.WhitePlayer = None
@@ -80,7 +81,7 @@ class GameMaster:
                 return True
         return False
 
-    def getAvialabelSpaceForHatch(self, side):
+    def getAvailableSpaceForHatch(self, side):
         if side == "B":
             hatchery = self.plansza.whitesHatchery
         elif side == "C":
