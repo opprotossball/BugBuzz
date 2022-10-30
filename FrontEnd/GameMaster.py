@@ -1,4 +1,12 @@
+
+from BackEnd.Plansza import Plansza
+from BackEnd.Robal import Robal
+from InterfejsGracza import InterfejsGracza
+from FrontEnd.UI import UI
+from FrontEnd.Display import Display
+
 import sys
+
 
 from BackEnd.Armia import Armia
 from BackEnd.Plansza import Plansza
@@ -6,9 +14,14 @@ from BackEnd.Plansza import Plansza
 
 class GameMaster:
     def __init__(self):
+        self.board = Plansza(4)
+        self.turn = 0
+        self.UI = UI(self)
+        self.display = Display(self)
+        self.display.run()
+
         self.plansza = Plansza(4)
 
-        self.turn = 0
 
         self.BlackPlayer = None
         self.WhitePlayer = None
@@ -16,30 +29,27 @@ class GameMaster:
     def newGame(self, player_white, player_black):
         self.BlackPlayer = player_black
         self.WhitePlayer = player_white
-
-    def nextMove(self):
-        if self.turn == 0:
+        while True:
             print("Tura białego atak.")
             self.WhitePlayer.resources += self.getResourcesForSide("B")
             self.WhitePlayer.performAttack()
-        elif self.turn == 1:
+            #time.sleep(0.5)
             print("Tura białego ruch.")
             self.WhitePlayer.performMove()
-        elif self.turn == 2:
+            #time.sleep(0.5)
             print("Tura białego wylęganie.")
             self.WhitePlayer.performHatchery()
-        elif self.turn == 3:
+            #time.sleep(0.5)
             print("Tura czarnego atak.")
             self.BlackPlayer.resources += self.getResourcesForSide("C")
             self.BlackPlayer.performAttack()
-        elif self.turn == 4:
+            #time.sleep(0.5)
             print("Tura czarnego ruch.")
             self.BlackPlayer.performMove()
-        elif self.turn == 5:
+            #time.sleep(0.5)
             print("Tura czarnego wylęganie.")
             self.BlackPlayer.performHatchery()
-            self.turn = -1
-        self.turn += 1
+            #time.sleep(0.5)
 
     def getArmies(self, side):
         armies = []
@@ -80,7 +90,6 @@ class GameMaster:
             hatchery = self.plansza.whitesHatchery
         elif side == "C":
             hatchery = self.plansza.blacksHatchery
-
         for hatch in hatchery:
             if hatch.bug is None:
                 return True
@@ -99,3 +108,8 @@ class GameMaster:
 
     def setUI(self, ui):
         self.ui = ui
+        ui.drawBoard(self.plansza, ui.width / 2, ui.height / 2, 40, 3)
+        ui.updateWindow()
+
+    def updateWindow(self):
+        self.ui.updateWindow()

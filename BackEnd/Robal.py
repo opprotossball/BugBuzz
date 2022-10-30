@@ -3,6 +3,8 @@ from array import *
 
 
 class Robal(ABC):
+    lastID = 0
+
     @abstractmethod
     def __init__(self, side):
         self.move = 0
@@ -11,6 +13,7 @@ class Robal(ABC):
         self.army = None
         self.side = side
         self.field = None
+        
         self.short_name = ""
         self.validMoves = []
         self.invalidMoves = []
@@ -50,11 +53,13 @@ class Konik(Robal):
         self.attack = 0
         self.toughness = array('i', [1])
         self.side = side
+        
         self.field = None
         self.short_name = "K"
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+
 
 
 class Mrowka(Robal):
@@ -64,11 +69,13 @@ class Mrowka(Robal):
         self.attack = 1
         self.toughness = array('i', [3, 4])
         self.side = side
+        
         self.field = None
         self.short_name = "M"
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+
 
 
 class Pajak(Robal):
@@ -78,6 +85,7 @@ class Pajak(Robal):
         self.attack = 3
         self.toughness = array('i', [1, 2, 3])
         self.side = side
+
         self.field = None
         self.short_name = "P"
         self.validMoves = []
@@ -92,6 +100,8 @@ class Zuk(Robal):
         self.attack = 5
         self.toughness = array('i', [4, 5, 6])
         self.side = side
+        self.army = None
+
         self.field = None
         self.short_name = "Z"
         self.validMoves = []
