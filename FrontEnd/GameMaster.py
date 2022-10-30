@@ -1,14 +1,19 @@
 from BackEnd.Plansza import Plansza
 from BackEnd.Robal import Robal
 from InterfejsGracza import InterfejsGracza
+from FrontEnd.UI import UI
+from FrontEnd.Display import Display
 
 import time
 
 
 class GameMaster:
     def __init__(self):
-        self.plansza = Plansza(5)
+        self.board = Plansza(4)
         self.turn = 0
+        self.UI = UI(self)
+        self.display = Display(self)
+        self.display.run()
 
     def newGame(self):
         self.BlackPlayer = InterfejsGracza("C", self)
@@ -33,24 +38,22 @@ class GameMaster:
             self.BlackPlayer.Hatch()
             time.sleep(0.5)
 
-
     def isAvialabelSpaceForHatch(self, side):
         hatchery = []
         if side == "B":
-            hatchery = self.plansza.blacksHatchery
+            hatchery = self.board.blacksHatchery
         elif side == "C":
-            hatchery = self.plansza.whitesHatchery
+            hatchery = self.board.whitesHatchery
         for hatch in hatchery:
             if not hatch.hasBug():
                 return True
         return False
 
-
     def getAvialabelSpaceForHatch(self, side):
         if side == "B":
-            hatchery = self.plansza.blacksHatchery
+            hatchery = self.board.blacksHatchery
         elif side == "C":
-            hatchery = self.plansza.whitesHatchery
+            hatchery = self.board.whitesHatchery
             option = []
         for field in hatchery:
             if not field.hasBug():
@@ -62,8 +65,5 @@ class GameMaster:
         selectedPlacmentField.addBug(bug)
 
 
-
-
-GM = GameMaster()
-
-GM.newGame()
+if __name__ == '__main__':
+    gm = GameMaster()
