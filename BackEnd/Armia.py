@@ -56,9 +56,10 @@ class Armia:
                     return armyValidMoves
         return armyValidMoves
 
+
     def hasAttack(self):
         for bug in self.bugList:
-            for neighbour in bug.field.neighbours:
+            for neighbour in bug.field.getNeighbours():
                 if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
                     return True
         return False
@@ -146,7 +147,7 @@ class Armia:
         diceCounter = 0
 
         for bug in opponentArmy.bugList:
-            for neighbour in bug.field.neighbours:
+            for neighbour in bug.field.getNeighbours():
                 if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
                     if bug in attackers:
                         continue

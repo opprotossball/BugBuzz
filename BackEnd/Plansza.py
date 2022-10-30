@@ -1,6 +1,7 @@
 from numpy.core.defchararray import upper, lower
 
 from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
+
 from BackEnd.Pole import Pole
 
 
@@ -81,6 +82,7 @@ class Plansza:
             if self.iterList[i].bug is not None:
                 clone.iterList[i].bug = self.iterList[i].bug.clone()
         return clone
+
 
     def getPositionWithoutToMoveNorResourcesInfo(self):
         position = ''

@@ -1,4 +1,12 @@
+
+from BackEnd.Plansza import Plansza
+from BackEnd.Robal import Robal
+from InterfejsGracza import InterfejsGracza
+from FrontEnd.UI import UI
+from FrontEnd.Display import Display
+
 import sys
+
 
 from BackEnd.Armia import Armia
 from BackEnd.Plansza import Plansza
@@ -6,7 +14,14 @@ from BackEnd.Plansza import Plansza
 
 class GameMaster:
     def __init__(self):
+        self.board = Plansza(4)
+        self.turn = 0
+        self.UI = UI(self)
+        self.display = Display(self)
+        self.display.run()
+
         self.plansza = Plansza(4)
+
 
         self.BlackPlayer = None
         self.WhitePlayer = None
@@ -75,7 +90,6 @@ class GameMaster:
             hatchery = self.plansza.whitesHatchery
         elif side == "C":
             hatchery = self.plansza.blacksHatchery
-
         for hatch in hatchery:
             if hatch.bug is None:
                 return True
