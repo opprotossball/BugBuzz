@@ -3,6 +3,8 @@ from array import *
 
 
 class Robal(ABC):
+    lastID = 0
+
     @abstractmethod
     def __init__(self, side):
         self.move = 0
@@ -23,6 +25,7 @@ class Konik(Robal):
         self.attack = 0
         self.toughness = array('i', [1])
         self.side = side
+
 
 class Mrowka(Robal):
 
