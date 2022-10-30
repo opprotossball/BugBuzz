@@ -28,9 +28,12 @@ class Armia:
                 if direction not in Information.directionOptions:
                     print('Cannot change direction')
                     return
-                field = bug.field.direction(direction)
-                bug.setField(field)
-                bug.move -= 1
+                destination = bug.field.direction(direction)
+                if destination is not None:
+                    bug.field.bug = None
+                    bug.setField(destination)
+                    destination.setBug(bug)
+                    bug.move -= 1
 
     def getValidMoves(self):
         validMoves = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
