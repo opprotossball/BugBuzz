@@ -30,7 +30,10 @@ class Interfejs:
                     continue
                 moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
             moves.append("end")
-            choice = self.getMove(moves)
+            if len(moves) > 1:
+                choice = self.getMove(moves)
+            else:
+                choice = "end"
             if choice != "end":
                 army_index, direction = choice
                 armies[army_index].performMove(direction)
@@ -45,7 +48,10 @@ class Interfejs:
             for i in range(len(armies)):
                 attacks += concatenate_moves([i], armies[i].getAttacks())
             attacks.append("end")
-            choice = self.getAttack(attacks)
+            if len(attacks) > 1:
+                choice = self.getAttack(attacks)
+            else:
+                choice = "end"
             if choice != "end":
                 index, attacked_army = choice
                 armies[index].performeMove(attacked_army)
