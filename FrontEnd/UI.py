@@ -5,11 +5,10 @@ from BackEnd.Armia import Armia
 
 
 class UI:
-
-
     def __init__(self, gameMaster):
         self.tileButtons = []
         self.gameMaster = gameMaster
+
     def setTileButtons(self, tilebutons):
         self.tileButtons = tilebutons
 
@@ -26,27 +25,27 @@ class UI:
         x = randrange(8)
         bug = None
         if x == 0:
-            bug = Zuk("W")
+            bug = Zuk("C")
         elif x == 1:
             bug = Zuk("B")
         elif x == 2:
-            bug = Pajak("W")
+            bug = Pajak("C")
         elif x == 3:
             bug = Pajak("B")
         elif x == 4:
-            bug = Mrowka("W")
+            bug = Mrowka("C")
         elif x == 5:
             bug = Mrowka("B")
         elif x == 6:
-            bug = Konik("W")
+            bug = Konik("C")
         elif x == 7:
             bug = Konik("B")
-            
-
-        for pole in self.gameMaster.board.iterList:
-            if pole == tile:
-                pole.setBug(bug)
-        self.gameMaster.display.drawBug(bug, tile)
+        bug.setField(tile)
+        tile.setBug(bug)
+        if bug.side == "B":
+            self.gameMaster.WhitePlayer.bugList.append(bug)
+        elif bug.side == "C":
+            self.gameMaster.BlackPlayer.bugList.append(bug)
 
     def onTileClick(self):
         for tileButton in self.tileButtons:
@@ -56,4 +55,6 @@ class UI:
             if tileButton.isClickedRight():
                 buttonTile = tileButton.tile
                 self.drawRandomBug(buttonTile)
-                army = Armia(buttonTile)
+                self.gameMaster.getArmies("C")
+                self.gameMaster.getArmies("B")
+
