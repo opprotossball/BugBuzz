@@ -57,7 +57,8 @@ class Display:
     def updateWindow(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
+                pygame.quit()
+                exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
         self.gameMaster.UI.onTileClick()
