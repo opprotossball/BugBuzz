@@ -1,12 +1,5 @@
-
-from BackEnd.Plansza import Plansza
-from BackEnd.Robal import Robal
-from InterfejsGracza import InterfejsGracza
 from FrontEnd.UI import UI
 from FrontEnd.Display import Display
-
-import sys
-
 
 from BackEnd.Armia import Armia
 from BackEnd.Plansza import Plansza
@@ -18,10 +11,8 @@ class GameMaster:
         self.turn = 0
         self.UI = UI(self)
         self.display = Display(self)
-        self.display.run()
 
         self.plansza = Plansza(4)
-
 
         self.BlackPlayer = None
         self.WhitePlayer = None
@@ -29,27 +20,36 @@ class GameMaster:
     def newGame(self, player_white, player_black):
         self.BlackPlayer = player_black
         self.WhitePlayer = player_white
-        while True:
+
+    def nextMove(self):
+        if self.turn == 0:
             print("Tura białego atak.")
-            self.WhitePlayer.resources += self.getResourcesForSide("B")
             self.WhitePlayer.performAttack()
-            #time.sleep(0.5)
+            self.updateWindow()
+        elif self.turn == 1:
             print("Tura białego ruch.")
             self.WhitePlayer.performMove()
-            #time.sleep(0.5)
+            self.updateWindow()
+        elif self.turn == 2:
             print("Tura białego wylęganie.")
+            self.WhitePlayer.resources += self.getResourcesForSide("B")
             self.WhitePlayer.performHatchery()
-            #time.sleep(0.5)
+            self.updateWindow()
+        elif self.turn == 3:
             print("Tura czarnego atak.")
-            self.BlackPlayer.resources += self.getResourcesForSide("C")
             self.BlackPlayer.performAttack()
-            #time.sleep(0.5)
+            self.updateWindow()
+        elif self.turn == 4:
             print("Tura czarnego ruch.")
             self.BlackPlayer.performMove()
-            #time.sleep(0.5)
+            self.updateWindow()
+        elif self.turn == 5:
             print("Tura czarnego wylęganie.")
+            self.BlackPlayer.resources += self.getResourcesForSide("C")
             self.BlackPlayer.performHatchery()
-            #time.sleep(0.5)
+            self.turn = -1
+            self.updateWindow()
+        self.turn += 1
 
     def getArmies(self, side):
         armies = []
@@ -81,7 +81,7 @@ class GameMaster:
         n = 1
         for field in resources:
             if field.bug is not None and field.bug.side == side:
-                n += field.bug.army.numberOfGrassHopppers
+                n += field.bug.army.numberOfGrassHoppers
         return n
 
     def isAvailableSpaceForHatch(self, side):
@@ -108,8 +108,6 @@ class GameMaster:
 
     def setUI(self, ui):
         self.ui = ui
-        ui.drawBoard(self.plansza, ui.width / 2, ui.height / 2, 40, 3)
-        ui.updateWindow()
 
     def updateWindow(self):
-        self.ui.updateWindow()
+        self.display.updateWindow()

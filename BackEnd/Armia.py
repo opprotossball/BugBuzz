@@ -13,7 +13,7 @@ class Armia:
         self.numberOfGrassHoppers = 0
 
     def addBug(self, bug):
-        if isinstance(bug, Konik):
+        if bug.short_name == "K":
             self.numberOfGrassHoppers += 1
         self.bugList.append(bug)
         bug.army = self
@@ -83,15 +83,7 @@ class Armia:
     def getAttackPower(self, army):
         attackValue = Counter(army.bugList.attack)
         sorted(attackValue, key=attackValue.keys(), reverse=True)
-
-        bugCount = 0
-        for count, value in attackValue.items():
-            bugCount += count
-            if bugCount > attackValue.total() * 0.5:
-                finalValue = value
-                break
-
-        return finalValue
+        return attackValue[len(attackValue)//2]
 
     def rollDice(self, diceCount):
         rollArray = [] * diceCount
