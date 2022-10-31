@@ -32,7 +32,6 @@ class Display:
         self.marginRadiusRatio = marginRadiusRatio
         self.bugScale = None
         self.margin = None
-        self.running = True
         self.tileRadius = None
         self.cos30 = math.cos(math.pi / 6)
         self.sin30 = math.sin(math.pi / 6)
@@ -41,32 +40,31 @@ class Display:
         self.tileButtons = []
         self.highlightedTiles = []
 
-        self.beetleWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/BeetleWhite.png"), True, False)
-        self.beetleBlack = pygame.image.load("../Assets/Bugs/BeetleBlack.png")
-        self.spiderWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/SpiderWhite.png"), True, False)
-        self.spiderBlack = pygame.image.load("../Assets/Bugs/SpiderBlack.png")
-        self.antWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/AntWhite.png"), True, False)
-        self.antBlack = pygame.image.load("../Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("../Assets/Bugs/GrasshooperWhite.png"), True, False)
-        self.grasshooperBlack = pygame.image.load("../Assets/Bugs/GrasshooperBlack.png")
+        self.beetleWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
+        self.beetleBlack = pygame.image.load("../FrontEnd/Assets/Bugs/BeetleBlack.png")
+        self.spiderWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
+        self.spiderBlack = pygame.image.load("../FrontEnd/Assets/Bugs/SpiderBlack.png")
+        self.antWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
+        self.antBlack = pygame.image.load("../FrontEnd/Assets/Bugs/AntBlack.png")
+        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
+        self.grasshooperBlack = pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperBlack.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)
         pygame.display.set_caption(caption)
         self.resize(self.width, self.height)
 
-    def run(self):
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == pygame.VIDEORESIZE:
-                    self.resize(event.w, event.h)
-                self.gameMaster.UI.onTileClick()
-                self.drawTiles()
-                self.highlight()
-                self.drawBugs()
-            pygame.display.update()
+    def updateWindow(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.VIDEORESIZE:
+                self.resize(event.w, event.h)
+        self.gameMaster.UI.onTileClick()
+        self.drawTiles()
+        self.highlight()
+        self.drawBugs()
+        pygame.display.update()
 
     def resize(self, newWidth, newHeight):
         self.screen = pygame.display.set_mode((newWidth, newHeight), HWSURFACE | DOUBLEBUF | RESIZABLE)
@@ -101,7 +99,6 @@ class Display:
         tileButtons = []
         for pole in self.gameMaster.board.iterList:
             coordinates = self.transformToRealCoordinates(pole)
-            color = None
             if pole.hatchery:
                 color = self.hatcheryColor
             elif pole.resources:
@@ -113,32 +110,33 @@ class Display:
         self.gameMaster.UI.setTileButtons(tileButtons)
 
     def drawBugs(self):
-        for tile in self.gameMaster.board.iterList:
-            if tile.bug is not None:
-                self.drawBug(tile.bug, tile)
+        for bug in self.gameMaster.BlackPlayer.bugList:
+            self.drawBug(bug, bug.field)
+        for bug in self.gameMaster.WhitePlayer.bugList:
+            self.drawBug(bug, bug.field)
 
     def drawBug(self, bug, tile):
         coordinates = self.transformToRealCoordinates(tile)
         image = None
-        if isinstance(bug, Konik):
-            if bug.side == 'W':
+        if bug.short_name == "K":
+            if bug.side == 'B':
                 image = self.grasshooperWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.grasshooperBlack
-        elif isinstance(bug, Mrowka):
-            if bug.side == 'W':
+        elif bug.short_name == "M":
+            if bug.side == 'B':
                 image = self.antWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.antBlack
-        elif isinstance(bug, Pajak):
-            if bug.side == 'W':
+        elif bug.short_name == "P":
+            if bug.side == 'B':
                 image = self.spiderWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.spiderBlack
-        elif isinstance(bug, Zuk):
-            if bug.side == 'W':
+        elif bug.short_name == "Z":
+            if bug.side == 'B':
                 image = self.beetleWhite
-            elif bug.side == 'B':
+            elif bug.side == 'C':
                 image = self.beetleBlack
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")

@@ -10,51 +10,64 @@ def concatenate_moves(table1, table2):
 
 
 class Interfejs:
-    def __init__(self, GM, side):
+    def __init__(self, GM, side, updateMethod):
         self.side = side
         self.resources = 0
-        self.GameMaster = GM
+        self.GM = GM
+
+        self.update = updateMethod
 
         self.bugList = []
 
     def performMove(self):
         choice = ""
         while choice != "end":
-            armies = self.GameMaster.getArmies(self.side)
+            self.update()
+            armies = self.GM.getArmies(self.side)
             moves = []
             for index_army in range(len(armies)):
                 if armies[index_army].numberOfMoves == 0:
                     continue
                 moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
             moves.append("end")
-            choice = self.getMove(moves)
+            if len(moves) > 1:
+                choice = self.getMove(moves)
+            else:
+                choice = "end"
             if choice != "end":
                 army_index, direction = choice
                 armies[army_index].performMove(direction)
+        self.update()
 
     def performAttack(self):
         choice = ""
         while choice != "end":
-            armies = self.GameMaster.getArmies(self.side)
+            self.update()
+            armies = self.GM.getArmies(self.side)
             attacks = []
             for i in range(len(armies)):
                 attacks += concatenate_moves([i], armies[i].getAttacks())
             attacks.append("end")
-            choice = self.getAttack(attacks)
+            if len(attacks) > 1:
+                choice = self.getAttack(attacks)
+            else:
+                choice = "end"
             if choice != "end":
                 index, attacked_army = choice
                 armies[index].performeMove(attacked_army)
+        self.update()
 
     def performHatchery(self):
         choice = ""
-        while choice != "end" and self.GameMaster.isAvailableSpaceForHatch(self.side):
+        while choice != "end" and self.GM.isAvailableSpaceForHatch(self.side):
+            self.update()
             trader = Trader()
             possible_to_hatch = trader.getOptions(self.resources)
             hatchery_fields = []
             if self.side == "C":
-                hatchery_fields = self.GameMaster.plansza.blacksHatchery
+                hatchery_fields = self.GM.plansza.blacksHatchery
             elif self.side == "B":
-                hatchery_fields = self.GameMaster.plansza.whitesHatchery
+                hatchery_fields = self.GM.plansza.whitesHatchery
 
             options = []
 
@@ -71,6 +84,7 @@ class Interfejs:
                 self.bugList.append(bug)
                 self.resources -= price
                 bug.moveBugTo(hatchery_fields[field])
+        self.update()
 
     # abstract
     def getMove(self, possible_moves):

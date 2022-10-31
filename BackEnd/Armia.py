@@ -13,11 +13,10 @@ class Armia:
         self.numberOfGrassHoppers = 0
 
     def addBug(self, bug):
-        if isinstance(bug, Konik):
+        if bug.short_name == "K":
             self.numberOfGrassHoppers += 1
         self.bugList.append(bug)
         bug.army = self
-
 
     def getValidMoves(self):
         for bug in self.bugList:
@@ -27,25 +26,28 @@ class Armia:
 
         while self.has_bug_with_moves_to_examine():
             for bug in self.bugList:
-                for name_of_direction in bug.moveToExamine: # replace with 'in bug.moveToExamine:'
+                move_to_examine = bug.moveToExamine.copy()
+                for name_of_direction in bug.moveToExamine:
                     neighbour = bug.field.getDictionary()[name_of_direction]
-                    if neighbour is None:                                       #Pole nie istnieje
-                        bug.moveToExamine.remove(name_of_direction)
+                    if neighbour is None:  # Pole nie istnieje
+                        move_to_examine.remove(name_of_direction)
                         bug.invalidMoves.append(name_of_direction)
-                    elif neighbour.bug is not None:                             #Pole istnieje i znajduje się na nim robal
-                        if neighbour.bug.side != bug.side:                      #Przeciwnika
+                    elif neighbour.bug is not None:  # Pole istnieje i znajduje się na nim robal
+                        if neighbour.bug.side != bug.side:  # Przeciwnika
                             bug.moveToExamine = []
                             bug.validMoves = []
                             bug.invalidMoves = Information.directionOptions.copy()
-                        elif name_of_direction in neighbour.bug.validMoves:     #Nasz i może on się ruszyć w kierunku
-                            bug.moveToExamine.remove(name_of_direction)
+                            break
+                        elif name_of_direction in neighbour.bug.validMoves:  # Nasz i może on się ruszyć w kierunku
+                            move_to_examine.remove(name_of_direction)
                             bug.validMoves.append(name_of_direction)
-                        elif name_of_direction in neighbour.bug.invalidMoves:   #Nasz i nie może on się ruszyć w kierunku
-                            bug.moveToExamine.remove(name_of_direction)
+                        elif name_of_direction in neighbour.bug.invalidMoves:  # Nasz i nie może on się ruszyć w kierunku
+                            move_to_examine.remove(name_of_direction)
                             bug.invalidMoves.append(name_of_direction)
-                    else:                                                       #Na polu nic nie ma
-                        bug.moveToExamine.remove(name_of_direction)
+                    else:  # Na polu nic nie ma
+                        move_to_examine.remove(name_of_direction)
                         bug.validMoves.append(name_of_direction)
+                    bug.moveToExamine = move_to_examine
 
         armyValidMoves = []
         for bug in self.bugList:
@@ -81,15 +83,7 @@ class Armia:
     def getAttackPower(self, army):
         attackValue = Counter(army.bugList.attack)
         sorted(attackValue, key=attackValue.keys(), reverse=True)
-
-        bugCount = 0
-        for count, value in attackValue.items():
-            bugCount += count
-            if bugCount > attackValue.total() * 0.5:
-                finalValue = value
-                break
-
-        return finalValue
+        return attackValue[len(attackValue)//2]
 
     def rollDice(self, diceCount):
         rollArray = [] * diceCount
@@ -122,8 +116,7 @@ class Armia:
                     dict = bug.field.getDictionary()
                     if bug.hasEnemyInSurrounding():
                         bug.state = "won't move"
-
-                    if dict[direction] is not None:
+                    elif dict[direction] is not None:
                         if dict[direction].bug is None:
                             field = dict[direction]
                             bug.moveBugTo(field)
