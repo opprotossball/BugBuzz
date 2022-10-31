@@ -1,6 +1,6 @@
 from FrontEnd.UI import UI
 from FrontEnd.Display import Display
-
+from FrontEnd.InterfejsGracza import InterfejsGracza
 from BackEnd.Armia import Armia
 from BackEnd.Plansza import Plansza
 
@@ -66,7 +66,7 @@ class GameMaster:
 
         for bug in player.bugList:
             if bug.army is not None:
-                break
+                continue
             army = Armia()
             army.addBug(bug)
             bug.recruitNeighbours()
@@ -111,3 +111,10 @@ class GameMaster:
 
     def updateWindow(self):
         self.display.updateWindow()
+
+
+if __name__ == "__main__":
+    gm = GameMaster()
+    gm.newGame(InterfejsGracza(gm, "B", None), InterfejsGracza(gm, "C", None))
+    while True:
+        gm.updateWindow()
