@@ -8,6 +8,7 @@ class UI:
     def __init__(self, gameMaster):
         self.tileButtons = []
         self.gameMaster = gameMaster
+        self.selectedTile = None
 
     def setTileButtons(self, tilebutons):
         self.tileButtons = tilebutons
@@ -50,11 +51,31 @@ class UI:
     def onTileClick(self):
         for tileButton in self.tileButtons:
             if tileButton.isClickedLeft():
-                buttonTile = tileButton.tile
-                self.gameMaster.display.highlightedTiles = self.selectArmy(buttonTile)
+                tile = tileButton.tile
+                if tile.bug is None:
+                    if not self.makeMove(tile):
+                        self.selectedTile = None
+                else:
+                    self.selectedTile = tile
+                selectedArmyTiles = self.selectArmy(tile)
+                self.gameMaster.display.highlightedTiles = selectedArmyTiles
             if tileButton.isClickedRight():
                 buttonTile = tileButton.tile
                 self.drawRandomBug(buttonTile)
                 self.gameMaster.getArmies("C")
                 self.gameMaster.getArmies("B")
 
+    def makeMove(self, tile):
+        if self.selectedTile is None:
+            return False
+        dictionary = self.selectedTile.getDictionary()
+        directions = [d for d, n in dictionary.items() if n == tile]
+        if directions.__len__() == 0:
+            return False
+        direction = directions[0]
+        leader = self.selectedTile.bug
+        leader.army.performMove(direction)
+        self.selectedTile = leader.field
+        self.gameMaster.getArmies(leader.side)
+        self.gameMaster.display.highlightedTiles = self.selectArmy(tile)
+        return True
