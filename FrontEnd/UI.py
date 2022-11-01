@@ -21,6 +21,8 @@ class UI:
 
         # Useless test function
     def drawRandomBug(self, tile):
+        if tile.bug is not None:
+            return
         x = randrange(8)
         bug = None
         if x == 0:
