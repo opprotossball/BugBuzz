@@ -41,14 +41,14 @@ class Display:
         self.tileButtons = []
         self.highlightedTiles = []
 
-        self.beetleWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
-        self.beetleBlack = pygame.image.load("../FrontEnd/Assets/Bugs/BeetleBlack.png")
-        self.spiderWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
-        self.spiderBlack = pygame.image.load("../FrontEnd/Assets/Bugs/SpiderBlack.png")
-        self.antWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
-        self.antBlack = pygame.image.load("../FrontEnd/Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
-        self.grasshooperBlack = pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperBlack.png")
+        self.beetleWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
+        self.beetleBlack = pygame.image.load("./FrontEnd/Assets/Bugs/BeetleBlack.png")
+        self.spiderWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
+        self.spiderBlack = pygame.image.load("./FrontEnd/Assets/Bugs/SpiderBlack.png")
+        self.antWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
+        self.antBlack = pygame.image.load("./FrontEnd/Assets/Bugs/AntBlack.png")
+        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
+        self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)

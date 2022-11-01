@@ -1,7 +1,5 @@
-import pygame
 from BackEnd.Robal import *
 from random import randrange
-from BackEnd.Armia import Armia
 
 
 class UI:
@@ -41,8 +39,7 @@ class UI:
             bug = Konik("C")
         elif x == 7:
             bug = Konik("B")
-        bug.setField(tile)
-        tile.setBug(bug)
+        bug.moveBugTo(tile)
         if bug.side == "B":
             self.gameMaster.WhitePlayer.bugList.append(bug)
         elif bug.side == "C":
