@@ -11,7 +11,7 @@ from FrontEnd.UI import UI
 
 class Display:
 
-    def __init__(self, gameMaster, windowScreenRatio = 4 / 5, bugRadiusRatio = 1.2, marginRadiusRatio = 1/8, caption='Robale', backgroundColor = (80, 80, 80), tileColor = (153, 153, 153), resourcesColor = (0, 160, 0), hatcheryColor = (150, 45, 45), highlightedColor = (81, 210, 252)):
+    def __init__(self, gameMaster, windowScreenRatio = 4 / 5, bugRadiusRatio = 1.2, marginRadiusRatio = 1/8, caption='Robale', backgroundColor = (80, 80, 80), tileColor = (153, 153, 153), resourcesColor = (0, 160, 0), hatcheryColor = (150, 45, 45), highlightedColor = (81, 210, 252), selectedColor = (255, 225, 64)):
         pygame.init()
 
         self.backgroundColor = backgroundColor
@@ -19,6 +19,7 @@ class Display:
         self.resourcesColor = resourcesColor
         self.hatcheryColor = hatcheryColor
         self.highlightedColor = highlightedColor
+        self.selectedColor = selectedColor
 
         self.width = int(pygame.display.Info().current_w * windowScreenRatio)
         self.height = int(pygame.display.Info().current_h * windowScreenRatio)
@@ -40,14 +41,14 @@ class Display:
         self.tileButtons = []
         self.highlightedTiles = []
 
-        self.beetleWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
-        self.beetleBlack = pygame.image.load("../FrontEnd/Assets/Bugs/BeetleBlack.png")
-        self.spiderWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
-        self.spiderBlack = pygame.image.load("../FrontEnd/Assets/Bugs/SpiderBlack.png")
-        self.antWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
-        self.antBlack = pygame.image.load("../FrontEnd/Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
-        self.grasshooperBlack = pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperBlack.png")
+        self.beetleWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
+        self.beetleBlack = pygame.image.load("./FrontEnd/Assets/Bugs/BeetleBlack.png")
+        self.spiderWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
+        self.spiderBlack = pygame.image.load("./FrontEnd/Assets/Bugs/SpiderBlack.png")
+        self.antWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
+        self.antBlack = pygame.image.load("./FrontEnd/Assets/Bugs/AntBlack.png")
+        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
+        self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)
@@ -57,12 +58,14 @@ class Display:
     def updateWindow(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
+                pygame.quit()
+                exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
         self.gameMaster.UI.onTileClick()
         self.drawTiles()
         self.highlight()
+        self.drawSelected()
         self.drawBugs()
         pygame.display.update()
 
@@ -148,3 +151,9 @@ class Display:
         for tile in self.highlightedTiles:
             coordinates = self.transformToRealCoordinates(tile)
             self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.highlightedColor)
+
+    def drawSelected(self):
+       tile = self.gameMaster.UI.selectedTile
+       if tile is not None:
+            coordinates = self.transformToRealCoordinates(tile)
+            self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.selectedColor)
