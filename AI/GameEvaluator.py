@@ -11,14 +11,18 @@ class Position:
 
 
 class Evaluator:
-    def __init__(self, NN):
+    def __init__(self, NN, side):
         self.NN = NN
+        if side == "C":
+            self.isMaximizing = False
+        elif side == "B":
+            self.isMaximizing = True
         self.position_root = None
         self.position_list = HashMap(1299457)
 
     def evaluate(self, position):
         self.position_root = Position(position)
-        self.position_root.evaluation = self.minimax(position, 3, True)
+        self.position_root.evaluation = self.minimax(position, 3, self.isMaximizing)
         return self.position_root.evaluation
 
     def evaluate_and_get_best_move(self, position):
