@@ -138,5 +138,31 @@ class Plansza:
                 input += [1, 1, 0, 0]
         return input
 
+    def __hash__(self):
+        input = 0
+        power = 0
+        for field in self.iterList:
+            if field.bug is None:
+                input += 0*pow(16, power)
+            elif field.bug.short_name == 'k' and field.bug.side == "B":
+                input += 1*pow(16, power)
+            elif field.bug.short_name == 'm' and field.bug.side == "B":
+                input += 2*pow(16, power)
+            elif field.bug.short_name == 'p' and field.bug.side == "B":
+                input += 3*pow(16, power)
+            elif field.bug.short_name == 'z' and field.bug.side == "B":
+                input += 4*pow(16, power)
+            elif field.bug.short_name == 'k' and field.bug.side == "C":
+                input += 9*pow(16, power)
+            elif field.bug.short_name == 'm' and field.bug.side == "C":
+                input += 10*pow(16, power)
+            elif field.bug.short_name == 'p' and field.bug.side == "C":
+                input += 11*pow(16, power)
+            elif field.bug.short_name == 'z' and field.bug.side == "C":
+                input += 12*pow(16, power)
+            power += 1
+        return input
+
+
 def getKeyFor(Pole):
     return Pole.r * 60 - Pole.q
