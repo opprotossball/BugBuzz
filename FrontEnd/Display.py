@@ -49,6 +49,10 @@ class Display:
         self.antBlack = pygame.image.load("./FrontEnd/Assets/Bugs/AntBlack.png")
         self.grasshooperWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
         self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
+        self.combatButtonGray = pygame.image.load("./FrontEnd/Assets/Buttons/combatButtonGray.png")
+        self.moveButtonGray = pygame.image.load("./FrontEnd/Assets/Buttons/moveButtonGray.png")
+        self.hatchButtonGray = pygame.image.load("./FrontEnd/Assets/Buttons/hatchButtonGray.png")
+        self.nextPhaseButton = pygame.image.load("./FrontEnd/Assets/Buttons/nextButtonGray.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)
