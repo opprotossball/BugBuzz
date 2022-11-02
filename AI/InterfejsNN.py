@@ -8,7 +8,7 @@ class InterfejNN(Interfejs):
         self.evaluator = evaluator
         self.moves = None # ([ruchy armii], [ataki armii(lista priorytetu ataku)], [wylęganie])
 
-    def yourTurn(self):
+    def resetMove(self):
         position = self.GM.board.clone()
         self.moves = self.evaluator.evaluate_and_get_best_move(position)
         self.moves_game = self.moves[0]
@@ -19,12 +19,14 @@ class InterfejNN(Interfejs):
         self.hatch_counter = 0
 
     def getMove(self, possible_moves):
+        self.resetMove()
         move = self.moves_game[self.move_counter]
         self.move_counter += 1
         if move not in possible_moves:
             print("Invalid move:" + move + " not in " + possible_moves)
             return None
         else:
+            self.GM.updateWindow()
             return move
 
     def getAttack(self, possible_attacks):
@@ -34,6 +36,7 @@ class InterfejNN(Interfejs):
             print("Invalid move:" + attack + " not in " + possible_attacks)
             return None
         else:
+            self.GM.updateWindow()
             return attack
 
     def getHatch(self, possible_hatch):
@@ -43,4 +46,5 @@ class InterfejNN(Interfejs):
             print("Invalid move:" + hatch + " not in " + possible_hatch)
             return None
         else:
+            self.GM.updateWindow()
             return hatch

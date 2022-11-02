@@ -9,8 +9,8 @@ class GameMaster:
     def __init__(self):
         self.board = Plansza(4)
         self.turn = 0
-        self.UI = UI(self)
-        self.display = Display(self)
+        self.UI = None
+        self.display = None
 
         self.plansza = Plansza(4)
 
@@ -96,6 +96,7 @@ class GameMaster:
         return False
 
     def getAvailableSpaceForHatch(self, side):
+        hatchery = []
         if side == "B":
             hatchery = self.plansza.whitesHatchery
         elif side == "C":
@@ -106,8 +107,13 @@ class GameMaster:
                 option.append(hatch)
         return option
 
-    def setUI(self, ui):
-        self.ui = ui
+    def setGUI(self):
+        self.UI = UI(self)
+        self.display = Display(self)
+
+    def setDisplay(self):
+        self.display = Display(self)
 
     def updateWindow(self):
-        self.display.updateWindow()
+        if self.display is not None:
+            self.display.updateWindow()
