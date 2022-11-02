@@ -65,9 +65,9 @@ class Interfejs:
             possible_to_hatch = trader.getOptions(self.resources)
             hatchery_fields = []
             if self.side == "C":
-                hatchery_fields = self.GM.plansza.blacksHatchery
+                hatchery_fields = self.GM.board.blacksHatchery
             elif self.side == "B":
-                hatchery_fields = self.GM.plansza.whitesHatchery
+                hatchery_fields = self.GM.board.whitesHatchery
 
             options = []
 

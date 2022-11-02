@@ -2,35 +2,50 @@ from FrontEnd.Interfejs import Interfejs
 
 
 class InterfejsGracza(Interfejs):
+    def __init__(self, GM, side, updateMethod):
+        super().__init__(GM, side, updateMethod)
+        self.attack = None
+        self.move = None
+        self.hatch = None
+
     def getAttack(self, possible_attacks):
         if self.GM.UI is not None:
-            attack = None
-            while attack not in possible_attacks:
+            self.attack = None
+            while self.attack not in possible_attacks:
                 self.GM.UI.setMode("Attack", self.side)
-                attack = self.GM.UI.getAttack()
+                self.GM.UI.getAttack(lambda attack: self.setAttack(attack))
         else:
-            attack = self.get_input_from_terminal(possible_attacks)
-        return attack
+            self.attack = self.get_input_from_terminal(possible_attacks)
+        return self.attack
 
     def getMove(self, possible_moves):
         if self.GM.UI is not None:
-            move = None
-            while move not in possible_moves:
+            self.move = None
+            while self.move not in possible_moves:
                 self.GM.UI.setMode("Move", self.side)
-                move = self.GM.UI.getMove()
+                self.GM.UI.getMove(lambda move: self.setMove(move))
         else:
-            move = self.get_input_from_terminal(possible_moves)
-        return move
+            self.move = self.get_input_from_terminal(possible_moves)
+        return self.move
 
     def getHatch(self, possible_hatch):
         if self.GM.UI is not None:
-            hatch = None
-            while hatch not in possible_hatch:
+            self.hatch = None
+            while self.attack not in possible_hatch:
                 self.GM.UI.setMode("Hatch", self.side)
-                hatch = self.GM.UI.getHatch()
+                self.hatch = self.GM.UI.getHatch(lambda hatch: self.setHatch(hatch))
         else:
-            hatch = self.get_input_from_terminal(possible_hatch)
-        return hatch
+            self.hatch = self.get_input_from_terminal(possible_hatch)
+        return self.hatch
+
+    def setAttack(self, attack):
+        self.attack = attack
+
+    def setMove(self, move):
+        self.move = move
+
+    def setHatch(self, hatch):
+        self.hatch = hatch
 
     def get_input_from_terminal(self, possible):
         choice = -1

@@ -22,13 +22,13 @@ class UI:
     def setMode(self, mode, side):
         pass #TODO
 
-    def getMove(self):
+    def getMove(self, setMove):
         pass #TODO
 
-    def getAttack(self):
+    def getAttack(self, setAttack):
         pass #TODO
 
-    def getHatch(self):
+    def getHatch(self, setHatch):
         pass #TODO
 
         # Useless test function

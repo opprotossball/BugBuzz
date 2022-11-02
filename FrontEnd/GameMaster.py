@@ -12,8 +12,6 @@ class GameMaster:
         self.UI = None
         self.display = None
 
-        self.plansza = Plansza(4)
-
         self.BlackPlayer = None
         self.WhitePlayer = None
 
@@ -76,7 +74,7 @@ class GameMaster:
         return armies
 
     def getResourcesForSide(self, side):
-        resources = self.plansza.resources
+        resources = self.board.resources
         self.getArmies(side)
         n = 1
         for field in resources:
@@ -87,9 +85,9 @@ class GameMaster:
     def isAvailableSpaceForHatch(self, side):
         hatchery = []
         if side == "B":
-            hatchery = self.plansza.whitesHatchery
+            hatchery = self.board.whitesHatchery
         elif side == "C":
-            hatchery = self.plansza.blacksHatchery
+            hatchery = self.board.blacksHatchery
         for hatch in hatchery:
             if hatch.bug is None:
                 return True
@@ -98,9 +96,9 @@ class GameMaster:
     def getAvailableSpaceForHatch(self, side):
         hatchery = []
         if side == "B":
-            hatchery = self.plansza.whitesHatchery
+            hatchery = self.board.whitesHatchery
         elif side == "C":
-            hatchery = self.plansza.blacksHatchery
+            hatchery = self.board.blacksHatchery
         option = []
         for hatch in hatchery:
             if hatch.bug is not None:
