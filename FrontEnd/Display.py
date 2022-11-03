@@ -1,6 +1,5 @@
 import pygame
 import math
-from BackEnd.GameObjects.Robal import *
 from FrontEnd.TileButton import TileButton
 from pygame.locals import *
 
@@ -37,7 +36,6 @@ class Display:
         self.sin60 = math.sin(math.pi / 3)
         self.tileButtons = []
         self.highlightedTiles = []
-        self.HATCH_BUTTON_WIDTH = 155
 
         self.beetleWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
         self.beetleBlack = pygame.image.load("./FrontEnd/Assets/Bugs/BeetleBlack.png")
@@ -60,10 +58,11 @@ class Display:
                 exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
-        self.gameMaster.UI.getInput()
+        if self.gameMaster.UI is not None:
+            self.gameMaster.UI.getInput()
+            self.drawSelected()
+            self.highlight()
         self.drawTiles()
-        self.highlight()
-        self.drawSelected()
         self.drawBugs()
         self.drawButtons(self.gameMaster.UI.hatchButtons)
         pygame.display.update()
@@ -90,6 +89,7 @@ class Display:
         self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
         self.tileRadius = newRadius
         self.margin = newMargin
+        self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
 
     def drawHex(self, xCenter, yCenter, radius, color):
         vertices = []
