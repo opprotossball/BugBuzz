@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from BackEnd.GameObjects.Trader import Trader
 
 
@@ -9,7 +11,7 @@ def concatenate_moves(table1, table2):
     return concatenated
 
 
-class Interfejs:
+class Interfejs(ABC):
     def __init__(self, GM, side, updateMethod):
         self.side = side
         self.resources = 0
@@ -86,14 +88,14 @@ class Interfejs:
                 bug.moveBugTo(hatchery_fields[field])
         self.update()
 
-    # abstract
+    @abstractmethod
     def getMove(self, possible_moves):
         pass
 
-    # abstract
+    @abstractmethod
     def getAttack(self, possible_attacks):
         pass
 
-    # abstract
+    @abstractmethod
     def getHatch(self, possible_hatch):
         pass
