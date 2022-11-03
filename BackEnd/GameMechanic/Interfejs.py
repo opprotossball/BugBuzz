@@ -30,7 +30,10 @@ class Interfejs(ABC):
             for index_army in range(len(armies)):
                 if armies[index_army].numberOfMoves == 0:
                     continue
-                moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
+                if self.GM.UI is None:
+                    moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
+                else:
+                    moves += concatenate_moves(armies[index_army], armies.getValidMoves())
             moves.append("end")
             if len(moves) > 1:
                 choice = self.getMove(moves)
@@ -41,14 +44,24 @@ class Interfejs(ABC):
                 armies[army_index].performMove(direction)
         self.update()
 
+    def oppositeSide(self):
+        if self.side == "B":
+            return "C"
+        else:
+            return "B"
+
     def performAttack(self):
         choice = ""
         while choice != "end":
             self.update()
-            armies = self.GM.getArmies(self.side)
+            armies = self.GM.getArmies(self.oppositeSide())
             attacks = []
-            for i in range(len(armies)):
-                attacks += concatenate_moves([i], armies[i].getAttacks())
+            for armies_index in range(len(armies)):
+                if self.GM.UI is None:
+                    attacks += concatenate_moves([armies_index], armies[armies_index].getAttacks())
+                else:
+                    attacks += armies
+                    break
             attacks.append("end")
             if len(attacks) > 1:
                 choice = self.getAttack(attacks)
@@ -75,7 +88,10 @@ class Interfejs(ABC):
 
             for i in range(len(hatchery_fields)):
                 if hatchery_fields[i].bug is None:
-                    options.append(i)
+                    if self.GM.UI is None:
+                        options.append(i)
+                    else:
+                        options.append(hatchery_fields[i])
 
             possible_to_hatch = concatenate_moves(options, possible_to_hatch)
             possible_to_hatch.append("end")

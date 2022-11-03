@@ -1,12 +1,7 @@
 import pygame
 import math
-from BackEnd.Plansza import Plansza
-from BackEnd.Robal import *
-from BackEnd.Armia import Armia
 from FrontEnd.TileButton import TileButton
-from random import randrange
 from pygame.locals import *
-from FrontEnd.UI import UI
 
 
 class Display:
@@ -62,10 +57,11 @@ class Display:
                 exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
-        self.gameMaster.UI.onTileClick()
+        if self.gameMaster.UI is not None:
+            self.gameMaster.UI.onTileClick()
+            self.drawSelected()
+            self.highlight()
         self.drawTiles()
-        self.highlight()
-        self.drawSelected()
         self.drawBugs()
         pygame.display.update()
 
