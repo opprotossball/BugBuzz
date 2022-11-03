@@ -1,12 +1,8 @@
 import pygame
 import math
-from BackEnd.Plansza import Plansza
-from BackEnd.Robal import *
-from BackEnd.Armia import Armia
+from BackEnd.GameObjects.Robal import *
 from FrontEnd.TileButton import TileButton
-from random import randrange
 from pygame.locals import *
-from FrontEnd.UI import UI
 
 
 class Display:
@@ -31,6 +27,7 @@ class Display:
         self.screen = None
         self.bugRadiusRatio = bugRadiusRatio
         self.marginRadiusRatio = marginRadiusRatio
+        self.hatchButtonScale = None
         self.bugScale = None
         self.margin = None
         self.tileRadius = None
@@ -40,6 +37,7 @@ class Display:
         self.sin60 = math.sin(math.pi / 3)
         self.tileButtons = []
         self.highlightedTiles = []
+        self.HATCH_BUTTON_WIDTH = 155
 
         self.beetleWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
         self.beetleBlack = pygame.image.load("./FrontEnd/Assets/Bugs/BeetleBlack.png")
@@ -62,11 +60,12 @@ class Display:
                 exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
-        self.gameMaster.UI.onTileClick()
+        self.gameMaster.UI.getInput()
         self.drawTiles()
         self.highlight()
         self.drawSelected()
         self.drawBugs()
+        self.drawButtons(self.gameMaster.UI.hatchButtons)
         pygame.display.update()
 
     def resize(self, newWidth, newHeight):
@@ -78,12 +77,19 @@ class Display:
         self.yCenter = int(newHeight / 2)
         newRadius = int((0.7 * newWidth / (2 * self.gameMaster.board.size + 1)) / (2 * self.cos30))
         newMargin = int(newRadius * self.marginRadiusRatio)
+
         if (newRadius * 2 * (self.gameMaster.board.size * 2 + 1) - self.gameMaster.board.size * (2 * (newRadius + newMargin) * self.cos30 * self.cos60)) > newHeight:
             newRadius = int((newHeight / (4 * self.gameMaster.board.size + 1)) / (2 * self.sin30))
             newMargin = int(newRadius * self.marginRadiusRatio)
+
+        if self.tileRadius is None:
+            self.hatchButtonScale = 1
+        else:
+            self.hatchButtonScale = self.hatchButtonScale * (newRadius / self.tileRadius)
+
+        self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
         self.tileRadius = newRadius
         self.margin = newMargin
-        self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
 
     def drawHex(self, xCenter, yCenter, radius, color):
         vertices = []
@@ -118,6 +124,13 @@ class Display:
             self.drawBug(bug, bug.field)
         for bug in self.gameMaster.WhitePlayer.bugList:
             self.drawBug(bug, bug.field)
+
+    def drawButtons(self, buttons):
+        x = int(self.width / 30)
+        y = int(self.height / 15)
+        for button in buttons:
+            button.draw(self.screen, x, y, self.hatchButtonScale)
+            y += int(1.2 * button.rect.height)
 
     def drawBug(self, bug, tile):
         coordinates = self.transformToRealCoordinates(tile)

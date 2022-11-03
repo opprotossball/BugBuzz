@@ -1,12 +1,29 @@
-from BackEnd.Robal import *
+from BackEnd.GameObjects.Robal import *
 from random import randrange
+from FrontEnd.HatchButton import HatchButton
+import pygame
 
 
 class UI:
     def __init__(self, gameMaster):
         self.tileButtons = []
+        self.hatchButtons = []
         self.gameMaster = gameMaster
         self.selectedTile = None
+
+        self.antHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/antHatchButton.png")
+        self.grasshooperHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperHatchButton.png")
+        self.spiderHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/spiderHatchButton.png")
+        self.beetleHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/beetleHatchButton.png")
+        self.antHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/antHatchButtonSelected.png")
+        self.grasshooperHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperHatchButtonSelected.png")
+        self.spiderHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderHatchButtonSelected.png")
+        self.beetleHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleHatchButtonSelected.png")
+
+        self.hatchButtons.append(HatchButton(self.antHatchButton, self.antHatchButtonSelected, "M"))
+        self.hatchButtons.append(HatchButton(self.grasshooperHatchButton, self.grasshooperHatchButtonSelected, "K"))
+        self.hatchButtons.append(HatchButton(self.spiderHatchButton, self.spiderHatchButtonSelected, "P"))
+        self.hatchButtons.append(HatchButton(self.beetleHatchButton, self.beetleHatchButtonSelected, "Z"))
 
     def setTileButtons(self, tilebutons):
         self.tileButtons = tilebutons
@@ -18,18 +35,6 @@ class UI:
             for anotherBug in bug.army.bugList:
                 tiles.append(anotherBug.field)
         return tiles
-
-    def setMode(self, mode, side):
-        pass #TODO
-
-    def getMove(self, setMove):
-        pass #TODO
-
-    def getAttack(self, setAttack):
-        pass #TODO
-
-    def getHatch(self, setHatch):
-        pass #TODO
 
         # Useless test function
     def drawRandomBug(self, tile):
@@ -59,7 +64,7 @@ class UI:
         elif bug.side == "C":
             self.gameMaster.BlackPlayer.bugList.append(bug)
 
-    def onTileClick(self):
+    def getInput(self):
         for tileButton in self.tileButtons:
             if tileButton.isClickedLeft():
                 tile = tileButton.tile
@@ -75,6 +80,10 @@ class UI:
                 self.drawRandomBug(buttonTile)
                 self.gameMaster.getArmies("C")
                 self.gameMaster.getArmies("B")
+
+        for hatchButton in self.hatchButtons:
+            if hatchButton.isClickedLeft():
+                print(hatchButton.bugShortName)
 
     def makeMove(self, tile):
         if self.selectedTile is None:
