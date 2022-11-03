@@ -30,7 +30,6 @@ class GameMechanic:
             army = Armia()
             army.addBug(bug)
             bug.recruitNeighbours()
-            army.setMoves()
             armies.append(army)
 
         return armies

@@ -23,12 +23,14 @@ class Interfejs(ABC):
 
     def performMove(self):
         choice = ""
+        for bug in self.bugList:
+            bug.reset_moves()
         while choice != "end":
             self.update()
             armies = self.GM.getArmies(self.side)
             moves = []
             for index_army in range(len(armies)):
-                if armies[index_army].numberOfMoves == 0:
+                if armies[index_army].numberOfMoves <= 0:
                     continue
                 if self.GM.UI is None:
                     moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
