@@ -1,4 +1,4 @@
-from BackEnd.Trader import Trader
+from BackEnd.GameObjects.Trader import Trader
 
 
 def concatenate_moves(table1, table2):

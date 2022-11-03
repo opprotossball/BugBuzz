@@ -1,8 +1,8 @@
 from numpy.core.defchararray import upper, lower
 
-from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
+from BackEnd.GameObjects.Robal import Konik, Mrowka, Pajak, Zuk
 
-from BackEnd.Pole import Pole
+from BackEnd.GameObjects.Pole import Pole
 from Util import Information
 
 

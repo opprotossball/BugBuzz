@@ -1,8 +1,7 @@
 from FrontEnd.UI import UI
 from FrontEnd.Display import Display
-from FrontEnd.InterfejsGracza import InterfejsGracza
-from BackEnd.Armia import Armia
-from BackEnd.Plansza import Plansza
+from BackEnd.GameObjects.Armia import Armia
+from BackEnd.GameObjects.Plansza import Plansza
 
 
 class GameMaster:

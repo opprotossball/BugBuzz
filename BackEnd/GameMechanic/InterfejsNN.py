@@ -1,4 +1,4 @@
-from FrontEnd.Interfejs import Interfejs
+from BackEnd.GameMechanic.Interfejs import Interfejs
 
 
 class InterfejNN(Interfejs):
