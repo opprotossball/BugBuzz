@@ -9,22 +9,30 @@ from pandas import Series
 def activation_f(x):
     return 1 / (1 + math.exp(-x))
 
+
 def map(func, matrix):
     for layer in matrix:
         for i in range(len(layer)):
             layer[i] = func(layer[i])
 
-def alter(prob, power, val):
-    if random.random < prob:
-        altered = random.gauss(val, power)
-        if altered > 1:
-            altered = 1
-        elif altered < -1:
-            altered = -1
-        return altered
+
+def alter_and_standardize(power, val):
+    altered = random.gauss(val, power)
+    if altered > 1:
+        altered = 1
+    elif altered < -1:
+        altered = -1
+    return altered
+
+
+def alter(power, val):
+    altered = random.gauss(val, power)
+    return altered
+
 
 class NeuralNetwork:
-    def __init__(self, neuron_distribution_in_layers=(1, 1), data_frame=None, weights_of_the_layers=None, biases_of_the_layer=None):
+    def __init__(self, neuron_distribution_in_layers=(1, 1), data_frame=None, weights_of_the_layers=None,
+                 biases_of_the_layer=None):
         self.weights_of_the_layers = []
         self.biases_of_the_layer = []
         self.number_of_layers = len(neuron_distribution_in_layers) - 1
@@ -37,8 +45,8 @@ class NeuralNetwork:
             self.weights_of_the_layers = weights_of_the_layers
             self.biases_of_the_layer = biases_of_the_layer
             self.get_distribution()
-        elif data_frame is None and weights_of_the_layers is None and biases_of_the_layer is None:
-            self.generate_random(neuron_distribution_in_layers)
+        elif data_frame is not None:
+            self.generate_random(self.neuron_distribution_in_layers)  # TODO change to reading from data frame
         else:
             self.generate_random(self.neuron_distribution_in_layers)
 
@@ -55,10 +63,12 @@ class NeuralNetwork:
 
     def mutate(self, rate, power):
         for matrix in self.weights_of_the_layers:
-            map(lambda val: alter(rate, power, val), matrix)
+            if random.random() < rate:
+                map(lambda val: alter_and_standardize(power, val), matrix)
 
         for matrix in self.biases_of_the_layer:
-            map(lambda val: alter(rate, power, val), matrix)
+            if random.random() < rate:
+                map(lambda val: alter(power, val), matrix)
 
     def generate_random(self, neuron_distribution_in_layers):
         for i in range(self.number_of_layers + 1):
@@ -73,7 +83,7 @@ class NeuralNetwork:
 
     def evaluate_at(self, X):
         row, col = X.shape
-        if col != self.size_of_input:
+        if col != self.size_of_input or col != 1:
             print("Wrong size input!")
 
         for i in range(self.number_of_layers):
@@ -84,20 +94,16 @@ class NeuralNetwork:
 
         return X
 
-    def toDataFrame(self):
-        return self.get_df(self.weights_of_the_layers, self.biases_of_the_layer)
-
     def get_distribution(self):
         distribution = []
-        counter = 0
         for layer in self.weights_of_the_layers:
+            counter = 0
             for neuron in layer:
                 counter += 1
             distribution.append(counter)
-            counter = 0
         self.neuron_distribution_in_layers = distribution
 
-    def get_df(self, weights_in, biases_in):
+    def toDataFrame(self, weights_in, biases_in):
         df = pd.DataFrame()
 
         number_of_layers = len(biases_in)

@@ -1,8 +1,7 @@
-from FrontEnd.GameMaster import GameMaster
-from FrontEnd.InterfejsGracza import InterfejsGracza
+from BackEnd.GameMechanic.GameMaster import GameMaster
+from BackEnd.GameMechanic.InterfejsGracza import InterfejsGracza
 
 if __name__ == "__main__":
     gm = GameMaster()
-    gm.newGame(InterfejsGracza(gm, "B", None), InterfejsGracza(gm, "C", None))
-    while True:
-        gm.updateWindow()
+    gm.setDisplay()
+    gm.newGame(InterfejsGracza(gm, "B", lambda: gm.updateWindow()), InterfejsGracza(gm, "C", lambda: gm.updateWindow()))

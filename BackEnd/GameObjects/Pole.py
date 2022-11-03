@@ -1,6 +1,5 @@
 class Pole:
     def __init__(self, q, r, s, size):
-        self.bug = None
         self.q = q
         self.r = r
         self.s = s

@@ -1,12 +1,7 @@
 import pygame
 import math
-from BackEnd.Plansza import Plansza
-from BackEnd.Robal import *
-from BackEnd.Armia import Armia
 from FrontEnd.TileButton import TileButton
-from random import randrange
 from pygame.locals import *
-from FrontEnd.UI import UI
 
 
 class Display:
@@ -41,14 +36,14 @@ class Display:
         self.tileButtons = []
         self.highlightedTiles = []
 
-        self.beetleWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
-        self.beetleBlack = pygame.image.load("./FrontEnd/Assets/Bugs/BeetleBlack.png")
-        self.spiderWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
-        self.spiderBlack = pygame.image.load("./FrontEnd/Assets/Bugs/SpiderBlack.png")
-        self.antWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
-        self.antBlack = pygame.image.load("./FrontEnd/Assets/Bugs/AntBlack.png")
-        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
-        self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
+        self.beetleWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/BeetleWhite.png"), True, False)
+        self.beetleBlack = pygame.image.load("../FrontEnd/Assets/Bugs/BeetleBlack.png")
+        self.spiderWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/SpiderWhite.png"), True, False)
+        self.spiderBlack = pygame.image.load("../FrontEnd/Assets/Bugs/SpiderBlack.png")
+        self.antWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/AntWhite.png"), True, False)
+        self.antBlack = pygame.image.load("../FrontEnd/Assets/Bugs/AntBlack.png")
+        self.grasshooperWhite = pygame.transform.flip(pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
+        self.grasshooperBlack = pygame.image.load("../FrontEnd/Assets/Bugs/GrasshooperBlack.png")
 
         self.resize(self.width, self.height)
         self.screen.fill(self.backgroundColor)
@@ -62,10 +57,11 @@ class Display:
                 exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
-        self.gameMaster.UI.onTileClick()
+        if self.gameMaster.UI is not None:
+            self.gameMaster.UI.onTileClick()
+            self.drawSelected()
+            self.highlight()
         self.drawTiles()
-        self.highlight()
-        self.drawSelected()
         self.drawBugs()
         pygame.display.update()
 
@@ -110,7 +106,8 @@ class Display:
                 color = self.tileColor
             tileButton = TileButton(pole, self.drawHex(coordinates[0], coordinates[1], self.tileRadius, color))
             tileButtons.append(tileButton)
-        self.gameMaster.UI.setTileButtons(tileButtons)
+        if self.gameMaster.UI is not None:
+            self.gameMaster.UI.setTileButtons(tileButtons)
 
     def drawBugs(self):
         for bug in self.gameMaster.BlackPlayer.bugList:

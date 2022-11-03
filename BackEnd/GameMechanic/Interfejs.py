@@ -1,4 +1,6 @@
-from BackEnd.Trader import Trader
+from abc import ABC, abstractmethod
+
+from BackEnd.GameObjects.Trader import Trader
 
 
 def concatenate_moves(table1, table2):
@@ -9,7 +11,7 @@ def concatenate_moves(table1, table2):
     return concatenated
 
 
-class Interfejs:
+class Interfejs(ABC):
     def __init__(self, GM, side, updateMethod):
         self.side = side
         self.resources = 0
@@ -28,7 +30,10 @@ class Interfejs:
             for index_army in range(len(armies)):
                 if armies[index_army].numberOfMoves == 0:
                     continue
-                moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
+                if self.GM.UI is None:
+                    moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
+                else:
+                    moves += concatenate_moves(armies[index_army], armies.getValidMoves())
             moves.append("end")
             if len(moves) > 1:
                 choice = self.getMove(moves)
@@ -39,14 +44,24 @@ class Interfejs:
                 armies[army_index].performMove(direction)
         self.update()
 
+    def oppositeSide(self):
+        if self.side == "B":
+            return "C"
+        else:
+            return "B"
+
     def performAttack(self):
         choice = ""
         while choice != "end":
             self.update()
-            armies = self.GM.getArmies(self.side)
+            armies = self.GM.getArmies(self.oppositeSide())
             attacks = []
-            for i in range(len(armies)):
-                attacks += concatenate_moves([i], armies[i].getAttacks())
+            for armies_index in range(len(armies)):
+                if self.GM.UI is None:
+                    attacks += concatenate_moves([armies_index], armies[armies_index].getAttacks())
+                else:
+                    attacks += armies
+                    break
             attacks.append("end")
             if len(attacks) > 1:
                 choice = self.getAttack(attacks)
@@ -65,15 +80,18 @@ class Interfejs:
             possible_to_hatch = trader.getOptions(self.resources)
             hatchery_fields = []
             if self.side == "C":
-                hatchery_fields = self.GM.plansza.blacksHatchery
+                hatchery_fields = self.GM.board.blacksHatchery
             elif self.side == "B":
-                hatchery_fields = self.GM.plansza.whitesHatchery
+                hatchery_fields = self.GM.board.whitesHatchery
 
             options = []
 
             for i in range(len(hatchery_fields)):
                 if hatchery_fields[i].bug is None:
-                    options.append(i)
+                    if self.GM.UI is None:
+                        options.append(i)
+                    else:
+                        options.append(hatchery_fields[i])
 
             possible_to_hatch = concatenate_moves(options, possible_to_hatch)
             possible_to_hatch.append("end")
@@ -86,14 +104,14 @@ class Interfejs:
                 bug.moveBugTo(hatchery_fields[field])
         self.update()
 
-    # abstract
+    @abstractmethod
     def getMove(self, possible_moves):
         pass
 
-    # abstract
+    @abstractmethod
     def getAttack(self, possible_attacks):
         pass
 
-    # abstract
+    @abstractmethod
     def getHatch(self, possible_hatch):
         pass

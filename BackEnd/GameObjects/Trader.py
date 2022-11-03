@@ -1,4 +1,4 @@
-from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
+from BackEnd.GameObjects.Robal import Konik, Mrowka, Pajak, Zuk
 
 
 class Trader:
