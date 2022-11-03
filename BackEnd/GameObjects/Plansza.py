@@ -1,16 +1,14 @@
 from numpy.core.defchararray import upper, lower
 
-from BackEnd.Robal import Konik, Mrowka, Pajak, Zuk
+from BackEnd.GameObjects.Robal import Konik, Mrowka, Pajak, Zuk
 
-from BackEnd.Pole import Pole
+from BackEnd.GameObjects.Pole import Pole
+from Util import Information
 
 
 class Plansza:
     def __init__(self, size=4):
-        self.plane = [[[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)] for x in range(2 * size + 1)]
-        ##TODO optimize self.plan. A lot of memory is wasted.
         self.iterList = []
-        self.queue = []
 
         self.resources = []
 
@@ -18,38 +16,44 @@ class Plansza:
         self.blacksHatchery = []
 
         self.size = size
-        for q in range(0, 2 * size + 1):
-            for r in range(0, 2 * size + 1):
-                for s in range(0, 2 * size + 1):
-                    if (q + r + s - 3 * size == 0):
-                        pole = Pole(q, r, s, self.size)
-                        self.plane[q][r][s] = pole
-                        self.queue.append([q, r, s])
-                        self.iterList.append(pole)
-        self.numberOfPole = len(self.queue)
-        while len(self.queue) > 0:
-            q, r, s = self.queue.pop(0)
-            self.addNeighbours(self.plane[q][r][s])
-        self.root = self.plane[size][size][size]
+
+        self.plane = [[[0 for x in range(2 * size + 2)] for x in range(2 * size + 2)] for x in range(2 * size + 2)]
+        ##TODO optimize self.plan. A lot of memory is wasted.
+
+        for q in range(-size, size + 1):
+            for r in range(max(-size, -size-q), min(size + 1, size + 1 - q)):
+                s = - q - r
+                pole = Pole(q, r, s, self.size)
+                self.setField(q, r, s, pole)
+                self.iterList.append(pole)
+        for pole in self.iterList:
+            q, r, s = pole.q, pole.r, pole.s
+            self.addNeighbours(self.getField(q, r, s))
+        self.root = self.getField(0, 0, 0)
         self.setHatchery()
-        self.setRecources()
+        self.setResources()
 
         sorted(self.iterList, key=getKeyFor)
 
+    def setField(self, q, r, s, field):
+        self.plane[q + self.size][r + self.size][s + self.size] = field
+
+    def getField(self, q, r, s):
+        return self.plane[q + self.size][r + self.size][s + self.size]
+
     def addNeighbours(self, pole):
-        size = self.size
-        if pole.r - 1 >= 0 and pole.s + 1 < size * 2 + 1:
-            pole.setES(self.plane[pole.q][pole.r - 1][pole.s + 1])
-        if pole.r - 1 >= 0 and pole.q + 1 < size * 2 + 1:
-            pole.setWS(self.plane[pole.q + 1][pole.r - 1][pole.s])
-        if pole.s - 1 >= 0 and pole.r + 1 < size * 2 + 1:
-            pole.setWN(self.plane[pole.q][pole.r + 1][pole.s - 1])
-        if pole.s - 1 >= 0 and pole.q + 1 < size * 2 + 1:
-            pole.setW(self.plane[pole.q + 1][pole.r][pole.s - 1])
-        if pole.q - 1 >= 0 and pole.r + 1 < size * 2 + 1:
-            pole.setEN(self.plane[pole.q - 1][pole.r + 1][pole.s])
-        if pole.q - 1 >= 0 and pole.s + 1 < size * 2 + 1:
-            pole.setE(self.plane[pole.q - 1][pole.r][pole.s + 1])
+        if pole.r - 1 >= -self.size and pole.s + 1 < self.size + 1:
+            pole.setES(self.getField(pole.q, pole.r - 1, pole.s + 1))
+        if pole.r - 1 >= -self.size and pole.q + 1 < self.size + 1:
+            pole.setWS(self.getField(pole.q + 1, pole.r - 1, pole.s))
+        if pole.s - 1 >= -self.size and pole.r + 1 < self.size + 1:
+            pole.setWN(self.getField(pole.q, pole.r + 1, pole.s - 1))
+        if pole.s - 1 >= -self.size and pole.q + 1 < self.size + 1:
+            pole.setW(self.getField(pole.q + 1, pole.r, pole.s - 1))
+        if pole.q - 1 >= -self.size and pole.r + 1 < self.size + 1:
+            pole.setEN(self.getField(pole.q - 1, pole.r + 1, pole.s))
+        if pole.q - 1 >= -self.size and pole.s + 1 < self.size + 1:
+            pole.setE(self.getField(pole.q - 1, pole.r, pole.s + 1))
 
     def setHatchery(self):
         pole = self.root
@@ -68,13 +72,12 @@ class Plansza:
         pole.EN.setHatchery(True, 1)
         self.blacksHatchery = [pole, pole.ES, pole.EN]
 
-    def setRecources(self):
-        pola = [[1 + self.size, 0 + self.size, -1 + self.size], [-2 + self.size, 3 + self.size, -1 + self.size],
-                [1 + self.size, -3 + self.size, 2 + self.size]]
-        for pole in self.iterList:
-            if pole.cor() in pola:
-                pole.setResources(True)
-                self.resources.append(pole)
+    def setResources(self):
+        fields_cor = Information.resourceFieldCoordinates
+        for cor in fields_cor:
+            field = self.getField(cor[0], cor[1], cor[2])
+            field.setResources(True)
+            self.resources.append(field)
 
     def clone(self):
         clone = Plansza(self.size)
@@ -137,6 +140,32 @@ class Plansza:
             elif field.bug.short_name == 'z' and field.bug.side == "C":
                 input += [1, 1, 0, 0]
         return input
+
+    def __hash__(self):
+        input = 0
+        power = 0
+        for field in self.iterList:
+            if field.bug is None:
+                input += 0*pow(16, power)
+            elif field.bug.short_name == 'k' and field.bug.side == "B":
+                input += 1*pow(16, power)
+            elif field.bug.short_name == 'm' and field.bug.side == "B":
+                input += 2*pow(16, power)
+            elif field.bug.short_name == 'p' and field.bug.side == "B":
+                input += 3*pow(16, power)
+            elif field.bug.short_name == 'z' and field.bug.side == "B":
+                input += 4*pow(16, power)
+            elif field.bug.short_name == 'k' and field.bug.side == "C":
+                input += 9*pow(16, power)
+            elif field.bug.short_name == 'm' and field.bug.side == "C":
+                input += 10*pow(16, power)
+            elif field.bug.short_name == 'p' and field.bug.side == "C":
+                input += 11*pow(16, power)
+            elif field.bug.short_name == 'z' and field.bug.side == "C":
+                input += 12*pow(16, power)
+            power += 1
+        return input
+
 
 def getKeyFor(Pole):
     return Pole.r * 60 - Pole.q

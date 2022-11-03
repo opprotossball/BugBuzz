@@ -3,6 +3,8 @@ from FrontEnd.InterfejsGracza import InterfejsGracza
 
 if __name__ == "__main__":
     gm = GameMaster()
-    gm.newGame(InterfejsGracza(gm, "B", None), InterfejsGracza(gm, "C", None))
+    #gm.setDisplay()
+    gm.newGame(InterfejsGracza(gm, "B", lambda: gm.updateWindow()), InterfejsGracza(gm, "C", lambda: gm.updateWindow()))
     while True:
         gm.updateWindow()
+        gm.nextMove()

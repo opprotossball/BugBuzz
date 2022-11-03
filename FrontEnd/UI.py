@@ -19,6 +19,18 @@ class UI:
                 tiles.append(anotherBug.field)
         return tiles
 
+    def setMode(self, mode, side):
+        pass #TODO
+
+    def getMove(self, setMove):
+        pass #TODO
+
+    def getAttack(self, setAttack):
+        pass #TODO
+
+    def getHatch(self, setHatch):
+        pass #TODO
+
         # Useless test function
     def drawRandomBug(self, tile):
         if tile.bug is not None:

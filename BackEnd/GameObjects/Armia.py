@@ -1,6 +1,6 @@
 import random
 
-from BackEnd.Robal import *
+from BackEnd.GameObjects.Robal import *
 from collections import Counter
 
 from Util import Information
