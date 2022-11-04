@@ -10,6 +10,9 @@ class UI:
         self.hatchButtons = []
         self.gameMaster = gameMaster
         self.selectedTile = None
+        self.chosenToHatch = None
+        self.mode = None
+        self.side = None
 
         self.antHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/antHatchButton.png")
         self.grasshooperHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperHatchButton.png")
@@ -25,6 +28,10 @@ class UI:
         self.hatchButtons.append(HatchButton(self.spiderHatchButton, self.spiderHatchButtonSelected, "P"))
         self.hatchButtons.append(HatchButton(self.beetleHatchButton, self.beetleHatchButtonSelected, "Z"))
 
+    def setMode(self, mode, side):
+        self.mode = mode
+        self.side = side
+
     def setTileButtons(self, tilebutons):
         self.tileButtons = tilebutons
 
@@ -36,7 +43,7 @@ class UI:
                 tiles.append(anotherBug.field)
         return tiles
 
-        # Useless test function
+    # Useless test function
     def drawRandomBug(self, tile):
         if tile.bug is not None:
             return
@@ -65,25 +72,21 @@ class UI:
             self.gameMaster.BlackPlayer.bugList.append(bug)
 
     def getInput(self):
-        for tileButton in self.tileButtons:
-            if tileButton.isClickedLeft():
-                tile = tileButton.tile
-                if tile.bug is None:
-                    if not self.makeMove(tile):
-                        self.selectedTile = None
-                else:
-                    self.selectedTile = tile
-                selectedArmyTiles = self.selectArmy(tile)
-                self.gameMaster.display.highlightedTiles = selectedArmyTiles
-            if tileButton.isClickedRight():
-                buttonTile = tileButton.tile
-                self.drawRandomBug(buttonTile)
-                self.gameMaster.getArmies("C")
-                self.gameMaster.getArmies("B")
+        if self.mode == "Move":
+            for tileButton in self.tileButtons:
+                if tileButton.isClickedLeft():
+                    tile = tileButton.tile
+                    if tile.bug is None:
+                        if not self.makeMove(tile):
+                            self.selectedTile = None
+                    else:
+                        self.selectedTile = tile
+                    selectedArmyTiles = self.selectArmy(tile)
+                    self.gameMaster.display.highlightedTiles = selectedArmyTiles
 
         for hatchButton in self.hatchButtons:
             if hatchButton.isClickedLeft():
-                print(hatchButton.bugShortName)
+                self.chosenToHatch = hatchButton.bugShortName
 
     def makeMove(self, tile):
         if self.selectedTile is None:

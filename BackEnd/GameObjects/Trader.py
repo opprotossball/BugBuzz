@@ -22,7 +22,7 @@ class Trader:
 
     def buyBug(self, option, available, side):
         if option in self.getOptions(available):
-            robal = 0
+            robal = None
             price = 0
             if option == "GrassHopper":
                 robal = Konik(side)

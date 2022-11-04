@@ -58,13 +58,13 @@ class Display:
                 exit()
             if event.type == pygame.VIDEORESIZE:
                 self.resize(event.w, event.h)
-        if self.gameMaster.UI is not None:
-            self.gameMaster.UI.getInput()
+        if self.gameMaster.ui is not None:
+            self.gameMaster.ui.getInput()
             self.drawSelected()
             self.highlight()
         self.drawTiles()
         self.drawBugs()
-        self.drawButtons(self.gameMaster.UI.hatchButtons)
+        self.drawButtons(self.gameMaster.ui.hatchButtons)
         pygame.display.update()
 
     def resize(self, newWidth, newHeight):
@@ -108,7 +108,7 @@ class Display:
         tileButtons = []
         for pole in self.gameMaster.board.iterList:
             coordinates = self.transformToRealCoordinates(pole)
-            if pole.hatchery:
+            if pole.is_white_hatchery or pole.is_black_hatchery:
                 color = self.hatcheryColor
             elif pole.resources:
                 color = self.resourcesColor
@@ -116,8 +116,8 @@ class Display:
                 color = self.tileColor
             tileButton = TileButton(pole, self.drawHex(coordinates[0], coordinates[1], self.tileRadius, color))
             tileButtons.append(tileButton)
-        if self.gameMaster.UI is not None:
-            self.gameMaster.UI.setTileButtons(tileButtons)
+        if self.gameMaster.ui is not None:
+            self.gameMaster.ui.setTileButtons(tileButtons)
 
     def drawBugs(self):
         for bug in self.gameMaster.BlackPlayer.bugList:
@@ -167,7 +167,7 @@ class Display:
             self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.highlightedColor)
 
     def drawSelected(self):
-       tile = self.gameMaster.UI.selectedTile
+       tile = self.gameMaster.ui.selectedTile
        if tile is not None:
             coordinates = self.transformToRealCoordinates(tile)
             self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.selectedColor)

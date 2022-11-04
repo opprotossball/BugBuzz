@@ -68,7 +68,7 @@ class GameMechanic:
         return option
 
     def setGUI(self):
-        self.UI = UI(self)
+        self.ui = UI(self)
         self.display = Display(self)
 
     def setDisplay(self):
