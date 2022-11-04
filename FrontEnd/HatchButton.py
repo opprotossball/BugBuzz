@@ -22,7 +22,6 @@ class HatchButton:
 
     def isClickedLeft(self):
         if self.rect == None:
-            print("draw button first")
             return False
         action = False
         mousePosition = pygame.mouse.get_pos()
