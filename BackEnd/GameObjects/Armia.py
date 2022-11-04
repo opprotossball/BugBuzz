@@ -9,7 +9,7 @@ from Util import Information
 
 class Armia:
     def __init__(self):
-        self.numberOfMoves = 0
+        self.numberOfMoves = 20
         self.bugList = []
         self.numberOfGrassHoppers = 0
 
@@ -17,6 +17,7 @@ class Armia:
         if bug.short_name == "K":
             self.numberOfGrassHoppers += 1
         self.bugList.append(bug)
+        self.numberOfMoves = min(self.numberOfMoves, bug.move_left)
         bug.army = self
 
     def getValidMoves(self):
@@ -57,6 +58,7 @@ class Armia:
                     armyValidMoves.append(move)
                 if armyValidMoves == Information.directionOptions:
                     return armyValidMoves
+            bug.move_left -= 1
         return armyValidMoves
 
     def performMove(self, direction):
