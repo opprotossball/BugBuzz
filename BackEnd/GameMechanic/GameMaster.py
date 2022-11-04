@@ -6,7 +6,7 @@ from BackEnd.GameObjects.Robal import Konik
 class GameMaster(GameMechanic):
     def __init__(self):
         super().__init__()
-        self.turn = 0
+        self.turn = -1
         self.ui = None
         self.display = None
 
@@ -24,6 +24,7 @@ class GameMaster(GameMechanic):
                 return
 
     def next_phase(self):
+        self.turn += 1
         if self.turn == 0:
             print("Tura białego atak.")
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
@@ -47,7 +48,7 @@ class GameMaster(GameMechanic):
             self.BlackPlayer.resources += self.getResourcesForSide("C")
             self.BlackPlayer.set_state(PlayerState.HATCH)
             self.turn = -1
-        self.turn += 1
+
 
     def gameIsOver(self):
         bug = self.board.resources[0].bug
