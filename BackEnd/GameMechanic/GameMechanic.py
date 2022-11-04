@@ -60,7 +60,6 @@ class GameMechanic:
     def getMovesForPlayer(self, player):
         armies = self.getArmies(player)
         moves = []
-        self.reset_move_left(armies)
         for army in armies:
             if army.numberOfMoves <= 0:
                 continue

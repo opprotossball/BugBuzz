@@ -25,9 +25,10 @@ class Interfejs(ABC):
 
     def performMove(self):
         choice = ""
+        armies = self.GM.getArmies(self)
+        self.GM.reset_move_left(armies)
         while choice != "end":
             moves = self.GM.getMovesForPlayer(self)
-
             if len(moves) > 1:
                 choice = self.getMove(moves)
             else:

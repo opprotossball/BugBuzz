@@ -58,7 +58,6 @@ class Armia:
                     armyValidMoves.append(move)
                 if armyValidMoves == Information.directionOptions:
                     return armyValidMoves
-            bug.move_left -= 1
         return armyValidMoves
 
     def performMove(self, direction):
