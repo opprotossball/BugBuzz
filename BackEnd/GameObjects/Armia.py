@@ -1,3 +1,4 @@
+import math
 import random
 
 from BackEnd.GameObjects.Robal import *
@@ -58,54 +59,6 @@ class Armia:
                     return armyValidMoves
         return armyValidMoves
 
-
-    def hasAttack(self):
-        for bug in self.bugList:
-            for neighbour in bug.field.getNeighbours():
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    return True
-        return False
-
-    def getAttacks(self):
-        attackArray = []
-        for bug in self.bugList:
-            for neighbour in bug.field.getNeighbours():
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    if neighbour.bug.army in attackArray:
-                        continue
-                    else:
-                        attackArray.append(neighbour.bug.army)
-        return attackArray
-
-    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
-        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
-
-    def getAttackPower(self, army):
-        attackValue = Counter(army.bugList.attack)
-        sorted(attackValue, key=attackValue.keys(), reverse=True)
-        return attackValue[len(attackValue)//2]
-
-    def rollDice(self, diceCount):
-        rollArray = [] * diceCount
-        i = 0
-        while i < diceCount:
-            rollArray[i] = random.randint(1, 10)
-            i += 1
-
-        return rollArray
-
-    def getToughnessArray(self, attackers):
-
-        toughnessInterval = []
-        for i in attackers:
-            newElement = attackers[i].toughness
-            if newElement in toughnessInterval:
-                continue
-            else:
-                toughnessInterval += newElement
-
-        return toughnessInterval
-
     def performMove(self, direction):
         for bug in self.bugList:
             bug.state = "to move"
@@ -126,12 +79,14 @@ class Armia:
                     else:
                         bug.state = "won't move"
         self.numberOfMoves -= 1
-
-    def haveEveryBugMoved(self):
         for bug in self.bugList:
-            if bug.state == "to move":
-                return False
-        return True
+            bug.move_left -= 1
+
+    def setMove(self):
+        self.numberOfMoves = 20
+        for bug in self.bugList:
+            bug.move_left = bug.move
+            self.numberOfMoves = min(self.numberOfMoves, bug.move)
 
     def performAttack(self, opponentArmy):
         myArmies = []
@@ -171,6 +126,61 @@ class Armia:
 
         return hitNumber
 
+
+    def hasAttack(self):
+        for bug in self.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    return True
+        return False
+
+    def getAttacks(self):
+        attackArray = []
+        for bug in self.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    if neighbour.bug.army in attackArray:
+                        continue
+                    else:
+                        attackArray.append(neighbour.bug.army)
+        return attackArray
+
+    def getAttackPower(self, army):
+        attackValue = Counter(army.bugList.attack)
+        sorted(attackValue, key=attackValue.keys(), reverse=True)
+        index = math.ceil((attackValue + 1)/2)
+        return attackValue[index]
+
+    def getToughnessArray(self, attackers):
+
+        toughnessInterval = []
+        for i in attackers:
+            newElement = attackers[i].toughness
+            if newElement in toughnessInterval:
+                continue
+            else:
+                toughnessInterval += newElement
+
+        return toughnessInterval
+
+    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
+        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
+
+    def rollDice(self, diceCount):
+        rollArray = [] * diceCount
+        i = 0
+        while i < diceCount:
+            rollArray[i] = random.randint(1, 10)
+            i += 1
+
+        return rollArray
+
+    def haveEveryBugMoved(self):
+        for bug in self.bugList:
+            if bug.state == "to move":
+                return False
+        return True
+
     def getNumberOfResources(self):
         grassHopperCounter = 0
         hatcheryCounter = 0
@@ -187,10 +197,3 @@ class Armia:
             if len(bug.moveToExamine) > 0:
                 return True
         return False
-
-    def setMoves(self):
-        moves = 20
-        for bug in self.bugList:
-            if moves > bug.move:
-                moves = bug.move
-        self.numberOfMoves = moves

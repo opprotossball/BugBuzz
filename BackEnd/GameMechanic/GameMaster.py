@@ -1,5 +1,4 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
-from BackEnd.GameObjects.Robal import Konik
 
 
 class GameMaster(GameMechanic):
@@ -17,7 +16,7 @@ class GameMaster(GameMechanic):
 
         while True:
             self.nextMove()
-            if self.gameIsOver():
+            if self.gameIsOver(self.board):
                 print("Player " + self.winner_side)
                 return
 
@@ -32,7 +31,7 @@ class GameMaster(GameMechanic):
             self.updateWindow()
         elif self.turn == 2:
             print("Tura białego wylęganie.")
-            self.WhitePlayer.resources += self.getResourcesForSide("B")
+            self.WhitePlayer.resources += self.getResourcesForPlayer(self.WhitePlayer)
             self.WhitePlayer.performHatchery()
             self.updateWindow()
         elif self.turn == 3:
@@ -45,22 +44,8 @@ class GameMaster(GameMechanic):
             self.updateWindow()
         elif self.turn == 5:
             print("Tura czarnego wylęganie.")
-            self.BlackPlayer.resources += self.getResourcesForSide("C")
+            self.BlackPlayer.resources += self.getResourcesForPlayer(self.BlackPlayer)
             self.BlackPlayer.performHatchery()
             self.turn = -1
             self.updateWindow()
         self.turn += 1
-
-    def gameIsOver(self):
-        bug = self.board.resources[0].bug
-        if bug is not None:
-            side = bug.side
-        else:
-            return False
-
-        for pole in self.board.resources:
-            if pole.bug is None or pole.bug.side != side:
-                return False
-
-        self.winner_side = side
-        return True

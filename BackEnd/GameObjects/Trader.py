@@ -8,32 +8,35 @@ class Trader:
         self.SpiderPrice = 2
         self.BeetlePrice = 3
 
-    def getOptions(self, available):
+    def getOptions(self, player):
         options = []
-        if (available >= self.GrassHopperPrice):
-            options.append("GrassHopper")
-        if available >= self.AntPrice:
-            options.append("Ant")
-        if available >= self.SpiderPrice:
-            options.append("Spider")
-        if available >= self.BeetlePrice:
-            options.append("Beetle")
+        if player.resources >= self.GrassHopperPrice:
+            options.append("Konik")
+        if player.resources >= self.AntPrice:
+            options.append("Mrowka")
+        if player.resources >= self.SpiderPrice:
+            options.append("Pajak")
+        if player.resources >= self.BeetlePrice:
+            options.append("Zuk")
         return options
 
-    def buyBug(self, option, available, side):
-        if option in self.getOptions(available):
+    def buyBug(self,  player, option):
+        if option in self.getOptions(player):
             robal = 0
-            price = 0
-            if option == "GrassHopper":
-                robal = Konik(side)
-                price = 1
-            elif option == "Ant":
-                robal = Mrowka(side)
-                price = 1
-            elif option == "Spider":
-                robal = Pajak(side)
-                price = 2
-            elif option == "Beetle":
-                robal = Zuk(side)
-                price = 3
-            return robal, price
+            if option == "Konik":
+                robal = Konik(player.side)
+                player.resources -= 1
+            elif option == "Mrowka":
+                robal = Mrowka(player.side)
+                player.resources -= 1
+            elif option == "Pajak":
+                robal = Pajak(player.side)
+                player.resources -= 2
+            elif option == "Zuk":
+                robal = Zuk(player.side)
+                player.resources -= 3
+
+            player.bugList.append(robal)
+
+            return robal
+        return None

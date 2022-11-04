@@ -13,6 +13,8 @@ class Robal(ABC):
         self.army = None
         self.side = side
         self.field = None
+
+        self.move_left = 0
         
         self.short_name = ""
         self.validMoves = []
@@ -56,6 +58,7 @@ class Konik(Robal):
         self.side = side
         self.army = None
         self.field = None
+        self.move_left = 0
         self.short_name = "K"
         self.validMoves = []
         self.invalidMoves = []
@@ -71,6 +74,7 @@ class Mrowka(Robal):
         self.side = side
         self.army = None
         self.field = None
+        self.move_left = 0
         self.short_name = "M"
         self.validMoves = []
         self.invalidMoves = []
@@ -86,6 +90,7 @@ class Pajak(Robal):
         self.side = side
         self.army = None
         self.field = None
+        self.move_left = 0
         self.short_name = "P"
         self.validMoves = []
         self.invalidMoves = []
@@ -101,6 +106,7 @@ class Zuk(Robal):
         self.side = side
         self.army = None
         self.field = None
+        self.move_left = 0
         self.short_name = "Z"
         self.validMoves = []
         self.invalidMoves = []
