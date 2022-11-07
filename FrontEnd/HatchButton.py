@@ -10,12 +10,11 @@ class HatchButton:
         self.selected = False
         self.rect = None
 
-    def draw(self, surface, x, y, scale):
+    def draw(self, surface, x, y):
         if self.selected:
-            image = self.imageSelected
+            image = self.imageSelected.convert_alpha()
         else:
-            image = self.image
-        image = pygame.transform.smoothscale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))
+            image = self.image.convert_alpha()
         self.rect = image.get_rect()
         self.rect.topleft = (x, y)
         surface.blit(image, (x, y))

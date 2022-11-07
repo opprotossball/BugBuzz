@@ -6,30 +6,32 @@ from pygame.locals import *
 
 class Display:
 
-    def __init__(self, gameMaster, windowScreenRatio = 4 / 5, bugRadiusRatio = 1.2, marginRadiusRatio = 1/8, caption='Robale', backgroundColor = (80, 80, 80), tileColor = (153, 153, 153), resourcesColor = (0, 160, 0), hatcheryColor = (150, 45, 45), highlightedColor = (81, 210, 252), selectedColor = (255, 225, 64)):
+    def __init__(self, game_master, max_fps=40, caption='Bug Buzz', background_color=(80, 80, 80), tile_color=(153, 153, 153), resources_color=(0, 160, 0), hatchery_color=(150, 45, 45), highlighted_color=(81, 210, 252), selected_color=(255, 225, 64)):
         pygame.init()
+        self.clock = pygame.time.Clock()
+        self.backgroundColor = background_color
+        self.tileColor = tile_color
+        self.resourcesColor = resources_color
+        self.hatcheryColor = hatchery_color
+        self.highlightedColor = highlighted_color
+        self.selectedColor = selected_color
+        self.max_fps = max_fps
 
-        self.backgroundColor = backgroundColor
-        self.tileColor = tileColor
-        self.resourcesColor = resourcesColor
-        self.hatcheryColor = hatcheryColor
-        self.highlightedColor = highlightedColor
-        self.selectedColor = selectedColor
+        self.DEFAULT_WIDTH = 1600
+        self.DEFAULT_HEIGHT = 900
+        self.TILE_RADIUS = 50
+        self.TILE_MARGIN = 5
+        self.X_BOARD_CENTER = 759
+        self.Y_BOARD_CENTER = 480
 
-        self.width = int(pygame.display.Info().current_w * windowScreenRatio)
-        self.height = int(pygame.display.Info().current_h * windowScreenRatio)
-        self.xCenter = int(self.width / 2)
-        self.yCenter = int(self.height / 2)
+        self.font23 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 40)
+        self.img = self.font23.render('White\'s combat phase', True, (255, 255, 255))
 
-        self.gameMaster = gameMaster
-        self.tiltAngle = math.pi / 2
         self.screen = None
-        self.bugRadiusRatio = bugRadiusRatio
-        self.marginRadiusRatio = marginRadiusRatio
-        self.hatchButtonScale = None
-        self.bugScale = None
-        self.margin = None
-        self.tileRadius = None
+        self.window_scale = 1
+        self.gameMaster = game_master
+        self.tiltAngle = math.pi / 2
+
         self.cos30 = math.cos(math.pi / 6)
         self.sin30 = math.sin(math.pi / 6)
         self.cos60 = math.cos(math.pi / 3)
@@ -45,11 +47,9 @@ class Display:
         self.antBlack = pygame.image.load("./FrontEnd/Assets/Bugs/AntBlack.png")
         self.grasshooperWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
         self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
-
-        self.resize(self.width, self.height)
-        self.screen.fill(self.backgroundColor)
         pygame.display.set_caption(caption)
-        self.resize(self.width, self.height)
+
+
 
     def updateWindow(self):
         for event in pygame.event.get():
@@ -57,67 +57,47 @@ class Display:
                 pygame.quit()
                 exit()
             if event.type == pygame.VIDEORESIZE:
-                self.resize(event.w, event.h)
+                pass
+        self.screen = pygame.display.set_mode((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT), HWSURFACE | DOUBLEBUF | RESIZABLE)
+        self.screen.fill(self.backgroundColor)
         if self.gameMaster.ui is not None:
             self.gameMaster.ui.getInput()
             self.drawSelected()
             self.highlight()
-        self.drawTiles()
+        self.draw_tiles()
         self.drawBugs()
         self.drawButtons(self.gameMaster.ui.hatchButtons)
-        pygame.display.update()
+        self.screen.blit(self.img, (50, 50))
+        pygame.display.flip()
+        self.clock.tick(self.max_fps)
 
-    def resize(self, newWidth, newHeight):
-        self.screen = pygame.display.set_mode((newWidth, newHeight), HWSURFACE | DOUBLEBUF | RESIZABLE)
-        self.screen.fill(self.backgroundColor)
-        self.width = newWidth
-        self.height = newHeight
-        self.xCenter = int(newWidth / 2)
-        self.yCenter = int(newHeight / 2)
-        newRadius = int((0.7 * newWidth / (2 * self.gameMaster.board.size + 1)) / (2 * self.cos30))
-        newMargin = int(newRadius * self.marginRadiusRatio)
-
-        if (newRadius * 2 * (self.gameMaster.board.size * 2 + 1) - self.gameMaster.board.size * (2 * (newRadius + newMargin) * self.cos30 * self.cos60)) > newHeight:
-            newRadius = int((newHeight / (4 * self.gameMaster.board.size + 1)) / (2 * self.sin30))
-            newMargin = int(newRadius * self.marginRadiusRatio)
-
-        if self.tileRadius is None:
-            self.hatchButtonScale = 1
-        else:
-            self.hatchButtonScale = self.hatchButtonScale * (newRadius / self.tileRadius)
-
-        self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
-        self.tileRadius = newRadius
-        self.margin = newMargin
-        self.bugScale = (self.bugRadiusRatio * newRadius / self.antWhite.get_width())
-
-    def drawHex(self, xCenter, yCenter, radius, color):
+    def draw_hex(self, x_center, y_center, radius, color):
         vertices = []
         for i in range(6):
-            x = xCenter + radius * math.cos(self.tiltAngle + math.pi * 2 * i / 6)
-            y = yCenter + radius * math.sin(self.tiltAngle + math.pi * 2 * i / 6)
+            x = x_center + radius * math.cos(self.tiltAngle + math.pi * 2 * i / 6)
+            y = y_center + radius * math.sin(self.tiltAngle + math.pi * 2 * i / 6)
             vertices.append([int(x), int(y)])
         return pygame.draw.polygon(self.screen, color, vertices)
 
-    def transformToRealCoordinates(self, pole):
-        x = int(self.xCenter + (self.tileRadius + self.margin) * self.cos30 * (pole.s - pole.q))
-        y = int(self.yCenter + (self.tileRadius + self.margin) * (self.sin30 * (pole.q + pole.s) - pole.r))
-        return (x, y)
+    def transform_to_real_coordinates(self, pole):
+        x = int(self.X_BOARD_CENTER + (self.TILE_RADIUS + self.TILE_MARGIN) * self.cos30 * (pole.s - pole.q))
+        y = int(self.Y_BOARD_CENTER + (self.TILE_RADIUS + self.TILE_MARGIN) * (self.sin30 * (pole.q + pole.s) - pole.r))
+        return x, y
 
-    def drawTiles(self):
-        tileButtons = []
+    def draw_tiles(self):
+        tile_buttons = []
         for pole in self.gameMaster.board.iterList:
-            coordinates = self.transformToRealCoordinates(pole)
+            coordinates = self.transform_to_real_coordinates(pole)
             if pole.is_white_hatchery or pole.is_black_hatchery:
                 color = self.hatcheryColor
             elif pole.resources:
                 color = self.resourcesColor
             else:
                 color = self.tileColor
-            tileButton = TileButton(pole, self.drawHex(coordinates[0], coordinates[1], self.tileRadius, color))
-            tileButtons.append(tileButton)
+            tile_button = TileButton(pole, self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, color))
+            tile_buttons.append(tile_button)
         if self.gameMaster.ui is not None:
-            self.gameMaster.ui.setTileButtons(tileButtons)
+            self.gameMaster.ui.setTileButtons(tile_buttons)
 
     def drawBugs(self):
         for bug in self.gameMaster.BlackPlayer.bugList:
@@ -126,14 +106,14 @@ class Display:
             self.drawBug(bug, bug.field)
 
     def drawButtons(self, buttons):
-        x = int(self.width / 30)
-        y = int(self.height / 15)
+        x = 40
+        y = 275
         for button in buttons:
-            button.draw(self.screen, x, y, self.hatchButtonScale)
-            y += int(1.2 * button.rect.height)
+            button.draw(self.screen, x, y)
+            y += 144
 
     def drawBug(self, bug, tile):
-        coordinates = self.transformToRealCoordinates(tile)
+        coordinates = self.transform_to_real_coordinates(tile)
         image = None
         if bug.short_name == "K":
             if bug.side == 'B':
@@ -158,16 +138,16 @@ class Display:
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")
             return
-        image = pygame.transform.smoothscale(image, (int(image.get_width() * self.bugScale), int(image.get_height() * self.bugScale)))
+        #image = pygame.transform.smoothscale(image, (int(image.get_width() * self.bugScale), int(image.get_height() * self.bugScale)))
         self.screen.blit(image, (int(coordinates[0] - image.get_width() / 2), int(coordinates[1] - image.get_height() / 2)))
 
     def highlight(self):
         for tile in self.highlightedTiles:
-            coordinates = self.transformToRealCoordinates(tile)
-            self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.highlightedColor)
+            coordinates = self.transform_to_real_coordinates(tile)
+            self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
 
     def drawSelected(self):
-       tile = self.gameMaster.ui.selectedTile
-       if tile is not None:
-            coordinates = self.transformToRealCoordinates(tile)
-            self.drawHex(coordinates[0], coordinates[1], self.tileRadius, self.selectedColor)
+        tile = self.gameMaster.ui.selected_tile
+        if tile is not None:
+            coordinates = self.transform_to_real_coordinates(tile)
+            self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.selectedColor)
