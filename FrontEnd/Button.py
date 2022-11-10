@@ -1,17 +1,18 @@
 import pygame
 
-class HatchButton:
-    clickedLeft = False
 
-    def __init__(self, image, imageSelected, bugShortName):
+class Button:
+
+    def __init__(self, image, imageSelected=None, bugShortName=None):
         self.image = image
         self.imageSelected = imageSelected
         self.bugShortName = bugShortName
         self.selected = False
         self.rect = None
+        self.clickedLeft = False
 
     def draw(self, surface, x, y):
-        if self.selected:
+        if self.selected and self.imageSelected is not None:
             image = self.imageSelected.convert_alpha()
         else:
             image = self.image.convert_alpha()
@@ -20,16 +21,20 @@ class HatchButton:
         surface.blit(image, (x, y))
 
     def isClickedLeft(self):
-        if self.rect == None:
+        if self.rect is None:
             return False
         action = False
-        mousePosition = pygame.mouse.get_pos()
+        mouse_position = pygame.mouse.get_pos()
         if pygame.mouse.get_pressed()[0] == 0:
-            HatchButton.clickedLeft = False
-        elif self.rect.collidepoint(mousePosition) and not HatchButton.clickedLeft:
+            self.clickedLeft = False
+        elif self.rect.collidepoint(mouse_position) and not self.clickedLeft:
             self.selected = True
-            HatchButton.clickedLeft = True
+            self.clickedLeft = True
             action = True
-        elif not self.rect.collidepoint(mousePosition):
+        elif not self.rect.collidepoint(mouse_position):
             self.selected = False
+            action = False
         return action
+
+    def isSelected(self):
+        return self.selected
