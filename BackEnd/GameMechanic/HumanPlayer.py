@@ -8,6 +8,4 @@ class HumanPlayer(Player):
 
     def set_state(self, state):
         self.state = state
-        self.gm.ui.setMode(state, self.side)  #ui przez gm-a wywołuje metody z Plater.py z odpowiedniej fazy
-
-        #ewentalnie można tu po prostu wkleić ui bo ta klasa praktycznie nic nie robi
+        self.gm.ui.setMode(state, self.side)

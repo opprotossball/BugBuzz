@@ -19,14 +19,25 @@ class Player(ABC):
         self.resources = 0
         self.bugList = []
         self.state = PlayerState.INACTIVE
+        self.bugs_available = {
+            'M': 3,
+            'K': 3,
+            'P': 2,
+            'Z': 2
+        }
 
     def end_phase(self):
         self.gm.next_phase()
 
     def perform_move(self, army, direction):
+        army.setMoves()
+        if army.numberOfMoves < 1:
+            return False
         army.performMove(direction)
+        self.gm.getArmies(self.side)
+        return True
 
-    def perform_hatch(self, bug_type, tile):  # typ jak w Trader.py
+    def perform_hatch(self, bug_type, tile):
         if self.side == "B":
             if not tile.is_white_hatchery:
                 return False
@@ -38,14 +49,15 @@ class Player(ABC):
             return False
 
         trader = Trader()
-        bug, price = trader.buyBug(bug_type, self.resources, self.side)
-
+        bug, price = trader.buyBug(bug_type, self)
         if bug is None:
             return False
 
         self.resources -= price
+        self.bugs_available[bug.short_name] -= 1
         self.bugList.append(bug)
         bug.moveBugTo(tile)
+        self.gm.getArmies(self.side)
         return True
 
     def perform_attack(self, opponent_army):
