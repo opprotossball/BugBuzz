@@ -20,7 +20,7 @@ class GameMaster(GameMechanic):
         while True:
             self.updateWindow()
             if self.gameIsOver():
-                print("Player " + self.winner_side)
+                print("Player " + self.winner_side + " has won!")
                 return
 
     def next_phase(self):
@@ -30,6 +30,7 @@ class GameMaster(GameMechanic):
         if self.turn == 0:
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
+            self.getArmies("C")
         elif self.turn == 1:
             self.resetMove("B")
             self.WhitePlayer.set_state(PlayerState.MOVE)
@@ -39,6 +40,7 @@ class GameMaster(GameMechanic):
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
+            self.getArmies("B")
         elif self.turn == 4:
             self.resetMove("C")
             self.BlackPlayer.set_state(PlayerState.MOVE)

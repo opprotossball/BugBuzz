@@ -1,3 +1,5 @@
+from random import randint
+
 from FrontEnd.UI import UI
 from FrontEnd.Display import Display
 from BackEnd.GameObjects.Armia import Armia
@@ -85,6 +87,26 @@ class GameMechanic:
     def setDisplay(self):
         self.display = Display(self)
 
+    def rollDice(self, diceCount):
+        rollArray = [randint(1, 10) for i in range(diceCount)]
+        return rollArray
+
     def updateWindow(self):
         if self.display is not None:
             self.display.updateWindow()
+
+    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
+        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
+
+    def get_attack_power(self, attacked_army):
+        attacking_bugs = set()
+        attacking_armies = set()
+        for bug in attacked_army.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    attacking_bugs.add(neighbour.bug)
+                    attacking_armies.add(neighbour.bug.army)
+        power = len(attacking_bugs)
+        for army in attacking_armies:
+            power += army.calculate_attack()
+        return power

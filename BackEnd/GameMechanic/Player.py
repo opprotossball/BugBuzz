@@ -1,3 +1,4 @@
+import math
 from abc import ABC, abstractmethod
 from enum import Enum
 
@@ -17,6 +18,8 @@ class Player(ABC):
         self.gm = gm
         self.side = side
         self.resources = 0
+        self.kills = 0
+        self.attacked_army = None
         self.bugList = []
         self.state = PlayerState.INACTIVE
         self.bugs_available = {
@@ -61,10 +64,45 @@ class Player(ABC):
         return True
 
     def perform_attack(self, opponent_army):
-        pass
+        self.kills = 0
+        if opponent_army.was_attacked:
+            return False, 0, None
+        attack_power = self.gm.get_attack_power(opponent_army)
+        toughness = opponent_army.getToughnessArray()
+        damage = 0
+        rolls = self.gm.rollDice(attack_power)
+        for result in rolls:
+            if result not in toughness:
+                damage += 1
+        kills = math.floor(damage / 2)
+        attacked = attack_power > 0
+        if attacked:
+            opponent_army.was_attacked = True
+            self.attacked_army = opponent_army
+            self.kills = kills
+        return attacked, kills, rolls
+
+    def kill_bug(self, bug):
+        if self.kills > 0 and bug.army == self.attacked_army:
+            neighbours = bug.field.getNeighbours()
+            can_be_killed = False
+            for neighbour in neighbours:
+                if self.gm.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    can_be_killed = True
+                    break
+            if can_be_killed:
+                if self.side == "B":
+                    other_player = self.gm.BlackPlayer
+                else:
+                    other_player = self.gm.WhitePlayer
+                other_player.bugList.remove(bug)
+                other_player.bugs_available[bug.short_name] += 1
+                bug.army.bugList.remove(bug)
+                bug.field.resetBug()
+                self.kills -= 1
+                return True
+        return False
 
     @abstractmethod
     def set_state(self, state):
         pass
-
-

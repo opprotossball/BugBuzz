@@ -101,11 +101,28 @@ class UI:
         for tile_button in self.tile_buttons:
             if tile_button.isClickedLeft():
                 tile = tile_button.tile
+                bug = tile.bug
+
                 if self.mode == PlayerState.COMBAT:
-                    pass
+                    if bug is not None and bug.side != self.side:
+                        if self.player.kills > 0:
+                            self.player.kill_bug(bug)
+                            if self.player.kills == 0:
+                                self.game_master.display.highlightedTiles = []
+                            return
+                        else:
+                            was_attacked, kills, rolls = self.player.perform_attack(bug.army)
+                            if was_attacked:
+                                self.game_master.display.highlightedTiles = self.selectArmy(tile)
+                                self.game_master.display.highlightedColor = (150, 45, 45)
+                                print("Your rolls were: {}".format(rolls))
+                                print("kill {} bugs".format(kills))
+                                return
+                    elif self.player.kills > 0:
+                        return  # killing is compulsory for now
 
                 elif self.mode == PlayerState.MOVE:
-                    if tile.bug is None:
+                    if bug is None:
                         if self.makeMove(tile):
                             return
                     self.selected_tile = None
@@ -118,9 +135,10 @@ class UI:
 
                 selected_army_tiles = self.selectArmy(tile)
                 self.game_master.display.highlightedTiles = selected_army_tiles
+                self.game_master.display.highlightedColor = (81, 210, 252)
 
                 if self.mode == PlayerState.MOVE:
-                    if tile.bug is not None and tile.bug.side == self.side:
+                    if tile is not None and bug is not None and bug.side == self.side:
                         self.selected_tile = tile
 
         if self.mode != PlayerState.MOVE:
@@ -128,6 +146,7 @@ class UI:
 
         if self.mode != PlayerState.INACTIVE:
             if self.end_phase_button.isClickedLeft():
+                self.game_master.display.highlightedTiles = []
                 self.player.end_phase()
 
     def makeMove(self, tile):

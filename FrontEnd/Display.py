@@ -148,6 +148,7 @@ class Display:
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
 
+
     def drawSelected(self):
         tile = self.gameMaster.ui.selected_tile
         if tile is not None:

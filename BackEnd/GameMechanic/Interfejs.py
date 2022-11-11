@@ -58,7 +58,7 @@ class Interfejs(ABC):
             attacks = []
             for armies_index in range(len(armies)):
                 if self.GM.ui is None:
-                    attacks += concatenate_moves([armies_index], armies[armies_index].getAttacks())
+                    attacks += concatenate_moves([armies_index], armies[armies_index].get_attacks())
                 else:
                     attacks += armies
                     break
