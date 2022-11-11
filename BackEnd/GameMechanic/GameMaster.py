@@ -25,30 +25,26 @@ class GameMaster(GameMechanic):
 
     def next_phase(self):
         self.turn += 1
+        if self.turn == 6:
+            self.turn = 0
         if self.turn == 0:
-            print("Tura białego atak.")
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 1:
-            print("Tura białego ruch.")
+            self.resetMove("B")
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
-            print("Tura białego wylęganie.")
-            self.WhitePlayer.resources += self.getResourcesForSide("B")
+            self.WhitePlayer.resources = self.getResourcesForSide("B")
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
-            print("Tura czarnego atak.")
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 4:
-            print("Tura czarnego ruch.")
+            self.resetMove("C")
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
-            print("Tura czarnego wylęganie.")
-            self.BlackPlayer.resources += self.getResourcesForSide("C")
+            self.BlackPlayer.resources = self.getResourcesForSide("C")
             self.BlackPlayer.set_state(PlayerState.HATCH)
-            self.turn = -1
-
 
     def gameIsOver(self):
         bug = self.board.resources[0].bug

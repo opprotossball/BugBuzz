@@ -67,6 +67,17 @@ class GameMechanic:
                 option.append(hatch)
         return option
 
+    def resetMove(self, side):
+        if side == "B":
+            player = self.WhitePlayer
+        elif side == "C":
+            player = self.BlackPlayer
+        else:
+            print(side + "is not a valid side")
+            return False
+        for bug in player.bugList:
+            bug.setMove(bug.max_move)
+
     def setGUI(self):
         self.ui = UI(self)
         self.display = Display(self)

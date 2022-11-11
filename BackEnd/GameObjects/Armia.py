@@ -112,6 +112,7 @@ class Armia:
 
         while not self.haveEveryBugMoved():
             for bug in self.bugList:
+                bug.setMove(bug.move - 1)
                 if bug.state == "to move":
                     dict = bug.field.getDictionary()
                     if bug.hasEnemyInSurrounding():
@@ -170,17 +171,6 @@ class Armia:
                 hitNumber += 1
 
         return hitNumber
-
-    def getNumberOfResources(self):
-        grassHopperCounter = 0
-        hatcheryCounter = 0
-        for bug in self.bugList:
-            if type(bug) == Konik:
-                grassHopperCounter = grassHopperCounter + 1
-            if bug.field.hatchery:
-                hatcheryCounter = hatcheryCounter + 1
-
-        return grassHopperCounter * hatcheryCounter
 
     def has_bug_with_moves_to_examine(self):
         for bug in self.bugList:
