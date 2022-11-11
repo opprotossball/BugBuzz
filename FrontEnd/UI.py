@@ -7,42 +7,51 @@ import pygame
 
 class UI:
     def __init__(self, game_master):
-        self.tileButtons = []
-        self.hatchButtons = []
+        self.tile_buttons = []
+        self.hatch_buttons = []
         self.game_master = game_master
         self.selected_tile = None
-        self.chosenToHatch = None
+        self.chosen_to_hatch = None
         self.mode = None
         self.side = None
         self.player = None
 
-        self.antHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
-        self.grasshooperHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
-        self.spiderHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteHatchButton.png")
-        self.beetleHatchButton = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteHatchButton.png")
+        self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
+        self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
+        self.spider_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteHatchButton.png")
+        self.beetle_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteHatchButton.png")
 
-        self.antHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteSelectedHatchButton.png")
-        self.grasshooperHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteSelectedHatchButton.png")
-        self.spiderHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteSelectedHatchButton.png")
-        self.beetleHatchButtonSelected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteSelectedHatchButton.png")
+        self.ant_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteSelectedHatchButton.png")
+        self.grasshooper_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteSelectedHatchButton.png")
+        self.spider_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteSelectedHatchButton.png")
+        self.beetle_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteSelectedHatchButton.png")
 
-        self.next_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
+        self.ant_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antBlackHatchButton.png")
+        self.grasshooper_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperBlackHatchButton.png")
+        self.spider_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackHatchButton.png")
+        self.beetle_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackHatchButton.png")
 
-        self.hatchButtons.append(Button(self.antHatchButton, self.antHatchButtonSelected, "M"))
-        self.hatchButtons.append(Button(self.grasshooperHatchButton, self.grasshooperHatchButtonSelected, "K"))
-        self.hatchButtons.append(Button(self.spiderHatchButton, self.spiderHatchButtonSelected, "P"))
-        self.hatchButtons.append(Button(self.beetleHatchButton, self.beetleHatchButtonSelected, "Z"))
+        self.ant_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/antBlackSelectedHatchButton.png")
+        self.grasshooper_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperBlackSelectedHatchButton.png")
+        self.spider_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackSelectedHatchButton.png")
+        self.beetle_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackSelectedHatchButton.png")
 
-        self.end_phase_button = Button(self.next_phase_button_image)
+        end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
+        end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
 
-        self.phase_titles = [
-            "White's combat phase",
-            "White's move phase",
-            "White's hatch phase",
-            "Black's combat phase",
-            "Black's move phase",
-            "Black's hatch phase"
-        ]
+        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2)
+
+        self.BLACK = (0, 0, 0)
+        self.WHITE = (255, 255, 255)
+
+        self.phase_titles = {
+            0: "White's combat phase",
+            1: "White's move phase",
+            2: "White's hatch phase",
+            3: "Black's combat phase",
+            4: "Black's move phase",
+            5: "Black's hatch phase"
+        }
 
         self.tip_texts = [
             "Select opponent's army to attack"
@@ -56,13 +65,23 @@ class UI:
     def setMode(self, mode, side):
         self.mode = mode
         self.side = side
+        hatch_buttons = []
         if side == "B":
             self.player = self.game_master.WhitePlayer
+            hatch_buttons.append(Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, "M"))
+            hatch_buttons.append(Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None, "K"))
+            hatch_buttons.append(Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, "P"))
+            hatch_buttons.append(Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, "Z"))
         elif side == "C":
             self.player = self.game_master.BlackPlayer
+            hatch_buttons.append(Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, "M"))
+            hatch_buttons.append(Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None, "K"))
+            hatch_buttons.append(Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, "P"))
+            hatch_buttons.append(Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, "Z"))
+        self.hatch_buttons = hatch_buttons
 
     def setTileButtons(self, tilebutons):
-        self.tileButtons = tilebutons
+        self.tile_buttons = tilebutons
 
     def selectArmy(self, tile):
         tiles = []
@@ -73,47 +92,79 @@ class UI:
         return tiles
 
     def getInput(self):
+        if self.mode == PlayerState.HATCH:
+            for hatchButton in self.hatch_buttons:
+                hatchButton.isClickedLeft()
+                if hatchButton.isSelected():
+                    self.chosen_to_hatch = hatchButton.bugShortName
+
+        for tile_button in self.tile_buttons:
+            if tile_button.isClickedLeft():
+                tile = tile_button.tile
+                if self.mode == PlayerState.COMBAT:
+                    pass
+
+                elif self.mode == PlayerState.MOVE:
+                    if tile.bug is None:
+                        if self.makeMove(tile):
+                            return
+                    self.selected_tile = None
+
+                elif self.mode == PlayerState.HATCH:
+                    if self.chosen_to_hatch is not None:
+                        if self.player.perform_hatch(self.chosen_to_hatch, tile):
+                            self.chosen_to_hatch = None
+                            return
+
+                selected_army_tiles = self.selectArmy(tile)
+                self.game_master.display.highlightedTiles = selected_army_tiles
+
+                if self.mode == PlayerState.MOVE:
+                    if tile.bug is not None and tile.bug.side == self.side:
+                        self.selected_tile = tile
+
+        if self.mode != PlayerState.MOVE:
+            self.selected_tile = None
+
         if self.mode != PlayerState.INACTIVE:
             if self.end_phase_button.isClickedLeft():
                 self.player.end_phase()
 
-        if self.mode == PlayerState.COMBAT:
-            pass
-
-        elif self.mode == PlayerState.MOVE:
-            for tileButton in self.tileButtons:
-                if tileButton.isClickedLeft():
-                    tile = tileButton.tile
-                    if tile.bug is None:
-                        if not self.makeMove(tile):
-                            self.selected_tile = None
-                    else:
-                        self.selected_tile = tile
-                    selected_army_tiles = self.selectArmy(tile)
-                    self.game_master.display.highlightedTiles = selected_army_tiles
-
-        elif self.mode == PlayerState.HATCH:
-            bug_was_chosen = False
-            for hatchButton in self.hatchButtons:
-                hatchButton.isClickedLeft()
-                if hatchButton.isSelected():
-                    self.chosenToHatch = hatchButton.bugShortName
-                    bug_was_chosen = True
-            if not bug_was_chosen:
-                self.chosenToHatch = None
-
-
     def makeMove(self, tile):
         if self.selected_tile is None:
+            self.selected_tile = None
             return False
         dictionary = self.selected_tile.getDictionary()
         directions = [d for d, n in dictionary.items() if n == tile]
         if directions.__len__() == 0:
+            self.selected_tile = None
             return False
         direction = directions[0]
         leader = self.selected_tile.bug
-        leader.army.performMove(direction)
         self.selected_tile = leader.field
-        self.game_master.getArmies(leader.side)
-        self.game_master.display.highlightedTiles = self.selectArmy(tile)
-        return True
+        self.player.perform_move(leader.army, direction)
+        move_performed = self.game_master.display.highlightedTiles = self.selectArmy(tile)
+        self.selected_tile = leader.field
+        return move_performed
+
+    def get_count_of_bugs_available(self):
+        if self.side == "B":
+            color = self.WHITE
+        else:
+            color = self.BLACK
+        return self.player.bugs_available, color
+
+    def get_number_of_resources(self):
+        if self.side == "B":
+            color = self.WHITE
+        else:
+            color = self.BLACK
+        return self.player.resources, color
+
+    def get_phase_title(self):
+        turn = self.game_master.turn
+        if turn < 3:
+            color = self.WHITE
+        else:
+            color = self.BLACK
+        return self.phase_titles[turn], color

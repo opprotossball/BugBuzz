@@ -6,7 +6,7 @@ from pygame.locals import *
 
 class Display:
 
-    def __init__(self, game_master, max_fps=40, caption='Bug Buzz', background_color=(80, 80, 80), tile_color=(153, 153, 153), resources_color=(0, 160, 0), hatchery_color=(150, 45, 45), highlighted_color=(81, 210, 252), selected_color=(255, 225, 64)):
+    def __init__(self, game_master, max_fps=40, caption='Bug Buzz', background_color=(80, 80, 80), tile_color=(153, 153, 153), resources_color=(29, 122, 29), hatchery_color=(150, 45, 45), highlighted_color=(81, 210, 252), selected_color=(255, 225, 64)):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.backgroundColor = background_color
@@ -19,15 +19,16 @@ class Display:
 
         self.DEFAULT_WIDTH = 1600
         self.DEFAULT_HEIGHT = 900
-        self.TILE_RADIUS = 50
-        self.TILE_MARGIN = 5
+        self.TILE_RADIUS = 58
+        self.TILE_MARGIN = 4
         self.X_BOARD_CENTER = 759
-        self.Y_BOARD_CENTER = 480
+        self.Y_BOARD_CENTER = 450
+        self.BUG_RADIUS_RATIO = 1.4
 
         self.font23 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 40)
-        self.img = self.font23.render('White\'s combat phase', True, (255, 255, 255))
 
-        self.screen = None
+        self.screen = pygame.display.set_mode((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT), HWSURFACE | DOUBLEBUF)
+
         self.window_scale = 1
         self.gameMaster = game_master
         self.tiltAngle = math.pi / 2
@@ -58,16 +59,17 @@ class Display:
                 exit()
             if event.type == pygame.VIDEORESIZE:
                 pass
-        self.screen = pygame.display.set_mode((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT), HWSURFACE | DOUBLEBUF | RESIZABLE)
         self.screen.fill(self.backgroundColor)
+        self.draw_tiles()
         if self.gameMaster.ui is not None:
             self.gameMaster.ui.getInput()
-            self.drawSelected()
             self.highlight()
-        self.draw_tiles()
+            self.drawSelected()
         self.drawBugs()
-        self.drawButtons(self.gameMaster.ui.hatchButtons)
-        self.screen.blit(self.img, (50, 50))
+        self.drawButtons()
+        self.show_phase_title()
+        self.show_number_of_bugs_available()
+        self.show_number_of_resources()
         pygame.display.flip()
         self.clock.tick(self.max_fps)
 
@@ -105,12 +107,13 @@ class Display:
         for bug in self.gameMaster.WhitePlayer.bugList:
             self.drawBug(bug, bug.field)
 
-    def drawButtons(self, buttons):
+    def drawButtons(self):
         x = 40
         y = 275
-        for button in buttons:
+        for button in self.gameMaster.ui.hatch_buttons:
             button.draw(self.screen, x, y)
             y += 144
+        self.gameMaster.ui.end_phase_button.draw(self.screen, 1300, 805)
 
     def drawBug(self, bug, tile):
         coordinates = self.transform_to_real_coordinates(tile)
@@ -138,7 +141,6 @@ class Display:
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")
             return
-        #image = pygame.transform.smoothscale(image, (int(image.get_width() * self.bugScale), int(image.get_height() * self.bugScale)))
         self.screen.blit(image, (int(coordinates[0] - image.get_width() / 2), int(coordinates[1] - image.get_height() / 2)))
 
     def highlight(self):
@@ -151,3 +153,26 @@ class Display:
         if tile is not None:
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.selectedColor)
+
+    def show_phase_title(self):
+        turn = self.gameMaster.turn
+        text, color = self.gameMaster.ui.get_phase_title()
+        title = self.font23.render(text, True, color)
+        self.screen.blit(title, (int(1350 - title.get_width() / 2), int(75 - title.get_height() / 2)))
+
+    def show_number_of_bugs_available(self):
+        x = 170
+        y = 310
+        dictionary, color = self.gameMaster.ui.get_count_of_bugs_available()
+        for key in dictionary:
+            text = self.font23.render("x{}".format(dictionary[key]), True, color)
+            self.screen.blit(text, (x, y))
+            y += 144
+
+    def show_number_of_resources(self):
+        x = 85
+        y = 80
+        resources, color = self.gameMaster.ui.get_number_of_resources()
+        text = self.font23.render("{}".format(resources), True, color)
+        self.draw_hex(x, y, 55, self.resourcesColor)
+        self.screen.blit(text, (int(x - text.get_width() / 2), int(y - text.get_height() / 2)))
