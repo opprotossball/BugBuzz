@@ -5,4 +5,4 @@ from BackEnd.GameMechanic.NNPlayer import NNPlayer
 if __name__ == "__main__":
     gm = GameMaster()
     gm.setGUI()
-    gm.newGame(HumanPlayer(gm, "B"), NNPlayer(gm, "C", None))  #None to evaluator
+    gm.newGame(HumanPlayer(gm, "B"), HumanPlayer(gm, "C"))

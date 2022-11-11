@@ -11,7 +11,7 @@ class TileButton:
     def isClickedLeft(self):
         if pygame.mouse.get_pressed()[0] == 0:
             TileButton.clickedLeft = False
-        elif self.isHovered() and pygame.mouse.get_pressed()[0] == 1 and not TileButton.clickedLeft:
+        elif self.isHovered() and not TileButton.clickedLeft:
             TileButton.clickedLeft = True
             return True
         else:
@@ -20,7 +20,7 @@ class TileButton:
     def isClickedRight(self):
         if pygame.mouse.get_pressed()[2] == 0:
             TileButton.clickedRight = False
-        elif self.isHovered() and pygame.mouse.get_pressed()[2] == 1 and not TileButton.clickedRight:
+        elif self.isHovered() and not TileButton.clickedRight:
             TileButton.clickedRight = True
             return True
         else:
