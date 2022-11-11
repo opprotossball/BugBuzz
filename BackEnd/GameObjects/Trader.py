@@ -8,32 +8,33 @@ class Trader:
         self.SpiderPrice = 2
         self.BeetlePrice = 3
 
-    def getOptions(self, available):
+    def getOptions(self, available, bugs_available):
         options = []
-        if (available >= self.GrassHopperPrice):
-            options.append("GrassHopper")
-        if available >= self.AntPrice:
-            options.append("Ant")
-        if available >= self.SpiderPrice:
-            options.append("Spider")
-        if available >= self.BeetlePrice:
-            options.append("Beetle")
+        if available >= self.GrassHopperPrice and bugs_available['K'] > 0:
+            options.append('K')
+        if available >= self.AntPrice and bugs_available['M'] > 0:
+            options.append('M')
+        if available >= self.SpiderPrice and bugs_available['P'] > 0:
+            options.append('P')
+        if available >= self.BeetlePrice and bugs_available['Z'] > 0:
+            options.append('Z')
         return options
 
-    def buyBug(self, option, available, side):
-        if option in self.getOptions(available):
-            robal = None
-            price = 0
-            if option == "GrassHopper":
-                robal = Konik(side)
+    def buyBug(self, option, player):
+        side = player.side
+        bug = None
+        price = 0
+        if option in self.getOptions(player.resources, player.bugs_available):
+            if option == 'K':
+                bug = Konik(side)
                 price = 1
-            elif option == "Ant":
-                robal = Mrowka(side)
+            elif option == 'M':
+                bug = Mrowka(side)
                 price = 1
-            elif option == "Spider":
-                robal = Pajak(side)
+            elif option == 'P':
+                bug = Pajak(side)
                 price = 2
-            elif option == "Beetle":
-                robal = Zuk(side)
+            elif option == 'Z':
+                bug = Zuk(side)
                 price = 3
-            return robal, price
+        return bug, price
