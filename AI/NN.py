@@ -9,11 +9,14 @@ from pandas import Series
 def activation_f(x):
     return 1 / (1 + math.exp(-x))
 
+def derivative_f(x):
+    return (math.exp(-x))/(math.exp(-x) + 1)**2
 
 def map(func, matrix):
-    for layer in matrix:
-        for i in range(len(layer)):
-            layer[i] = func(layer[i])
+    for layer in range(len(matrix)):
+        for weight in range(len(matrix[layer])):
+            newValue = func(matrix.item((layer, weight)))
+            matrix.itemset((layer, weight), newValue)
 
 
 def alter_and_standardize(power, val):
@@ -50,6 +53,74 @@ class NeuralNetwork:
         else:
             self.generate_random(self.neuron_distribution_in_layers)
 
+    def learn(self, input, label, rate):
+        outputs = [input]
+        last_index = len(self.neuron_distribution_in_layers) -1
+        size_of_output = self.neuron_distribution_in_layers[last_index]
+
+        if not isinstance(label, np.matrix):
+            raise Exception("Label has to be instace of numpy.matrix")
+        if label.shape != (1, size_of_output):
+            raise Exception("Label has to be size of the output. Expected shape: (1, " + str(size_of_output) +"), provided:" + str(label.shape) + "")
+
+        last_layer_index = len(self.neuron_distribution_in_layers) - 1
+
+        W = self.weights_of_the_layers.copy()
+
+        cost_for_layer = []
+                                                                                    # <Getting inputs>
+        X = input
+        for layer in range(self.number_of_layers):
+            cost_for_layer.append([])
+            X = np.dot(X, self.weights_of_the_layers[layer])
+            X += self.biases_of_the_layer[layer]
+            map(activation_f, X)
+            mat = np.matrix(X.copy())
+            outputs.append(mat)
+                                                                                    # </Getting inputs>
+        for lab, inp in zip(label, outputs[last_layer_index]):
+            cost_for_layer[last_layer_index].append(lab - inp)
+
+
+        # Ostatnia warstwa: n = nmax
+        #    deltan = (xn - ln) [multiply] f'(Wn*x(n-1))
+
+        # Pozostałe warstwy: n < nmax
+        #    deltan = W(n+1)T [dot] delta[n+1] [multiply] f'(Wn*x(n-1))
+
+                                                                                    # <Getting deltas>
+        deltas = [[] for layer in self.weights_of_the_layers]
+
+        derivative = np.dot(W[last_index], outputs[last_index - 1])
+        map(derivative_f, derivative)
+        deltas[last_index] = np.multiply((outputs[last_index] - label), derivative)
+
+        for layer in range(len(self.neuron_distribution_in_layers) - 2 , -1, -1):
+            cost = np.dot(W[layer + 1].T, deltas[layer + 1])
+            derivative = np.dot(W[last_index], outputs[layer - 1])
+            map(derivative_f, derivative)
+            deltas[layer] = np.multiply(cost, derivative)
+                                                                                    # </Getting deltas>
+        # Kalkulacja końcowa:
+        #    dE/dW = deltan [dot] x(n-1)T
+        #    a = rate_of_learning
+        #    Wn' = Wn - dE/dW * a
+                                                                                    # <Getting new weights>
+        newW = [[] for layer in self.weights_of_the_layers]
+        for layer in range(len(self.neuron_distribution_in_layers)):
+            derivative = np.dot(deltas[layer], outputs[layer].T)
+            newW[layer] = W[layer] - derivative * rate
+                                                                                    # </Getting new weights>
+        return newW
+
+    def cost(self, input, labels):
+        eval = self.evaluate_at(input)
+        cost = []
+        for outcome, label in zip(eval, labels):
+            cost.append((outcome - label) ** 2)
+        cost = np.matrix(cost)
+        return cost
+
     def clone(self):
         new = NeuralNetwork()
         for weights in self.weights_of_the_layers:
@@ -60,15 +131,6 @@ class NeuralNetwork:
             mat = biases.copy()
             self.biases_of_the_layer.append(mat)
         return new
-
-    def mutate(self, rate, power):
-        for matrix in self.weights_of_the_layers:
-            if random.random() < rate:
-                map(lambda val: alter_and_standardize(power, val), matrix)
-
-        for matrix in self.biases_of_the_layer:
-            if random.random() < rate:
-                map(lambda val: alter(power, val), matrix)
 
     def generate_random(self, neuron_distribution_in_layers):
         for i in range(self.number_of_layers + 1):
@@ -89,8 +151,7 @@ class NeuralNetwork:
         for i in range(self.number_of_layers):
             X = np.dot(X, self.weights_of_the_layers[i])
             X += self.biases_of_the_layer[i]
-            X = X.tolist()
-            X = np.matrix([[activation_f(cell) for cell in row] for row in X])
+            map(activation_f, X)
 
         return X
 
@@ -123,3 +184,7 @@ class NeuralNetwork:
 
                 df[column_name] = s
         return df
+
+nn = NeuralNetwork((3,4,2))
+
+nn.learn(np.matrix([1,2,3]), np.matrix([3,4]), 0.1)
