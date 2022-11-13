@@ -5,12 +5,22 @@ import numpy as np
 import pandas as pd
 from pandas import Series
 
+a = 0
 
 def activation_f(x):
-    return 1 / (1 + math.exp(-x))
+    if a == 0:
+        return 1 / (1 + math.exp(-x))
+    if a == 1:
+        return max(0, x)
 
 def derivative_f(x):
-    return (math.exp(-x))/(math.exp(-x) + 1)**2
+    if a == 0:
+        return (math.exp(-x))/(math.exp(-x) + 1)**2
+    elif a == 1:
+        if x > 0:
+            return 1
+        return 0
+
 
 def map(func, matrix):
     row, col = matrix.shape
@@ -56,15 +66,12 @@ class NeuralNetwork:
             self.generate_random(self.neuron_distribution_in_layers)
 
     def generate_random(self, neuron_distribution_in_layers):
-        for i in range(self.number_of_layers + 1):
-            if i == 0:
-                input_layer = np.random.rand(neuron_distribution_in_layers[i], 1)
-            else:
-                weights = np.matrix(
-                    -1 + 2 * np.random.rand(neuron_distribution_in_layers[i - 1], neuron_distribution_in_layers[i]))
-                biases = np.matrix(-1 + 2 * np.random.rand(1, neuron_distribution_in_layers[i]))
-                self.weights_of_the_layers.append(weights.T)
-                self.biases_of_the_layer.append(biases.T)
+        for i in range(1, self.number_of_layers + 1):
+            weights = np.matrix(
+                -1 + 2 * np.random.rand(neuron_distribution_in_layers[i - 1], neuron_distribution_in_layers[i]))
+            biases = np.matrix(-1 + 2 * np.random.rand(1, neuron_distribution_in_layers[i]))
+            self.weights_of_the_layers.append(weights.T)
+            self.biases_of_the_layer.append(biases.T)
 
     def learn(self, input, label, rate):
         last_index = self.number_of_layers
@@ -79,19 +86,15 @@ class NeuralNetwork:
 
         W = self.weights_of_the_layers.copy()
         B = self.biases_of_the_layer.copy()
-                                                                                    # <Getting inputs>
+
         X = input.T
         outputs = [X]
 
         for layer in range(self.number_of_layers):
-            X = np.dot(W[layer], X)
-            #X += B[layer] // TODO
+            X = np.dot(W[layer], X) + B[layer]
             map(activation_f, X)
+            outputs.append(np.matrix(X.copy()))
 
-            mat = np.matrix(X.copy())
-            outputs.append(mat)
-                                                                                    # </Getting inputs>
-                                                                                    # <Getting deltas>
         deltas = [[] for layer in range(last_index)]
 
         outputs[last_index] = np.matrix(outputs[last_index])
@@ -107,15 +110,14 @@ class NeuralNetwork:
             derivative = np.dot(W[layer], outputs[layer])
             map(derivative_f, derivative)
             deltas[layer] = np.multiply(derivative, cost.T)
-                                                                                    # </Getting deltas>
-                                                                                    # <Getting new weights>
-        newW = [[] for layer in self.weights_of_the_layers]
 
-        for layer in range(1, last_index + 1):
-            derivative = np.dot(outputs[layer].T, deltas[layer - 1])
-            newW[layer - 1] = W[layer - 1] - derivative.T * rate
-                                                                                    # </Getting new weights>
-        return newW
+        for layer in range(0, last_index):
+            derivative = np.dot(outputs[layer + 1].T, deltas[layer])
+            W[layer] = W[layer] - derivative.T * rate
+            B[layer] = B[layer] - deltas[layer] * rate
+
+        self.weights_of_the_layers = W
+        self.biases_of_the_layer = B
 
     def cost(self, input, labels):
         eval = self.evaluate_at(input)
@@ -154,8 +156,7 @@ class NeuralNetwork:
 
         X = X.T
         for i in range(self.number_of_layers):
-            X = np.dot(self.weights_of_the_layers[i], X)
-            #X += self.biases_of_the_layer[i]
+            X = np.dot(self.weights_of_the_layers[i], X) + self.biases_of_the_layer[i]
             map(activation_f, X)
 
         return X.T
@@ -189,9 +190,3 @@ class NeuralNetwork:
 
                 df[column_name] = s
         return df
-
-nn = NeuralNetwork((3,4,2))
-for i in range(2000):
-    mat = nn.learn(np.matrix([1,2,3]), np.matrix([0.5, 1]), 0.5)
-    nn.weights_of_the_layers = mat
-    print(str(nn.cost_function([1, 2, 3], [0.5, 1])))
