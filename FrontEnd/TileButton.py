@@ -7,6 +7,7 @@ class TileButton:
     def __init__(self, pole, polygon):
         self.tile = pole
         self.polygon = polygon
+        self.window_scale = 1
 
     def isClickedLeft(self):
         if pygame.mouse.get_pressed()[0] == 0:
@@ -27,6 +28,9 @@ class TileButton:
             return False
 
     def isHovered(self):
-        mousePosition = pygame.mouse.get_pos()
-        if self.polygon.collidepoint(mousePosition):
+        position = pygame.mouse.get_pos()
+        if self.polygon.collidepoint((position[0] / self.window_scale, position[1] / self.window_scale)):
             return True
+
+    def set_window_scale(self, scale):
+        self.window_scale = scale

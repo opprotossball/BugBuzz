@@ -1,6 +1,4 @@
 from BackEnd.GameMechanic.Player import PlayerState
-from BackEnd.GameObjects.Robal import *
-from random import randrange
 from FrontEnd.Button import Button
 import pygame
 

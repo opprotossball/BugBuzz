@@ -17,11 +17,6 @@ class Display:
         self.selectedColor = selected_color
         self.max_fps = max_fps
 
-        self.SUPPORTED_SIZES = [
-            (1280, 720),
-            (1600, 900),
-            (1920, 1080)
-        ]
         self.DEFAULT_WIDTH = 1600
         self.DEFAULT_HEIGHT = 900
         self.TILE_RADIUS = 58
@@ -29,12 +24,15 @@ class Display:
         self.X_BOARD_CENTER = 759
         self.Y_BOARD_CENTER = 450
         self.BUG_RADIUS_RATIO = 1.4
+        self.MIN_SCALE = 0.3
 
+        self.width = self.DEFAULT_WIDTH
+        self.height = self.DEFAULT_HEIGHT
         self.font40 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 40)
         self.font30 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 30)
 
         self.main_surface = pygame.Surface((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT))
-        self.screen = pygame.display.set_mode((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT), HWSURFACE | DOUBLEBUF)
+        self.screen = pygame.display.set_mode((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT), HWSURFACE | DOUBLEBUF | RESIZABLE)
 
         self.window_scale = 1
         self.gameMaster = game_master
@@ -57,30 +55,46 @@ class Display:
         self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
         pygame.display.set_caption(caption)
 
-
-
     def updateWindow(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
             if event.type == pygame.VIDEORESIZE:
-                pass
+                self.resize(event.size)
         self.main_surface.fill(self.backgroundColor)
         self.draw_tiles()
         if self.gameMaster.ui is not None:
             self.gameMaster.ui.getInput()
             self.highlight()
             self.drawSelected()
+            self.drawButtons()
+            self.show_phase_title()
+            self.show_number_of_bugs_available()
+            self.show_number_of_resources()
         self.drawBugs()
-        self.drawButtons()
-        self.show_phase_title()
-        self.show_number_of_bugs_available()
-        self.show_number_of_resources()
         self.show_combat_results()
+        if self.window_scale != 1:
+            surface = pygame.transform.smoothscale(self.main_surface, (self.width, self.height))
+        else:
+            surface = self.main_surface
+        self.screen.blit(surface, (0, 0))
+
         pygame.display.flip()
-        self.screen.blit(self.main_surface, (0, 0))
         self.clock.tick(self.max_fps)
+
+    def resize(self, size):
+        new_width, new_height = size
+        if abs(self.width - new_width) > abs(self.height - new_height):
+            scale = new_width / self.DEFAULT_WIDTH
+        else:
+            scale = new_height / self.DEFAULT_HEIGHT
+        if scale < self.MIN_SCALE:
+            scale = self.MIN_SCALE
+        self.width = int(self.DEFAULT_WIDTH * scale)
+        self.height = int(self.DEFAULT_HEIGHT * scale)
+        self.screen = pygame.display.set_mode((self.width, self.height), HWSURFACE | DOUBLEBUF | RESIZABLE)
+        self.window_scale = scale
 
     def draw_hex(self, x_center, y_center, radius, color):
         vertices = []
@@ -106,6 +120,7 @@ class Display:
             else:
                 color = self.tileColor
             tile_button = TileButton(pole, self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, color))
+            tile_button.set_window_scale(self.window_scale)
             tile_buttons.append(tile_button)
         if self.gameMaster.ui is not None:
             self.gameMaster.ui.setTileButtons(tile_buttons)
@@ -121,7 +136,9 @@ class Display:
         y = 275
         for button in self.gameMaster.ui.hatch_buttons:
             button.draw(self.main_surface, x, y)
+            button.set_window_scale(self.window_scale)
             y += 144
+        self.gameMaster.ui.end_phase_button.set_window_scale(self.window_scale)
         self.gameMaster.ui.end_phase_button.draw(self.main_surface, 1300, 805)
 
     def drawBug(self, bug, tile):
