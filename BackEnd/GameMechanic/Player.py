@@ -19,7 +19,7 @@ class Player(ABC):
         self.side = side
         self.resources = 0
         self.kills = 0
-        self.attacked_army = None
+        self.attacked_bugs = []
         self.bugList = []
         self.state = PlayerState.INACTIVE
         self.bugs_available = {
@@ -67,7 +67,7 @@ class Player(ABC):
         self.kills = 0
         if opponent_army.was_attacked:
             return False, 0, None
-        attack_power = self.gm.get_attack_power(opponent_army)
+        attack_power, attacked_bugs = self.gm.get_attack_power_and_bugs_attacked(opponent_army)
         toughness = opponent_army.getToughnessArray()
         damage = 0
         rolls = self.gm.rollDice(attack_power)
@@ -78,29 +78,23 @@ class Player(ABC):
         attacked = attack_power > 0
         if attacked:
             opponent_army.was_attacked = True
-            self.attacked_army = opponent_army
+            self.attacked_bugs = attacked_bugs
             self.kills = kills
         return attacked, kills, rolls
 
     def kill_bug(self, bug):
-        if self.kills > 0 and bug.army == self.attacked_army:
-            neighbours = bug.field.getNeighbours()
-            can_be_killed = False
-            for neighbour in neighbours:
-                if self.gm.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    can_be_killed = True
-                    break
-            if can_be_killed:
-                if self.side == "B":
-                    other_player = self.gm.BlackPlayer
-                else:
-                    other_player = self.gm.WhitePlayer
-                other_player.bugList.remove(bug)
-                other_player.bugs_available[bug.short_name] += 1
-                bug.army.bugList.remove(bug)
-                bug.field.resetBug()
-                self.kills -= 1
-                return True
+        if self.kills > 0 and bug in self.attacked_bugs:
+            if self.side == "B":
+                other_player = self.gm.BlackPlayer
+            else:
+                other_player = self.gm.WhitePlayer
+            other_player.bugList.remove(bug)
+            other_player.bugs_available[bug.short_name] += 1
+            bug.army.bugList.remove(bug)
+            self.attacked_bugs.remove(bug)
+            bug.field.resetBug()
+            self.kills -= 1
+            return True
         return False
 
     @abstractmethod

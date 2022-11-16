@@ -118,7 +118,7 @@ class UI:
                                 self.game_master.display.highlightedColor = (150, 45, 45)
                                 self.rolls = rolls
                                 return
-                    elif self.player.kills > 0:
+                    elif self.player.kills > 0 and self.player.attacked_bugs.__len__() > 0:
                         return  # killing is compulsory for now
                     else:
                         self.attacking = False

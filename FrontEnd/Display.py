@@ -24,7 +24,7 @@ class Display:
         self.X_BOARD_CENTER = 759
         self.Y_BOARD_CENTER = 450
         self.BUG_RADIUS_RATIO = 1.4
-        self.MIN_SCALE = 0.3
+        self.MIN_SCALE = 0.5
 
         self.width = self.DEFAULT_WIDTH
         self.height = self.DEFAULT_HEIGHT
@@ -65,13 +65,13 @@ class Display:
         self.main_surface.fill(self.backgroundColor)
         self.draw_tiles()
         if self.gameMaster.ui is not None:
-            self.gameMaster.ui.getInput()
             self.highlight()
             self.drawSelected()
             self.drawButtons()
             self.show_phase_title()
             self.show_number_of_bugs_available()
             self.show_number_of_resources()
+            self.gameMaster.ui.getInput()
         self.drawBugs()
         self.show_combat_results()
         if self.window_scale != 1:
