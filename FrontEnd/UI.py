@@ -15,6 +15,8 @@ class UI:
         self.mode = None
         self.side = None
         self.player = None
+        self.rolls = None
+        self.attacking = False
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
         self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
@@ -113,13 +115,15 @@ class UI:
                         else:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
                             if was_attacked:
+                                self.attacking = True
                                 self.game_master.display.highlightedTiles = self.selectArmy(tile)
                                 self.game_master.display.highlightedColor = (150, 45, 45)
-                                print("Your rolls were: {}".format(rolls))
-                                print("kill {} bugs".format(kills))
+                                self.rolls = rolls
                                 return
                     elif self.player.kills > 0:
                         return  # killing is compulsory for now
+                    else:
+                        self.attacking = False
 
                 elif self.mode == PlayerState.MOVE:
                     if bug is None:
@@ -147,6 +151,7 @@ class UI:
         if self.mode != PlayerState.INACTIVE:
             if self.end_phase_button.isClickedLeft():
                 self.game_master.display.highlightedTiles = []
+                self.attacking = False
                 self.player.end_phase()
 
     def makeMove(self, tile):
@@ -187,3 +192,16 @@ class UI:
         else:
             color = self.BLACK
         return self.phase_titles[turn], color
+
+    def get_combat_results(self):
+        if not self.attacking:
+            return None, None
+        turn = self.game_master.turn
+        if turn < 3:
+            color = self.WHITE
+        else:
+            color = self.BLACK
+        text = "Your rolls were: {}\n Kill {} bug".format(self.rolls, self.player.kills)
+        if self.player.kills != 1:
+            text += "s"
+        return text, color
