@@ -32,7 +32,6 @@ class Display:
         self.font30 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 30)
 
         self.main_surface = pygame.Surface((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT))
-        self.screen = pygame.display.set_mode((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT), HWSURFACE | DOUBLEBUF | RESIZABLE)
 
         self.window_scale = 1
         self.gameMaster = game_master
@@ -53,9 +52,21 @@ class Display:
         self.antBlack = pygame.image.load("./FrontEnd/Assets/Bugs/AntBlack.png")
         self.grasshooperWhite = pygame.transform.flip(pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperWhite.png"), True, False)
         self.grasshooperBlack = pygame.image.load("./FrontEnd/Assets/Bugs/GrasshooperBlack.png")
+
+        info = pygame.display.Info()
+        if self.DEFAULT_WIDTH > info.current_w:
+            self.width = info.current_w * 4 / 5
+            self.scale = self.width / self.DEFAULT_WIDTH
+            self.height = self.DEFAULT_HEIGHT * self.scale
+        if self.height > info.current_h:
+            self.height = info.current_h * 4 / 5
+            self.scale = self.height / self.DEFAULT_HEIGHT
+            self.width = self.DEFAULT_WIDTH * self.scale
+
+        self.screen = pygame.display.set_mode((self.width, self.height), HWSURFACE | DOUBLEBUF | RESIZABLE)
         pygame.display.set_caption(caption)
 
-    def updateWindow(self):
+    def update_window(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -66,8 +77,8 @@ class Display:
         self.draw_tiles()
         if self.gameMaster.ui is not None:
             self.highlight()
-            self.drawSelected()
-            self.drawButtons()
+            self.draw_selected()
+            self.draw_buttons()
             self.show_phase_title()
             self.show_number_of_bugs_available()
             self.show_number_of_resources()
@@ -127,11 +138,11 @@ class Display:
 
     def drawBugs(self):
         for bug in self.gameMaster.BlackPlayer.bugList:
-            self.drawBug(bug, bug.field)
+            self.draw_bug(bug, bug.field)
         for bug in self.gameMaster.WhitePlayer.bugList:
-            self.drawBug(bug, bug.field)
+            self.draw_bug(bug, bug.field)
 
-    def drawButtons(self):
+    def draw_buttons(self):
         x = 40
         y = 275
         for button in self.gameMaster.ui.hatch_buttons:
@@ -141,7 +152,7 @@ class Display:
         self.gameMaster.ui.end_phase_button.set_window_scale(self.window_scale)
         self.gameMaster.ui.end_phase_button.draw(self.main_surface, 1300, 805)
 
-    def drawBug(self, bug, tile):
+    def draw_bug(self, bug, tile):
         coordinates = self.transform_to_real_coordinates(tile)
         image = None
         if bug.short_name == "K":
@@ -174,8 +185,7 @@ class Display:
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
 
-
-    def drawSelected(self):
+    def draw_selected(self):
         tile = self.gameMaster.ui.selected_tile
         if tile is not None:
             coordinates = self.transform_to_real_coordinates(tile)

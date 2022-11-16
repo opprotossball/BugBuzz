@@ -93,7 +93,7 @@ class GameMechanic:
 
     def updateWindow(self):
         if self.display is not None:
-            self.display.updateWindow()
+            self.display.update_window()
 
     def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
         return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
