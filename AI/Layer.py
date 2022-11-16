@@ -13,7 +13,7 @@ def map(func, matrix):
 
 
 class Layer(ABC):
-    def __init__(self, layer_size, activation_model=am.ReLu):
+    def __init__(self, layer_size, activation_model=am.SoftMax):
         self.activation_state = None
 
         self._activation_model = activation_model
@@ -24,8 +24,6 @@ class Layer(ABC):
 
         self._weights = None
         self._biases = None
-
-        self._delta = None
 
     @abstractmethod
     def _evaluate_concrete(self):
@@ -38,8 +36,8 @@ class Layer(ABC):
     def evaluate(self):
         self._evaluate_concrete()
 
-    def learn(self, cost, rate):
-        self._validate_input_is_compilable_with_this_layer_input(cost)
+    def back_propagation(self, cost, rate):
+        self._validate_input_is_compilable_with_this_layer_input(cost)  # ToDo Can be factored for optimization purposes
         self._learn_concrete(cost, rate)
 
     def set_previous_layer(self, layer):
@@ -54,7 +52,7 @@ class Layer(ABC):
     def _validate_input_is_compilable_with_this_layer_input(self, x):
         self.__validate_matrix_massege(x, "Input")
         if 1 != x.shape[0] and self._layer_size != x.shape[1]:
-            raise Exception("Input has to be compilable with layer of shape. Given:  " + x.shape +
+            raise Exception("Input has to be compilable with layer of shape. Given:  " + str(x.shape) +
                             " Expected: " + str((1, self._layer_size)) + ".")
 
     def set_weights(self, weights):
@@ -86,29 +84,31 @@ class Layer(ABC):
         return self._layer_size
 
     def generate_if_needed_and_finalize(self):
-        if self._biases is None:
-            self._biases = np.random.random(self._layer_size) * 2 - 1
-
         if self._weights is None:
-            self._biases = np.random.rand(self._layer_size, self._previous_layer.get_layer_size()) * 2 - 1
+            self._weights = np.matrix(np.random.rand(self._previous_layer.get_layer_size(), self._layer_size) * 2 - 1)
+
+        if self._biases is None:
+            self._biases = np.matrix(np.random.random(self._layer_size) * 2 - 1)
+
+        self._finalized = True
 
 
 class FullConnected(Layer, ABC):
     def _evaluate_concrete(self):
-        self._validate_input_is_compilable_with_this_layer_input(self._previous_layer.activation_state)
         self.activation_state = np.dot(self._previous_layer.activation_state, self._weights) + self._biases
         map(self._activation_model.activation, self.activation_state)
 
     def _learn_concrete(self, cost, rate):
-        out = np.dot(self._weights, self._previous_layer.get_activation_state()) + self._biases
+        out = np.dot(self._previous_layer.activation_state, self._weights)
         map(self._activation_model.activation_derivative, out)
-        self._delta = np.multiply(cost, out)
+        delta = np.multiply(cost, out)
 
-        self._previous_layer.learn()    # !VERY IMPORTANT!
+        n_cost = np.dot(delta, self._weights.T)
+        self._previous_layer.back_propagation(n_cost, rate)    # !VERY IMPORTANT!
 
-        der = np.dot(self._previous_layer.activation_state, self._delta)
-        self._weights = self._weights - der * rate
-        self._biases = self._biases - self._delta * rate
+        derivative = np.dot(self._previous_layer.activation_state.T, delta)
+        self._weights -= derivative * rate
+        self._biases -= delta * rate
 
 
 class InputLayer(Layer, ABC):

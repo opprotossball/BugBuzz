@@ -5,12 +5,7 @@ class CostModel(ABC):
     @staticmethod
     def evaluate(x, label):
         CostModel.__validate_input(x, label)
-        return CostModel.__concrete_eval(x,label)
-
-    @staticmethod
-    @abstractmethod
-    def __concrete_eval(x, label):
-        pass
+        return CostModel.RMS_eval(x, label)
 
     @staticmethod
     def __validate_input(x, label):
@@ -22,15 +17,14 @@ class CostModel(ABC):
             raise Exception("Shape of matrix x and matrix label has to be the same x: " + x.size
                             + " label: " + label.size)
 
-class RMS(CostModel, ABC):
     @staticmethod
-    def concrete_eval(x, label):
+    def RMS_eval(x, label):
         mat = x - label
         counter = 0
         sum = 0
         row, col = mat.shape
         for layer in range(row):
             for weight in range(col):
+                sum += mat.item((layer, weight)) ** 2
                 counter += 1
-                sum += mat.item((layer, weight))
         return sum / counter

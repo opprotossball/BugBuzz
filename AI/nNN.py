@@ -1,11 +1,9 @@
 import AI.CostModels as cm
-import Layer as l
+from AI.Layer import InputLayer
 
 
 class nNN:
-    def __init__(self, cost_model=cm.RMS):
-        self.__cost_model = cost_model
-
+    def __init__(self):
         self.__layers = []
         self.__input_layer = None
         self.__output_layer = None
@@ -20,14 +18,13 @@ class nNN:
         return self.__output_layer.activation_state
 
     def learn(self, x, label, rate):
-        self.__validate_if_finalized()
-        cost = x - label
-        for layer in range(self.__number_of_layers - 1):
-            cost = self.__layers[layer].learn(cost, rate)
+        res = self.evaluate_at(x)
+        cost = res - label
+        self.__layers[-1].back_propagation(cost, rate)
 
     def put_layer(self, layer):
-        if self.__number_of_layers == 0 and layer.__class__ != l.InputLayer:
-            raise Exception("First layer has to be instance of Layer.InputLayer.")
+        if self.__number_of_layers == 0 and layer.__class__ != InputLayer:
+            raise Exception("First layer has to be instance of Layer.InputLayer, not: " + str(layer.__class__) + ".")
         self.__layers.append(layer)
         self.__number_of_layers += 1
 
@@ -43,7 +40,7 @@ class nNN:
 
     def cost(self, x, label):
         result = self.evaluate_at(x)
-        return self.__cost_model.evaluate(result, label)
+        return cm.CostModel.RMS_eval(result, label)
 
     def __validate_if_finalized(self):
         if not self.is_finalized:
