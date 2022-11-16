@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 
 
 class ActivationModel(ABC):
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def activation(x):
         pass
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def activation_derivative(x):
         pass
 
@@ -21,7 +21,7 @@ class SoftMax(ActivationModel):
 
     @staticmethod
     def activation_derivative(x):
-        return (math.exp(-x))/(math.exp(-x) + 1)**2
+        return (math.exp(-x)) / (math.exp(-x) + 1) ** 2
 
 
 class ReLu(ActivationModel):

@@ -5,11 +5,11 @@ class CostModel(ABC):
     @staticmethod
     def evaluate(x, label):
         CostModel.__validate_input(x, label)
-        return CostModel.concrete_eval(x,label)
+        return CostModel.__concrete_eval(x,label)
 
-    @abstractmethod
     @staticmethod
-    def concrete_eval(x, label):
+    @abstractmethod
+    def __concrete_eval(x, label):
         pass
 
     @staticmethod
