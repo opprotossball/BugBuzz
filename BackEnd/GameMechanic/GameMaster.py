@@ -30,8 +30,8 @@ class GameMaster(GameMechanic):
         if self.turn == 0:
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
-            self.getArmies("C")
         elif self.turn == 1:
+            self.getArmies("C")
             self.resetMove("B")
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
@@ -40,8 +40,8 @@ class GameMaster(GameMechanic):
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
-            self.getArmies("B")
         elif self.turn == 4:
+            self.getArmies("B")
             self.resetMove("C")
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
