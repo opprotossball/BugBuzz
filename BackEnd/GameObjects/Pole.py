@@ -4,7 +4,9 @@ class Pole:
         self.r = r
         self.s = s
         self.resources = False
-        self.hatchery = False
+        self.is_white_hatchery = False
+        self.is_black_hatchery = False
+        self.hatcheryID = None
         self.size = size
 
         self.bug = None
@@ -30,8 +32,11 @@ class Pole:
         }
         return direction
 
-    def setHatchery(self, isHa, hatcheryID):
-        self.hatchery = isHa
+    def setHatchery(self, isHa, hatcheryID, side):
+        if side == "B":
+            self.is_white_hatchery = isHa
+        elif side == "C":
+            self.is_black_hatchery = isHa
         self.hatcheryID = hatcheryID
 
     def setBug(self, bug):

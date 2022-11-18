@@ -30,7 +30,7 @@ class Interfejs(ABC):
             for index_army in range(len(armies)):
                 if armies[index_army].numberOfMoves == 0:
                     continue
-                if self.GM.UI is None:
+                if self.GM.ui is None:
                     moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
                 else:
                     moves += concatenate_moves(armies[index_army], armies.getValidMoves())
@@ -57,8 +57,8 @@ class Interfejs(ABC):
             armies = self.GM.getArmies(self.oppositeSide())
             attacks = []
             for armies_index in range(len(armies)):
-                if self.GM.UI is None:
-                    attacks += concatenate_moves([armies_index], armies[armies_index].getAttacks())
+                if self.GM.ui is None:
+                    attacks += concatenate_moves([armies_index], armies[armies_index].get_attacks())
                 else:
                     attacks += armies
                     break
@@ -88,7 +88,7 @@ class Interfejs(ABC):
 
             for i in range(len(hatchery_fields)):
                 if hatchery_fields[i].bug is None:
-                    if self.GM.UI is None:
+                    if self.GM.ui is None:
                         options.append(i)
                     else:
                         options.append(hatchery_fields[i])

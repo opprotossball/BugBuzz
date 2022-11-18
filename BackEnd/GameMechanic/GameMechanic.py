@@ -1,3 +1,5 @@
+from random import randint
+
 from FrontEnd.UI import UI
 from FrontEnd.Display import Display
 from BackEnd.GameObjects.Armia import Armia
@@ -67,13 +69,46 @@ class GameMechanic:
                 option.append(hatch)
         return option
 
+    def resetMove(self, side):
+        if side == "B":
+            player = self.WhitePlayer
+        elif side == "C":
+            player = self.BlackPlayer
+        else:
+            print(side + "is not a valid side")
+            return False
+        for bug in player.bugList:
+            bug.setMove(bug.max_move)
+
     def setGUI(self):
-        self.UI = UI(self)
+        self.ui = UI(self)
         self.display = Display(self)
 
     def setDisplay(self):
         self.display = Display(self)
 
+    def rollDice(self, diceCount):
+        rollArray = [randint(1, 10) for i in range(diceCount)]
+        return rollArray
+
     def updateWindow(self):
         if self.display is not None:
-            self.display.updateWindow()
+            self.display.update_window()
+
+    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
+        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
+
+    def get_attack_power_and_bugs_attacked(self, attacked_army):
+        attacking_bugs = set()
+        attacking_armies = set()
+        attacked_bugs = set()
+        for bug in attacked_army.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    attacking_bugs.add(neighbour.bug)
+                    attacking_armies.add(neighbour.bug.army)
+                    attacked_bugs.add(bug)
+        power = len(attacking_bugs)
+        for army in attacking_armies:
+            power += army.calculate_attack()
+        return power, attacked_bugs

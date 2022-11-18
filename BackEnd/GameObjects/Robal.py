@@ -13,7 +13,7 @@ class Robal(ABC):
         self.army = None
         self.side = side
         self.field = None
-        
+
         self.short_name = ""
         self.validMoves = []
         self.invalidMoves = []
@@ -46,10 +46,14 @@ class Robal(ABC):
                 return True
         return False
 
+    def setMove(self, move):
+        self.move = move
+
 
 class Konik(Robal):
 
     def __init__(self, side):
+        self.max_move = 3
         self.move = 3
         self.attack = 0
         self.toughness = array('i', [1])
@@ -65,6 +69,7 @@ class Konik(Robal):
 class Mrowka(Robal):
 
     def __init__(self, side):
+        self.max_move = 4
         self.move = 4
         self.attack = 1
         self.toughness = array('i', [3, 4])
@@ -80,6 +85,7 @@ class Mrowka(Robal):
 class Pajak(Robal):
 
     def __init__(self, side):
+        self.max_move = 4
         self.move = 4
         self.attack = 3
         self.toughness = array('i', [1, 2, 3])
@@ -95,6 +101,7 @@ class Pajak(Robal):
 class Zuk(Robal):
 
     def __init__(self, side):
+        self.max_move = 2
         self.move = 2
         self.attack = 5
         self.toughness = array('i', [4, 5, 6])
