@@ -75,7 +75,7 @@ class Layer(ABC):
         expected_shape = (1, self._layer_size)
 
         if bias_shape != expected_shape:
-            raise Exception("Invalid size of bias. Given: " + str(bias_shape) + " Expected: " + str(expected_shape))
+            raise Exception("Invalid size of bias. Given: {given}, expected: {expected}".format(given=bias_shape, expected=expected_shape))
 
         if not self._finalized:
             self._biases = biases
@@ -106,3 +106,7 @@ class Layer(ABC):
     def get_activation_model(self):
         return self._activation_model
 
+    def get_previous_size(self):
+        if self._previous_layer is None:
+            return 1
+        return self._previous_layer.get_layer_size()
