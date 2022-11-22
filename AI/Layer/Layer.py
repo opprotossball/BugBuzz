@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import AI.ActivationModel as am
 import numpy as np
 
-
+valid_layer_short_name = ['F', 'I', 'C']
 def map(func, matrix):
     row, col = matrix.shape
     for layer in range(row):
@@ -13,7 +13,9 @@ def map(func, matrix):
 
 
 class Layer(ABC):
-    def __init__(self, layer_size, activation_model=am.SoftMax):
+    _short_name = "_"
+
+    def __init__(self, layer_size=0, activation_model=am.SoftMax):
         self.activation_state = None
 
         self._activation_model = activation_model
@@ -59,7 +61,7 @@ class Layer(ABC):
         self.__validate_matrix_massege(weights, "Weights")
         row, col = weights.shape
 
-        if row == col: #TODO
+        if row == col:  # TODO
             print("lalla")
 
         if not self._finalized:
@@ -92,43 +94,15 @@ class Layer(ABC):
 
         self._finalized = True
 
+    def get_short_name(self):
+        return self._short_name
 
-class FullConnected(Layer, ABC):
-    def _evaluate_concrete(self):
-        self.activation_state = np.dot(self._previous_layer.activation_state, self._weights) + self._biases
-        map(self._activation_model.activation, self.activation_state)
+    def get_weights(self):
+        return self._weights
 
-    def _learn_concrete(self, cost, rate):
-        out = np.dot(self._previous_layer.activation_state, self._weights)
-        map(self._activation_model.activation_derivative, out)
-        delta = np.multiply(cost, out)
+    def get_biases(self):
+        return self._biases
 
-        n_cost = np.dot(delta, self._weights.T)
-        self._previous_layer.back_propagation(n_cost, rate)    # !VERY IMPORTANT!
+    def get_activation_model(self):
+        return self._activation_model
 
-        derivative = np.dot(self._previous_layer.activation_state.T, delta)
-        self._weights -= derivative * rate
-        self._biases -= delta * rate
-
-
-class InputLayer(Layer, ABC):
-    def _evaluate_concrete(self):
-        pass
-
-    def _learn_concrete(self, cost, rate):
-        pass
-
-    def set_biases(self, biases):
-        pass
-
-    def set_weights(self, weights):
-        pass
-
-    def set_previous_layer_and_finalize(self, layer):
-        pass
-
-    def generate_if_needed_and_finalize(self):
-        pass
-
-class Convolutional(Layer, ABC):
-    pass
