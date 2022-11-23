@@ -9,15 +9,16 @@ from Util import Information
 
 class Armia:
     def __init__(self):
-        self.numberOfMoves = 20
+        self.numberOfMoves = 0
         self.bugList = []
         self.numberOfGrassHoppers = 0
+        self.attack = 0
+        self.was_attacked = False
 
     def addBug(self, bug):
         if bug.short_name == "K":
             self.numberOfGrassHoppers += 1
         self.bugList.append(bug)
-        self.numberOfMoves = min(self.numberOfMoves, bug.move_left)
         bug.army = self
 
     def getValidMoves(self):
@@ -60,12 +61,57 @@ class Armia:
                     return armyValidMoves
         return armyValidMoves
 
+
+    def hasAttack(self):
+        for bug in self.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    return True
+        return False
+
+    def get_attacks(self):
+        attackArray = []
+        for bug in self.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    if neighbour.bug.army in attackArray:
+                        continue
+                    else:
+                        attackArray.append(neighbour.bug.army)
+        return attackArray
+
+    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
+        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
+
+    def calculate_attack(self):
+        attack_values = [0 for i in range(6)]
+        for bug in self.bugList:
+            attack_values[bug.attack] += 1
+        for i in range(len(attack_values)-1, 0, -1):
+            if attack_values[i] >= math.ceil(len(self.bugList) / 2):
+                self.attack = i
+                return i
+            attack_values[i-1] += attack_values[i]
+        self.attack = 0
+        return 0
+
+    def getToughnessArray(self):
+        toughnessInterval = []
+        for bug in self.bugList:
+            newElement = bug.toughness
+            if newElement in toughnessInterval:
+                continue
+            else:
+                toughnessInterval += newElement
+        return toughnessInterval
+
     def performMove(self, direction):
         for bug in self.bugList:
             bug.state = "to move"
 
         while not self.haveEveryBugMoved():
             for bug in self.bugList:
+                bug.setMove(bug.move - 1)
                 if bug.state == "to move":
                     dict = bug.field.getDictionary()
                     if bug.hasEnemyInSurrounding():
@@ -80,101 +126,6 @@ class Armia:
                     else:
                         bug.state = "won't move"
         self.numberOfMoves -= 1
-        for bug in self.bugList:
-            bug.move_left -= 1
-
-    def setMove(self):
-        self.numberOfMoves = 20
-        for bug in self.bugList:
-            bug.move_left = bug.move
-            self.numberOfMoves = min(self.numberOfMoves, bug.move)
-
-    def performAttack(self, opponentArmy):
-        myArmies = []
-        myWarriors = []
-        attackers = []
-        diceCounter = 0
-
-        for bug in opponentArmy.bugList:
-            for neighbour in bug.field.getNeighbours():
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    if bug in attackers:
-                        continue
-                    else:
-                        attackers.append(bug)
-
-                    if neighbour.bug in myWarriors:
-                        continue
-                    else:
-                        myWarriors.append(neighbour.bug)
-
-                    if neighbour.bug.army in myArmies:
-                        continue
-                    else:
-                        myArmies.append(neighbour.bug.army)
-
-        for army in myArmies:
-            diceCounter = diceCounter + self.getAttackPower(army)
-
-        diceCounter = diceCounter + myWarriors.__len__()
-        rollOutcomes = self.rollDice(diceCounter)
-        opponentArmyToughness = self.getToughnessArray(attackers)
-
-        hitNumber = 0
-        for x in rollOutcomes:
-            if x not in opponentArmyToughness:
-                hitNumber += 1
-
-        return hitNumber
-
-
-    def hasAttack(self):
-        for bug in self.bugList:
-            for neighbour in bug.field.getNeighbours():
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    return True
-        return False
-
-    def getAttacks(self):
-        attackArray = []
-        for bug in self.bugList:
-            for neighbour in bug.field.getNeighbours():
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    if neighbour.bug.army in attackArray:
-                        continue
-                    else:
-                        attackArray.append(neighbour.bug.army)
-        return attackArray
-
-    def getAttackPower(self, army):
-        attackValue = Counter(army.bugList.attack)
-        sorted(attackValue, key=attackValue.keys(), reverse=True)
-        index = math.ceil((attackValue + 1)/2)
-        return attackValue[index]
-
-    def getToughnessArray(self, attackers):
-
-        toughnessInterval = []
-        for i in attackers:
-            newElement = attackers[i].toughness
-            if newElement in toughnessInterval:
-                continue
-            else:
-                toughnessInterval += newElement
-
-        return toughnessInterval
-
-    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
-        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
-
-    def rollDice(self, diceCount):
-        rollArray = [] * diceCount
-        i = 0
-        while i < diceCount:
-            rollArray[i] = random.randint(1, 10)
-            i += 1
-
-        return rollArray
 
     def haveEveryBugMoved(self):
         for bug in self.bugList:
@@ -182,19 +133,15 @@ class Armia:
                 return False
         return True
 
-    def getNumberOfResources(self):
-        grassHopperCounter = 0
-        hatcheryCounter = 0
-        for bug in self.bugList:
-            if type(bug) == Konik:
-                grassHopperCounter = grassHopperCounter + 1
-            if bug.field.hatchery:
-                hatcheryCounter = hatcheryCounter + 1
-
-        return grassHopperCounter * hatcheryCounter
-
     def has_bug_with_moves_to_examine(self):
         for bug in self.bugList:
             if len(bug.moveToExamine) > 0:
                 return True
         return False
+
+    def setMoves(self):
+        moves = 20
+        for bug in self.bugList:
+            if moves > bug.move:
+                moves = bug.move
+        self.numberOfMoves = moves

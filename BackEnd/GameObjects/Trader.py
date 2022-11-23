@@ -8,35 +8,33 @@ class Trader:
         self.SpiderPrice = 2
         self.BeetlePrice = 3
 
-    def getOptions(self, player):
+    def getOptions(self, available, bugs_available):
         options = []
-        if player.resources >= self.GrassHopperPrice:
-            options.append("Konik")
-        if player.resources >= self.AntPrice:
-            options.append("Mrowka")
-        if player.resources >= self.SpiderPrice:
-            options.append("Pajak")
-        if player.resources >= self.BeetlePrice:
-            options.append("Zuk")
+        if available >= self.GrassHopperPrice and bugs_available['K'] > 0:
+            options.append('K')
+        if available >= self.AntPrice and bugs_available['M'] > 0:
+            options.append('M')
+        if available >= self.SpiderPrice and bugs_available['P'] > 0:
+            options.append('P')
+        if available >= self.BeetlePrice and bugs_available['Z'] > 0:
+            options.append('Z')
         return options
 
-    def buyBug(self,  player, option):
-        if option in self.getOptions(player):
-            robal = 0
-            if option == "Konik":
-                robal = Konik(player.side)
-                player.resources -= 1
-            elif option == "Mrowka":
-                robal = Mrowka(player.side)
-                player.resources -= 1
-            elif option == "Pajak":
-                robal = Pajak(player.side)
-                player.resources -= 2
-            elif option == "Zuk":
-                robal = Zuk(player.side)
-                player.resources -= 3
-
-            player.bugList.append(robal)
-
-            return robal
-        return None
+    def buyBug(self, option, player):
+        side = player.side
+        bug = None
+        price = 0
+        if option in self.getOptions(player.resources, player.bugs_available):
+            if option == 'K':
+                bug = Konik(side)
+                price = 1
+            elif option == 'M':
+                bug = Mrowka(side)
+                price = 1
+            elif option == 'P':
+                bug = Pajak(side)
+                price = 2
+            elif option == 'Z':
+                bug = Zuk(side)
+                price = 3
+        return bug, price

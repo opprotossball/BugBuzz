@@ -14,8 +14,6 @@ class Robal(ABC):
         self.side = side
         self.field = None
 
-        self.move_left = 0
-        
         self.short_name = ""
         self.validMoves = []
         self.invalidMoves = []
@@ -48,22 +46,20 @@ class Robal(ABC):
                 return True
         return False
 
-    def reset_moves(self):
-        self.move_left = self.move
+    def setMove(self, move):
+        self.move = move
 
 
 class Konik(Robal):
 
     def __init__(self, side):
+        self.max_move = 3
         self.move = 3
         self.attack = 0
         self.toughness = array('i', [1])
         self.side = side
         self.army = None
         self.field = None
-
-        self.move_left = 0
-
         self.short_name = "K"
         self.validMoves = []
         self.invalidMoves = []
@@ -73,15 +69,13 @@ class Konik(Robal):
 class Mrowka(Robal):
 
     def __init__(self, side):
+        self.max_move = 4
         self.move = 4
         self.attack = 1
         self.toughness = array('i', [3, 4])
         self.side = side
         self.army = None
         self.field = None
-
-        self.move_left = 0
-
         self.short_name = "M"
         self.validMoves = []
         self.invalidMoves = []
@@ -91,15 +85,13 @@ class Mrowka(Robal):
 class Pajak(Robal):
 
     def __init__(self, side):
+        self.max_move = 4
         self.move = 4
         self.attack = 3
         self.toughness = array('i', [1, 2, 3])
         self.side = side
         self.army = None
         self.field = None
-
-        self.move_left = 0
-
         self.short_name = "P"
         self.validMoves = []
         self.invalidMoves = []
@@ -109,15 +101,13 @@ class Pajak(Robal):
 class Zuk(Robal):
 
     def __init__(self, side):
+        self.max_move = 2
         self.move = 2
         self.attack = 5
         self.toughness = array('i', [4, 5, 6])
         self.side = side
         self.army = None
         self.field = None
-
-        self.move_left = 0
-
         self.short_name = "Z"
         self.validMoves = []
         self.invalidMoves = []

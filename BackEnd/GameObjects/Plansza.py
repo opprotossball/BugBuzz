@@ -59,17 +59,17 @@ class Plansza:
         pole = self.root
         while pole.E is not None:
             pole = pole.E
-        pole.setHatchery(True, 2)
-        pole.WS.setHatchery(True, 1)
-        pole.WN.setHatchery(True, 3)
+        pole.setHatchery(True, 2, "B")
+        pole.WS.setHatchery(True, 1, "B")
+        pole.WN.setHatchery(True, 3, "B")
         self.whitesHatchery = [pole, pole.WS, pole.WN]
 
         pole = self.root
         while pole.W is not None:
             pole = pole.W
-        pole.setHatchery(True, 2)
-        pole.ES.setHatchery(True, 3)
-        pole.EN.setHatchery(True, 1)
+        pole.setHatchery(True, 2, "C")
+        pole.ES.setHatchery(True, 3, "C")
+        pole.EN.setHatchery(True, 1, "C")
         self.blacksHatchery = [pole, pole.ES, pole.EN]
 
     def setResources(self):

@@ -1,28 +1,27 @@
-from BackEnd.GameObjects.Plansza import Plansza
-from BackEnd.GameObjects.Trader import Trader
+from random import randint
+
 from FrontEnd.UI import UI
 from FrontEnd.Display import Display
 from BackEnd.GameObjects.Armia import Armia
+from BackEnd.GameObjects.Plansza import Plansza
 from Util import Information
-
-
-def concatenate_moves(table1, table2):
-    concatenated = []
-    for el1 in table1:
-        for el2 in table2:
-            concatenated.append((el1, el2))
-    return concatenated
 
 
 class GameMechanic:
     def __init__(self):
+        self.board = Plansza(Information.board_size)
         self.BlackPlayer = None
         self.WhitePlayer = None
 
-        self.board = Plansza(Information.board_size)
-
-    def getArmies(self, player):
+    def getArmies(self, side):
         armies = []
+
+        if side == "B":
+            player = self.WhitePlayer
+        elif side == "C":
+            player = self.BlackPlayer
+        else:
+            return
 
         for bug in player.bugList:
             bug.army = None
@@ -33,125 +32,83 @@ class GameMechanic:
             army = Armia()
             army.addBug(bug)
             bug.recruitNeighbours()
+            army.setMoves()
             armies.append(army)
 
         return armies
 
-    def getResourcesForPlayer(self, player):
+    def getResourcesForSide(self, side):
         resources = self.board.resources
-        self.getArmies(player)
+        self.getArmies(side)
         n = 1
         for field in resources:
-            if field.bug is not None and field.bug.side == player.side:
+            if field.bug is not None and field.bug.side == side:
                 n += field.bug.army.numberOfGrassHoppers
         return n
 
-    def isAvailableSpaceForHatch(self, side, board):
+    def isAvailableSpaceForHatch(self, side):
         hatchery = []
         if side == "B":
-            hatchery = board.whitesHatchery
+            hatchery = self.board.whitesHatchery
         elif side == "C":
-            hatchery = board.blacksHatchery
+            hatchery = self.board.blacksHatchery
         for hatch in hatchery:
             if hatch.bug is None:
                 return True
         return False
 
-    def getMovesForPlayer(self, player):
-        armies = self.getArmies(player)
-        moves = []
-        for army in armies:
-            if army.numberOfMoves <= 0:
-                continue
-            moves += concatenate_moves([army], army.getValidMoves())
-        moves.append("end")
-        return moves
-
-    def performMove(self, army, direction):
-        army.performMove(direction)
-
-    def getAttacksForPlayer(self, player):
-        armies = self.getArmies(self.oppositeSide(player.side))
-        attacks = []
-        for army in armies:
-            if army.hasAttack():
-                attacks += army
-        attacks.append("end")
-        return attacks
-
-    def performAttack1(self):
-        pass
-
-    def performAttack2(self):
-        pass
-
-    def getHatchForPlayer(self, player):
-        hatchery_field = self.getAvailableSpaceForHatch(player)
-
-        trader = Trader()
-        possible_to_hatch = trader.getOptions(player)
-
-        options = concatenate_moves(hatchery_field, possible_to_hatch)
-        options.append("end")
-        return options
-
-    def performHatch(self, player, hatchery_field, option):
-        trader = Trader()
-        bug = trader.buyBug(player, option)
-        bug.moveBugTo(hatchery_field)
-
-    def getAvailableSpaceForHatch(self, player):
-        hatchery = self.getHatcheryForPlayer(player)
+    def getAvailableSpaceForHatch(self, side):
+        hatchery = []
+        if side == "B":
+            hatchery = self.board.whitesHatchery
+        elif side == "C":
+            hatchery = self.board.blacksHatchery
         option = []
         for hatch in hatchery:
-            if hatch.bug is None:
+            if hatch.bug is not None:
                 option.append(hatch)
         return option
 
-    def getHatcheryForPlayer(self, player):
-        if player.side == "B":
-            return self.board.whitesHatchery
-        elif player.side == "C":
-            return self.board.blacksHatchery
-
-    def getResourcesForPlayer(self, player):
-        n = 1
-        for field in self.board.resources:
-            if field.bug is not None and field.bug.side == player.side:
-                n += field.bug.army.numberOfGrassHoppers
-        return n
-
-    def reset_move_left(self, armies):
-        for army in armies:
-            army.setMove()
-
-    def oppositeSide(self, side):
+    def resetMove(self, side):
         if side == "B":
-            return self.BlackPlayer
+            player = self.WhitePlayer
+        elif side == "C":
+            player = self.BlackPlayer
         else:
-            return self.WhitePlayer
-
-    def gameIsOver(self, board):
-        bug = board.resources[0].bug
-        if bug is not None:
-            side = bug.side
-        else:
+            print(side + "is not a valid side")
             return False
-
-        for pole in board.resources:
-            if pole.bug is None or pole.bug.side != side:
-                return False
-
-        self.winner_side = side
-        return True
+        for bug in player.bugList:
+            bug.setMove(bug.max_move)
 
     def setGUI(self):
-        self.UI = UI(self)
+        self.ui = UI(self)
         self.display = Display(self)
 
     def setDisplay(self):
         self.display = Display(self)
 
+    def rollDice(self, diceCount):
+        rollArray = [randint(1, 10) for i in range(diceCount)]
+        return rollArray
+
     def updateWindow(self):
         if self.display is not None:
-            self.display.updateWindow()
+            self.display.update_window()
+
+    def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
+        return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
+
+    def get_attack_power_and_bugs_attacked(self, attacked_army):
+        attacking_bugs = set()
+        attacking_armies = set()
+        attacked_bugs = set()
+        for bug in attacked_army.bugList:
+            for neighbour in bug.field.getNeighbours():
+                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
+                    attacking_bugs.add(neighbour.bug)
+                    attacking_armies.add(neighbour.bug.army)
+                    attacked_bugs.add(bug)
+        power = len(attacking_bugs)
+        for army in attacking_armies:
+            power += army.calculate_attack()
+        return power, attacked_bugs

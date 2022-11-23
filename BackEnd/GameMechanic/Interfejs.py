@@ -21,56 +21,88 @@ class Interfejs(ABC):
 
         self.bugList = []
 
-        self.hatchery = []
-
     def performMove(self):
         choice = ""
-        armies = self.GM.getArmies(self)
-        self.GM.reset_move_left(armies)
         while choice != "end":
-            moves = self.GM.getMovesForPlayer(self)
+            self.update()
+            armies = self.GM.getArmies(self.side)
+            moves = []
+            for index_army in range(len(armies)):
+                if armies[index_army].numberOfMoves == 0:
+                    continue
+                if self.GM.ui is None:
+                    moves += concatenate_moves([index_army], armies[index_army].getValidMoves())
+                else:
+                    moves += concatenate_moves(armies[index_army], armies.getValidMoves())
+            moves.append("end")
             if len(moves) > 1:
                 choice = self.getMove(moves)
             else:
                 choice = "end"
-
             if choice != "end":
-                army, direction = choice
-                self.GM.performMove(army, direction)
-            self.update()
+                army_index, direction = choice
+                armies[army_index].performMove(direction)
+        self.update()
+
+    def oppositeSide(self):
+        if self.side == "B":
+            return "C"
+        else:
+            return "B"
 
     def performAttack(self):
         choice = ""
         while choice != "end":
             self.update()
-            attacks = self.GM.getAttacksForPlayer(self)
-
+            armies = self.GM.getArmies(self.oppositeSide())
+            attacks = []
+            for armies_index in range(len(armies)):
+                if self.GM.ui is None:
+                    attacks += concatenate_moves([armies_index], armies[armies_index].get_attacks())
+                else:
+                    attacks += armies
+                    break
+            attacks.append("end")
             if len(attacks) > 1:
                 choice = self.getAttack(attacks)
             else:
                 choice = "end"
-
             if choice != "end":
-                attacked_army = choice
-                self.GM.performAttack1(attacked_army)
-            self.update()
+                index, attacked_army = choice
+                armies[index].performeMove(attacked_army)
+        self.update()
 
     def performHatchery(self):
         choice = ""
-        self.resources = self.GM.getResourcesForPlayer(self)
-        while choice != "end":
+        while choice != "end" and self.GM.isAvailableSpaceForHatch(self.side):
             self.update()
-            possible_to_hatch = self.GM.getHatchForPlayer(self)
+            trader = Trader()
+            possible_to_hatch = trader.getOptions(self.resources)
+            hatchery_fields = []
+            if self.side == "C":
+                hatchery_fields = self.GM.board.blacksHatchery
+            elif self.side == "B":
+                hatchery_fields = self.GM.board.whitesHatchery
 
-            if len(possible_to_hatch) > 1:
-                choice = self.getHatch(possible_to_hatch)
-            else:
-                choice = "end"
+            options = []
 
+            for i in range(len(hatchery_fields)):
+                if hatchery_fields[i].bug is None:
+                    if self.GM.ui is None:
+                        options.append(i)
+                    else:
+                        options.append(hatchery_fields[i])
+
+            possible_to_hatch = concatenate_moves(options, possible_to_hatch)
+            possible_to_hatch.append("end")
+            choice = self.getHatch(possible_to_hatch)
             if choice != "end":
                 field, bug = choice
-                self.GM.performHatch(self, field, bug)
-            self.update()
+                bug, price = trader.buyBug(bug, self.resources, self.side)
+                self.bugList.append(bug)
+                self.resources -= price
+                bug.moveBugTo(hatchery_fields[field])
+        self.update()
 
     @abstractmethod
     def getMove(self, possible_moves):
