@@ -3,6 +3,16 @@ from abc import ABC, abstractmethod
 
 valid_am_short_name = ["SoftMax", "ReLu", "Neutral"]
 
+
+def get_activation_model(code):
+    if code == "SoftMax":
+        return SoftMax
+    elif code == "ReLu":
+        return ReLu
+    elif code == "Neutral":
+        return Neutral
+
+
 class ActivationModel(ABC):
     @staticmethod
     @abstractmethod

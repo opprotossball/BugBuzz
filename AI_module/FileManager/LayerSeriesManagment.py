@@ -3,11 +3,12 @@ import ast
 import numpy as np
 import pandas as pd
 
-from AI.Layer.Layer import valid_layer_short_name
-from AI.Layer.Convolutional import Convolutional
-from AI.Layer.InputLayer import InputLayer
-from AI.Layer.FullyConnected import FullyConnected
-from AI.ActivationModel import *
+from AI_module.AI.Layer.Convolutional import Convolutional
+from AI_module.AI.Layer.FullyConnected import FullyConnected
+from AI_module.AI.Layer.InputLayer import InputLayer
+from AI_module.AI.Layer.Layer import valid_layer_short_name
+
+from AI_module.AI.Layer.ActivationModel import valid_am_short_name, get_activation_model
 
 
 def to_dict(layer):
@@ -36,7 +37,7 @@ def from_series(series):
     l_size = int(series['l_size'])
     l_size_prev = int(series['l_prev'])
 
-    l_am = __get_activation_model(series['l_am'])
+    l_am = get_activation_model(series['l_am'])
 
     layer = __get_layer(l_type, l_size, l_am)
 
@@ -61,16 +62,6 @@ def __get_layer(code, size, am):
         return InputLayer(size, activation_model=am)
     elif code == "C":
         return Convolutional(size, activation_model=am)
-
-
-def __get_activation_model(code):
-    if code == "SoftMax":
-        return SoftMax
-    elif code == "ReLu":
-        return ReLu
-    elif code == "Neutral":
-        return Neutral
-
 
 def __validate(series):
     if not isinstance(series, pd.Series):

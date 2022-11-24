@@ -1,11 +1,11 @@
 import pandas as pd
 
-import AI.CostModels as cm
-from AI.Layer.InputLayer import InputLayer
-from AI.Layer.LayerSeriesManagment import to_dict
+import AI_module.AI.CostModels as cm
+from AI_module.AI.Layer.InputLayer import InputLayer
+from AI_module.FileManager.LayerSeriesManagment import to_dict
 
 
-class nNN:
+class NN:
     def __init__(self):
         self.__layers = []
         self.__input_layer = None
