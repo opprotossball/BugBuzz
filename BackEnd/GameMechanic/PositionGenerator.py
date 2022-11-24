@@ -3,6 +3,8 @@ from BackEnd.GameObjects.Plansza import Plansza
 from BackEnd.GameMechanic.GeneratorPlayer import GeneratorPlayer
 from Util import Information
 
+factorials = [1, 1]
+
 
 def set_bugs_available(board, player):
     for tile in board.iterList:
@@ -11,6 +13,13 @@ def set_bugs_available(board, player):
             player.bugs_available[bug.short_name] -= 1
 
 
+def calculate_roll_probability(success_count, dice_count, toughness_length):
+    success_chance = 1 - toughness_length / 10
+    for i in range(len(factorials), dice_count + 1):
+        factorials.append(factorials[-1] * i)
+    result = factorials[dice_count] / factorials[success_count] / factorials[dice_count - success_count]
+    result *= pow(success_chance, success_count) * pow(1 - success_chance, dice_count - success_count)
+    return result
 
 
 class PositionGenerator:
