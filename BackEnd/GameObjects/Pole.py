@@ -1,3 +1,6 @@
+from Util.PlayerEnum import PlayerEnum
+
+
 class Pole:
     def __init__(self, q, r, s, size):
         self.q = q
@@ -33,9 +36,9 @@ class Pole:
         return direction
 
     def setHatchery(self, isHa, hatcheryID, side):
-        if side == "B":
+        if side == PlayerEnum.B:
             self.is_white_hatchery = isHa
-        elif side == "C":
+        elif side == PlayerEnum.C:
             self.is_black_hatchery = isHa
         self.hatcheryID = hatcheryID
 

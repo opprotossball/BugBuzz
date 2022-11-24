@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 from BackEnd.GameObjects.Trader import Trader
+from Util.PlayerEnum import PlayerEnum
 
 
 class PlayerState(Enum):
@@ -41,10 +42,10 @@ class Player(ABC):
         return True
 
     def perform_hatch(self, bug_type, tile):
-        if self.side == "B":
+        if self.side == PlayerEnum.B:
             if not tile.is_white_hatchery:
                 return False
-        elif self.side == "C":
+        elif self.side == PlayerEnum.C:
             if not tile.is_black_hatchery:
                 return False
 
@@ -84,7 +85,7 @@ class Player(ABC):
 
     def kill_bug(self, bug):
         if self.kills > 0 and bug in self.attacked_bugs:
-            if self.side == "B":
+            if self.side == PlayerEnum.B:
                 other_player = self.gm.BlackPlayer
             else:
                 other_player = self.gm.WhitePlayer

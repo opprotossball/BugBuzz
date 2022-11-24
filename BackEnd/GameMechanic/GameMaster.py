@@ -1,6 +1,6 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
-from BackEnd.GameObjects.Robal import Konik
+from Util.PlayerEnum import PlayerEnum
 
 
 class GameMaster(GameMechanic):
@@ -31,21 +31,21 @@ class GameMaster(GameMechanic):
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 1:
-            self.getArmies("C")
-            self.resetMove("B")
+            self.getArmies(PlayerEnum.C)
+            self.resetMove(PlayerEnum.B)
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
-            self.WhitePlayer.resources = self.getResourcesForSide("B")
+            self.WhitePlayer.resources = self.getResourcesForSide(PlayerEnum.B)
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 4:
-            self.getArmies("B")
-            self.resetMove("C")
+            self.getArmies(PlayerEnum.B)
+            self.resetMove(PlayerEnum.C)
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
-            self.BlackPlayer.resources = self.getResourcesForSide("C")
+            self.BlackPlayer.resources = self.getResourcesForSide(PlayerEnum.C)
             self.BlackPlayer.set_state(PlayerState.HATCH)
 
     def gameIsOver(self):

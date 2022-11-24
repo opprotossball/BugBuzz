@@ -170,14 +170,14 @@ class UI:
         return move_performed
 
     def get_count_of_bugs_available(self):
-        if self.side == "B":
+        if self.side == PlayerEnum.B:
             color = self.WHITE
         else:
             color = self.BLACK
         return self.player.bugs_available, color
 
     def get_number_of_resources(self):
-        if self.side == "B":
+        if self.side == PlayerEnum.B:
             color = self.WHITE
         else:
             color = self.BLACK

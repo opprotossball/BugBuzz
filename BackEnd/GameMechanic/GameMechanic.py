@@ -1,10 +1,11 @@
 from random import randint
 
-from FrontEnd.UI import UI
-from FrontEnd.Display import Display
 from BackEnd.GameObjects.Armia import Armia
 from BackEnd.GameObjects.Plansza import Plansza
+from FrontEnd.Display import Display
+from FrontEnd.UI import UI
 from Util import Information
+from Util.PlayerEnum import PlayerEnum
 
 
 class GameMechanic:
@@ -16,9 +17,9 @@ class GameMechanic:
     def getArmies(self, side):
         armies = []
 
-        if side == "B":
+        if side == PlayerEnum.B:
             player = self.WhitePlayer
-        elif side == "C":
+        elif side == PlayerEnum.C:
             player = self.BlackPlayer
         else:
             return
@@ -48,9 +49,9 @@ class GameMechanic:
 
     def isAvailableSpaceForHatch(self, side):
         hatchery = []
-        if side == "B":
+        if side == PlayerEnum.B:
             hatchery = self.board.whitesHatchery
-        elif side == "C":
+        elif side == PlayerEnum.C:
             hatchery = self.board.blacksHatchery
         for hatch in hatchery:
             if hatch.bug is None:
@@ -59,9 +60,9 @@ class GameMechanic:
 
     def getAvailableSpaceForHatch(self, side):
         hatchery = []
-        if side == "B":
+        if side == PlayerEnum.B:
             hatchery = self.board.whitesHatchery
-        elif side == "C":
+        elif side == PlayerEnum.C:
             hatchery = self.board.blacksHatchery
         option = []
         for hatch in hatchery:
@@ -70,9 +71,9 @@ class GameMechanic:
         return option
 
     def resetMove(self, side):
-        if side == "B":
+        if side == PlayerEnum.B:
             player = self.WhitePlayer
-        elif side == "C":
+        elif side == PlayerEnum.C:
             player = self.BlackPlayer
         else:
             print(side + "is not a valid side")
