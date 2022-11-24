@@ -37,7 +37,7 @@ class Player(ABC):
         if army.numberOfMoves < 1:
             return False
         army.performMove(direction)
-        self.gm.getArmies(self.side)
+        self.gm.get_armies(self.side)
         return True
 
     def perform_hatch(self, bug_type, tile):
@@ -60,7 +60,6 @@ class Player(ABC):
         self.bugs_available[bug.short_name] -= 1
         self.bugList.append(bug)
         bug.moveBugTo(tile)
-        self.gm.getArmies(self.side)
         return True
 
     def perform_attack(self, opponent_army):

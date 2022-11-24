@@ -25,7 +25,7 @@ class Interfejs(ABC):
         choice = ""
         while choice != "end":
             self.update()
-            armies = self.GM.getArmies(self.side)
+            armies = self.GM.get_armies(self.side)
             moves = []
             for index_army in range(len(armies)):
                 if armies[index_army].numberOfMoves == 0:
@@ -54,7 +54,7 @@ class Interfejs(ABC):
         choice = ""
         while choice != "end":
             self.update()
-            armies = self.GM.getArmies(self.oppositeSide())
+            armies = self.GM.get_armies(self.oppositeSide())
             attacks = []
             for armies_index in range(len(armies)):
                 if self.GM.ui is None:
