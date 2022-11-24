@@ -8,8 +8,7 @@ class GeneratorPlayer(Player):
         super().__init__(gm, side)
 
     def set_state(self, state):
-        self.state = state
-        self.gm.ui.setMode(state, self.side)
+        pass
 
     def clone(self):
         new = GeneratorPlayer(self.gm, self.side)
