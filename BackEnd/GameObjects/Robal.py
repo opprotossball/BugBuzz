@@ -43,7 +43,7 @@ class Robal(ABC):
         self.field.bug = self
 
     def clone(self):
-        clone = self.__class__.__init__(self.side)
+        clone = self.__class__(self.side)
         return clone
 
     def hasEnemyInSurrounding(self):

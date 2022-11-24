@@ -38,7 +38,7 @@ class NNPlayer(Player):
     def perform_attacks(self):
         choice = ""
         while choice != "end":
-            armies = self.gm.getArmies(self.oppositeSide())
+            armies = self.gm.get_armies(self.oppositeSide())
             attacks = []
             for armies_index in range(len(armies)):
                 if self.gm.ui is None:
@@ -59,7 +59,7 @@ class NNPlayer(Player):
     def perform_moves(self):
         choice = ""
         while choice != "end":
-            armies = self.gm.getArmies(self.side)
+            armies = self.gm.get_armies(self.side)
             moves = []
             for index_army in range(len(armies)):
                 if armies[index_army].numberOfMoves == 0:
