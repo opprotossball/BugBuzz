@@ -9,11 +9,20 @@ from Util import Information
 
 class GameMechanic:
     def __init__(self):
-        self.board = Plansza(Information.board_size)
+        self.board = None
         self.BlackPlayer = None
         self.WhitePlayer = None
 
-    def getArmies(self, side):
+    def set_player(self, player):
+        if player.side == 'B':
+            self.WhitePlayer = player
+        else:
+            self.BlackPlayer = player
+
+    def set_board(self, board):
+        self.board = board
+
+    def get_armies(self, side):
         armies = []
 
         if side == "B":
@@ -37,9 +46,9 @@ class GameMechanic:
 
         return armies
 
-    def getResourcesForSide(self, side):
+    def get_resources_for_side(self, side):
         resources = self.board.resources
-        self.getArmies(side)
+        self.get_armies(side)
         n = 1
         for field in resources:
             if field.bug is not None and field.bug.side == side:
@@ -65,7 +74,7 @@ class GameMechanic:
             hatchery = self.board.blacksHatchery
         option = []
         for hatch in hatchery:
-            if hatch.bug is not None:
+            if hatch.bug is None:
                 option.append(hatch)
         return option
 
