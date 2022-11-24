@@ -1,5 +1,13 @@
 from abc import ABC, abstractmethod
 from array import *
+from enum import Enum
+
+
+class RobalEnum(Enum):
+    K = 0
+    M = 1
+    P = 2
+    Z = 3
 
 
 class Robal(ABC):
@@ -60,7 +68,7 @@ class Konik(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "K"
+        self.short_name = RobalEnum.K
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
@@ -76,7 +84,7 @@ class Mrowka(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "M"
+        self.short_name = RobalEnum.M
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
@@ -92,7 +100,7 @@ class Pajak(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "P"
+        self.short_name = RobalEnum.P
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
@@ -108,7 +116,7 @@ class Zuk(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "Z"
+        self.short_name = RobalEnum.Z
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []

@@ -1,6 +1,9 @@
-from BackEnd.GameMechanic.Player import PlayerState
-from FrontEnd.Button import Button
 import pygame
+
+from BackEnd.GameMechanic.Player import PlayerState
+from BackEnd.GameObjects.Robal import RobalEnum
+from FrontEnd.Button import Button
+from Util.PlayerEnum import PlayerEnum
 
 
 class UI:
@@ -17,24 +20,34 @@ class UI:
         self.attacking = False
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
-        self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
+        self.grasshooper_white_hatch_button = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
         self.spider_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteHatchButton.png")
         self.beetle_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteHatchButton.png")
 
-        self.ant_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteSelectedHatchButton.png")
-        self.grasshooper_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteSelectedHatchButton.png")
-        self.spider_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteSelectedHatchButton.png")
-        self.beetle_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteSelectedHatchButton.png")
+        self.ant_white_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/antWhiteSelectedHatchButton.png")
+        self.grasshooper_white_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/grasshooperWhiteSelectedHatchButton.png")
+        self.spider_white_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/spiderWhiteSelectedHatchButton.png")
+        self.beetle_white_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/beetleWhiteSelectedHatchButton.png")
 
         self.ant_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antBlackHatchButton.png")
-        self.grasshooper_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperBlackHatchButton.png")
+        self.grasshooper_black_hatch_button = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/grasshooperBlackHatchButton.png")
         self.spider_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackHatchButton.png")
         self.beetle_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackHatchButton.png")
 
-        self.ant_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/antBlackSelectedHatchButton.png")
-        self.grasshooper_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperBlackSelectedHatchButton.png")
-        self.spider_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackSelectedHatchButton.png")
-        self.beetle_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackSelectedHatchButton.png")
+        self.ant_black_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/antBlackSelectedHatchButton.png")
+        self.grasshooper_black_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/grasshooperBlackSelectedHatchButton.png")
+        self.spider_black_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/spiderBlackSelectedHatchButton.png")
+        self.beetle_black_hatch_button_selected = pygame.image.load(
+            "./FrontEnd/Assets/Buttons/beetleBlackSelectedHatchButton.png")
 
         end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
         end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
@@ -66,18 +79,28 @@ class UI:
         self.mode = mode
         self.side = side
         hatch_buttons = []
-        if side == "B":
+        if side == PlayerEnum.B:
             self.player = self.game_master.WhitePlayer
-            hatch_buttons.append(Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, "M"))
-            hatch_buttons.append(Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None, "K"))
-            hatch_buttons.append(Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, "P"))
-            hatch_buttons.append(Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, "Z"))
-        elif side == "C":
+            hatch_buttons.append(
+                Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, RobalEnum.M))
+            hatch_buttons.append(
+                Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None,
+                       RobalEnum.K))
+            hatch_buttons.append(
+                Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, RobalEnum.P))
+            hatch_buttons.append(
+                Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, RobalEnum.Z))
+        elif side == PlayerEnum.C:
             self.player = self.game_master.BlackPlayer
-            hatch_buttons.append(Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, "M"))
-            hatch_buttons.append(Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None, "K"))
-            hatch_buttons.append(Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, "P"))
-            hatch_buttons.append(Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, "Z"))
+            hatch_buttons.append(
+                Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, RobalEnum.M))
+            hatch_buttons.append(
+                Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None,
+                       RobalEnum.K))
+            hatch_buttons.append(
+                Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, RobalEnum.P))
+            hatch_buttons.append(
+                Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, RobalEnum.Z))
         self.hatch_buttons = hatch_buttons
 
     def setTileButtons(self, tilebutons):

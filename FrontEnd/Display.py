@@ -155,30 +155,31 @@ class Display:
     def draw_bug(self, bug, tile):
         coordinates = self.transform_to_real_coordinates(tile)
         image = None
-        if bug.short_name == "K":
-            if bug.side == 'B':
+        if bug.short_name == RobalEnum.K:
+            if bug.side == s.PlayerEnum.B:
                 image = self.grasshooperWhite
-            elif bug.side == 'C':
+            elif bug.side == s.PlayerEnum.C:
                 image = self.grasshooperBlack
-        elif bug.short_name == "M":
-            if bug.side == 'B':
+        elif bug.short_name == RobalEnum.M:
+            if bug.side == s.PlayerEnum.B:
                 image = self.antWhite
-            elif bug.side == 'C':
+            elif bug.side == s.PlayerEnum.C:
                 image = self.antBlack
-        elif bug.short_name == "P":
-            if bug.side == 'B':
+        elif bug.short_name == RobalEnum.P:
+            if bug.side == s.PlayerEnum.B:
                 image = self.spiderWhite
-            elif bug.side == 'C':
+            elif bug.side == s.PlayerEnum.C:
                 image = self.spiderBlack
-        elif bug.short_name == "Z":
-            if bug.side == 'B':
+        elif bug.short_name == RobalEnum.Z:
+            if bug.side == s.PlayerEnum.B:
                 image = self.beetleWhite
-            elif bug.side == 'C':
+            elif bug.side == s.PlayerEnum.C:
                 image = self.beetleBlack
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")
             return
-        self.main_surface.blit(image, (int(coordinates[0] - image.get_width() / 2), int(coordinates[1] - image.get_height() / 2)))
+        self.main_surface.blit(image, (
+        int(coordinates[0] - image.get_width() / 2), int(coordinates[1] - image.get_height() / 2)))
 
     def highlight(self):
         for tile in self.highlightedTiles:

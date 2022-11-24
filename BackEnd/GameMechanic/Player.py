@@ -2,6 +2,7 @@ import math
 from abc import ABC, abstractmethod
 from enum import Enum
 
+from BackEnd.GameObjects.Robal import RobalEnum
 from BackEnd.GameObjects.Trader import Trader
 from Util.PlayerEnum import PlayerEnum
 
@@ -24,10 +25,10 @@ class Player(ABC):
         self.bugList = []
         self.state = PlayerState.INACTIVE
         self.bugs_available = {
-            'M': 3,
-            'K': 3,
-            'P': 2,
-            'Z': 2
+            RobalEnum.M: 3,
+            RobalEnum.K: 3,
+            RobalEnum.P: 2,
+            RobalEnum.Z: 2
         }
 
     def end_phase(self):

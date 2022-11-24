@@ -1,9 +1,6 @@
 import math
-import random
 
 from BackEnd.GameObjects.Robal import *
-from collections import Counter
-
 from Util import Information
 
 
@@ -16,7 +13,7 @@ class Armia:
         self.was_attacked = False
 
     def addBug(self, bug):
-        if bug.short_name == "K":
+        if bug.short_name == RobalEnum.K:
             self.numberOfGrassHoppers += 1
         self.bugList.append(bug)
         bug.army = self
@@ -61,7 +58,6 @@ class Armia:
                     return armyValidMoves
         return armyValidMoves
 
-
     def hasAttack(self):
         for bug in self.bugList:
             for neighbour in bug.field.getNeighbours():
@@ -87,11 +83,11 @@ class Armia:
         attack_values = [0 for i in range(6)]
         for bug in self.bugList:
             attack_values[bug.attack] += 1
-        for i in range(len(attack_values)-1, 0, -1):
+        for i in range(len(attack_values) - 1, 0, -1):
             if attack_values[i] >= math.ceil(len(self.bugList) / 2):
                 self.attack = i
                 return i
-            attack_values[i-1] += attack_values[i]
+            attack_values[i - 1] += attack_values[i]
         self.attack = 0
         return 0
 
