@@ -1,15 +1,28 @@
 class Pole:
     def __init__(self, q, r, s, size):
-        self.bug = None
         self.q = q
         self.r = r
         self.s = s
         self.resources = False
-        self.hatchery = False
+        self.is_white_hatchery = False
+        self.is_black_hatchery = False
+        self.hatcheryID = None
         self.size = size
-        self.iterating_list = [self.WN, self.W, self.WS, self.ES, self.E, self.EN]
 
-        self.direction = {
+        self.bug = None
+
+        self.WN = None
+        self.EN = None
+        self.E = None
+        self.ES = None
+        self.WS = None
+        self.W = None
+
+    def getNeighbours(self):
+        return [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
+
+    def getDictionary(self):
+        direction = {
             "WN" : self.WN,
             "EN" : self.EN,
             "E" : self.E,
@@ -17,24 +30,13 @@ class Pole:
             "WS" : self.WS,
             "W" : self.W
         }
+        return direction
 
-        self.neighbours = [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
-        self.directions = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
-
-        self.direction = {
-            "WN" : self.WN,
-            "EN" : self.EN,
-            "E" : self.E,
-            "ES" : self.ES,
-            "WS" : self.WS,
-            "W" : self.W
-        }
-
-        self.neighbours = [self.WN, self.EN, self.E, self.ES, self.WS, self.W]
-        self.directions = ['WN', 'EN', 'E', 'ES', 'WS', 'W']
-
-    def setHatchery(self, isHa, hatcheryID):
-        self.hatchery = isHa
+    def setHatchery(self, isHa, hatcheryID, side):
+        if side == "B":
+            self.is_white_hatchery = isHa
+        elif side == "C":
+            self.is_black_hatchery = isHa
         self.hatcheryID = hatcheryID
 
     def setBug(self, bug):
