@@ -17,42 +17,43 @@ class Plansza:
 
         self.size = size
 
-        self.plane = [[[0 for x in range(2 * size + 2)] for x in range(2 * size + 2)] for x in range(2 * size + 2)]
-        ##TODO optimize self.plan. A lot of memory is wasted.
+        self.plane = [[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)]
 
         for q in range(-size, size + 1):
             for r in range(max(-size, -size - q), min(size + 1, size + 1 - q)):
                 s = - q - r
                 pole = Pole(q, r, s, self.size)
-                self.setField(q, r, s, pole)
+                self.setField (q, r, s, pole)
                 self.iterList.append(pole)
+
         for pole in self.iterList:
-            q, r, s = pole.q, pole.r, pole.s
-            self.addNeighbours(self.getField(q, r, s))
+            self.addNeighbours(pole)
+
         self.root = self.getField(0, 0, 0)
+
         self.setHatchery()
         self.setResources()
 
         sorted(self.iterList, key=getKeyFor)
 
     def setField(self, q, r, s, field):
-        self.plane[q + self.size][r + self.size][s + self.size] = field
+        self.plane[q + self.size][r + self.size] = field
 
     def getField(self, q, r, s):
-        return self.plane[q + self.size][r + self.size][s + self.size]
+        return self.plane[q + self.size][r + self.size]
 
     def addNeighbours(self, pole):
-        if pole.r - 1 >= -self.size and pole.s + 1 < self.size + 1:
+        if pole.r - 1 >= -self.size and pole.s < self.size:
             pole.setES(self.getField(pole.q, pole.r - 1, pole.s + 1))
-        if pole.r - 1 >= -self.size and pole.q + 1 < self.size + 1:
+        if pole.r - 1 >= -self.size and pole.q < self.size:
             pole.setWS(self.getField(pole.q + 1, pole.r - 1, pole.s))
-        if pole.s - 1 >= -self.size and pole.r + 1 < self.size + 1:
+        if pole.s - 1 >= -self.size and pole.r < self.size:
             pole.setWN(self.getField(pole.q, pole.r + 1, pole.s - 1))
-        if pole.s - 1 >= -self.size and pole.q + 1 < self.size + 1:
+        if pole.s - 1 >= -self.size and pole.q < self.size:
             pole.setW(self.getField(pole.q + 1, pole.r, pole.s - 1))
-        if pole.q - 1 >= -self.size and pole.r + 1 < self.size + 1:
+        if pole.q - 1 >= -self.size and pole.r < self.size:
             pole.setEN(self.getField(pole.q - 1, pole.r + 1, pole.s))
-        if pole.q - 1 >= -self.size and pole.s + 1 < self.size + 1:
+        if pole.q - 1 >= -self.size and pole.s < self.size:
             pole.setE(self.getField(pole.q - 1, pole.r, pole.s + 1))
 
     def setHatchery(self):
@@ -83,7 +84,8 @@ class Plansza:
         clone = Plansza(self.size)
         for i in range(len(self.iterList)):
             if self.iterList[i].bug is not None:
-                clone.iterList[i].bug = self.iterList[i].bug.clone()
+                bug = self.iterList[i].bug.clone()
+                bug.moveBugTo(clone.iterList[i])
         return clone
 
     def getPositionWithoutToMoveNorResourcesInfo(self):
