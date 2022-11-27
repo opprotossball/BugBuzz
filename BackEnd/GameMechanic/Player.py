@@ -32,12 +32,13 @@ class Player(ABC):
     def end_phase(self):
         self.gm.next_phase()
 
-    def perform_move(self, army, direction):
+    def perform_move(self, army, direction, update_armies=False):
         army.setMoves()
         if army.numberOfMoves < 1:
             return False
         army.performMove(direction)
-        self.gm.get_armies(self.side)
+        if update_armies:
+            self.gm.get_armies(self.side)
         return True
 
     def perform_hatch(self, bug_type, tile):

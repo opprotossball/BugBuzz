@@ -19,7 +19,7 @@ class Robal(ABC):
         self.invalidMoves = []
         self.moveToExamine = []
 
-        self.state = "moved"  # "to move", "won't move"
+        self.moved = False
 
     def recruitNeighbours(self):
         for field in self.field.getNeighbours():
@@ -31,13 +31,17 @@ class Robal(ABC):
         self.field = field
 
     def moveBugTo(self, field):
+        if field.bug is not None:
+            return False
         if self.field is not None:
             self.field.bug = None
         self.field = field
         self.field.bug = self
+        return True
 
     def clone(self):
         clone = self.__class__(self.side)
+        clone.move = self.move
         return clone
 
     def hasEnemyInSurrounding(self):

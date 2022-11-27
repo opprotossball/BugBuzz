@@ -107,29 +107,29 @@ class Armia:
 
     def performMove(self, direction):
         for bug in self.bugList:
-            bug.state = "to move"
+            bug.moved = False
 
         while not self.haveEveryBugMoved():
             for bug in self.bugList:
                 bug.setMove(bug.move - 1)
-                if bug.state == "to move":
+                if not bug.moved:
                     dict = bug.field.getDictionary()
                     if bug.hasEnemyInSurrounding():
-                        bug.state = "won't move"
+                        bug.moved = True
                     elif dict[direction] is not None:
                         if dict[direction].bug is None:
                             field = dict[direction]
                             bug.moveBugTo(field)
-                            bug.state = "moved"
-                        elif dict[direction].bug.state == "won't move":
-                            bug.state = "won't move"
+                            bug.moved = True
+                        elif dict[direction].bug.moved:
+                            bug.moved = True
                     else:
-                        bug.state = "won't move"
+                        bug.moved = True
         self.numberOfMoves -= 1
 
     def haveEveryBugMoved(self):
         for bug in self.bugList:
-            if bug.state == "to move":
+            if not bug.moved:
                 return False
         return True
 

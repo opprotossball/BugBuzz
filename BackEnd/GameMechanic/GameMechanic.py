@@ -22,15 +22,18 @@ class GameMechanic:
     def set_board(self, board):
         self.board = board
 
-    def get_armies(self, side):
+    def get_armies(self, side, player=None):
         armies = []
 
-        if side == "B":
-            player = self.WhitePlayer
-        elif side == "C":
-            player = self.BlackPlayer
+        if player is not None:
+            player = player
         else:
-            return
+            if side == "B":
+                player = self.WhitePlayer
+            elif side == "C":
+                player = self.BlackPlayer
+            else:
+                return
 
         for bug in player.bugList:
             bug.army = None
@@ -45,6 +48,23 @@ class GameMechanic:
             armies.append(army)
 
         return armies
+
+    def set_army_on_tile(self, tile):
+        bug = tile.bug
+        if bug is not None:
+            army = Armia()
+            army.addBug(bug)
+            bug.recruitNeighbours()
+            army.setMoves()
+            return army
+        else:
+            return None
+    def set_player_bugs(self, board, player):
+        player.bugList = []
+        for tile in board.iterList:
+            bug = tile.bug
+            if bug is not None and bug.side == player.side:
+                player.bugList.append(bug)
 
     def get_resources_for_side(self, side):
         resources = self.board.resources

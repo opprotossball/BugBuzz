@@ -164,7 +164,7 @@ class UI:
         direction = directions[0]
         leader = self.selected_tile.bug
         self.selected_tile = leader.field
-        self.player.perform_move(leader.army, direction)
+        self.player.perform_move(leader.army, direction, update_armies=True)
         move_performed = self.game_master.display.highlightedTiles = self.selectArmy(tile)
         self.selected_tile = leader.field
         return move_performed

@@ -83,9 +83,10 @@ class Plansza:
         clone = Plansza(self.size)
         for i in range(len(self.iterList)):
             if self.iterList[i].bug is not None:
-                clone.iterList[i].bug = self.iterList[i].bug.clone()
+                bug = self.iterList[i].bug.clone()
+                bug.moveBugTo(clone.iterList[i])
+                #clone.iterList[i].bug = bug
         return clone
-
 
     def getPositionWithoutToMoveNorResourcesInfo(self):
         position = ''
@@ -146,26 +147,41 @@ class Plansza:
         power = 0
         for field in self.iterList:
             if field.bug is None:
-                input += 0*pow(16, power)
-            elif field.bug.short_name == 'k' and field.bug.side == "B":
+                input += 0
+            elif field.bug.short_name == 'K' and field.bug.side == "B":
                 input += 1*pow(16, power)
-            elif field.bug.short_name == 'm' and field.bug.side == "B":
+            elif field.bug.short_name == 'M' and field.bug.side == "B":
                 input += 2*pow(16, power)
-            elif field.bug.short_name == 'p' and field.bug.side == "B":
+            elif field.bug.short_name == 'P' and field.bug.side == "B":
                 input += 3*pow(16, power)
-            elif field.bug.short_name == 'z' and field.bug.side == "B":
+            elif field.bug.short_name == 'Z' and field.bug.side == "B":
                 input += 4*pow(16, power)
-            elif field.bug.short_name == 'k' and field.bug.side == "C":
+            elif field.bug.short_name == 'K' and field.bug.side == "C":
                 input += 9*pow(16, power)
-            elif field.bug.short_name == 'm' and field.bug.side == "C":
+            elif field.bug.short_name == 'M' and field.bug.side == "C":
                 input += 10*pow(16, power)
-            elif field.bug.short_name == 'p' and field.bug.side == "C":
+            elif field.bug.short_name == 'P' and field.bug.side == "C":
                 input += 11*pow(16, power)
-            elif field.bug.short_name == 'z' and field.bug.side == "C":
+            elif field.bug.short_name == 'Z' and field.bug.side == "C":
                 input += 12*pow(16, power)
             power += 1
         return input
 
+    def get_hash_2(self):
+        empty_count = 0
+        code = ""
+        for t in self.iterList:
+            if t.bug is None:
+                empty_count += 1
+            else:
+                if empty_count != 0:
+                    code += str(empty_count)
+                    empty_count = 0
+                name = t.bug.short_name
+                if t.bug.side == "C":
+                    name = name.lower()
+                code += name
+        return code.__hash__()
 
 def getKeyFor(Pole):
     return Pole.r * 60 - Pole.q
