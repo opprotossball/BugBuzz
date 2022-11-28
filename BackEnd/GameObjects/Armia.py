@@ -21,47 +21,6 @@ class Armia:
         self.bugList.append(bug)
         bug.army = self
 
-    def getValidMoves(self):
-        for bug in self.bugList:
-            bug.moveToExamine = Information.directionOptions.copy()
-            bug.validMoves = []
-            bug.invalidMoves = []
-
-        while self.has_bug_with_moves_to_examine():
-            for bug in self.bugList:
-                move_to_examine = bug.moveToExamine.copy()
-                for name_of_direction in bug.moveToExamine:
-                    neighbour = bug.field.getDictionary()[name_of_direction]
-                    if neighbour is None:  # Pole nie istnieje
-                        move_to_examine.remove(name_of_direction)
-                        bug.invalidMoves.append(name_of_direction)
-                    elif neighbour.bug is not None:  # Pole istnieje i znajduje się na nim robal
-                        if neighbour.bug.side != bug.side:  # Przeciwnika
-                            bug.moveToExamine = []
-                            bug.validMoves = []
-                            bug.invalidMoves = Information.directionOptions.copy()
-                            break
-                        elif name_of_direction in neighbour.bug.validMoves:  # Nasz i może on się ruszyć w kierunku
-                            move_to_examine.remove(name_of_direction)
-                            bug.validMoves.append(name_of_direction)
-                        elif name_of_direction in neighbour.bug.invalidMoves:  # Nasz i nie może on się ruszyć w kierunku
-                            move_to_examine.remove(name_of_direction)
-                            bug.invalidMoves.append(name_of_direction)
-                    else:  # Na polu nic nie ma
-                        move_to_examine.remove(name_of_direction)
-                        bug.validMoves.append(name_of_direction)
-                    bug.moveToExamine = move_to_examine
-
-        armyValidMoves = []
-        for bug in self.bugList:
-            for move in bug.validMoves:
-                if move not in armyValidMoves:
-                    armyValidMoves.append(move)
-                if armyValidMoves == Information.directionOptions:
-                    return armyValidMoves
-        return armyValidMoves
-
-
     def hasAttack(self):
         for bug in self.bugList:
             for neighbour in bug.field.getNeighbours():
@@ -132,12 +91,6 @@ class Armia:
             if not bug.moved:
                 return False
         return True
-
-    def has_bug_with_moves_to_examine(self):
-        for bug in self.bugList:
-            if len(bug.moveToExamine) > 0:
-                return True
-        return False
 
     def setMoves(self):
         moves = 20

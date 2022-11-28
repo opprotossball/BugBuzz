@@ -141,3 +141,17 @@ class GameMechanic:
         for army in attacking_armies:
             power += army.calculate_attack()
         return power, attacked_bugs
+
+    def set_position_for_player(self, board, player, delete_others=True):  # bugs controlled by other player are unchanged
+        if delete_others:
+            for tile in board.iterList:
+                if tile.bug is not None and tile.bug.side == player.side:
+                    tile.bug = None
+        for bug in player.bugList:
+            bug.field.bug = bug
+
+    def change_position_for_player(self, old_player, new_player):
+        for bug in old_player.bugList:
+            bug.field.bug = None
+        for bug in new_player.bugList:
+            bug.field.bug = bug

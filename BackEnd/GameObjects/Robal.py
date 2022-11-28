@@ -21,6 +21,7 @@ class Robal(ABC):
 
         self.moved = False
 
+
     def recruitNeighbours(self):
         for field in self.field.getNeighbours():
             if field is not None and field.bug is not None and field.bug.side == self.side and field.bug.army is None:
@@ -41,6 +42,12 @@ class Robal(ABC):
 
     def clone(self):
         clone = self.__class__(self.side)
+        clone.move = self.move
+        return clone
+
+    def clone_with_field(self):
+        clone = self.__class__(self.side)
+        clone.field = self.field
         clone.move = self.move
         return clone
 
@@ -68,6 +75,7 @@ class Konik(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
 
 
 class Mrowka(Robal):
@@ -84,6 +92,7 @@ class Mrowka(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
 
 
 class Pajak(Robal):
@@ -100,6 +109,7 @@ class Pajak(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
 
 
 class Zuk(Robal):
@@ -116,3 +126,4 @@ class Zuk(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
