@@ -16,7 +16,8 @@ class GameMaster(GameMechanic):
 
     def new_game(self, player_white, player_black):
         self.set_board(Plansza(Information.board_size))
-        self.set_players(player_white, player_black)
+        self.set_player(player_white)
+        self.set_player(player_black)
         self.next_phase()
 
         while True:
@@ -30,7 +31,7 @@ class GameMaster(GameMechanic):
         if self.turn == 6:
             self.turn = 0
         if self.turn == 0:
-            self.get_armies("B")
+            self.get_armies("C")
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 1:
