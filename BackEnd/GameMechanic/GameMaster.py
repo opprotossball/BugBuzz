@@ -27,26 +27,24 @@ class GameMaster(GameMechanic):
                 return
 
     def next_phase(self):
+        self.get_armies("B")
+        self.get_armies("C")
         self.turn += 1
         if self.turn == 6:
             self.turn = 0
         if self.turn == 0:
-            self.get_armies("C")
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 1:
-            self.get_armies("C")
             self.resetMove("B")
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
             self.WhitePlayer.resources = self.get_resources_for_side("B")
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
-            self.get_armies("B")
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 4:
-            self.get_armies("B")
             self.resetMove("C")
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
