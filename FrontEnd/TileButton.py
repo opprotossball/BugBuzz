@@ -1,6 +1,8 @@
 import pygame
 
+
 class TileButton:
+
     clickedLeft = False
     clickedRight = False
 
@@ -9,25 +11,25 @@ class TileButton:
         self.polygon = polygon
         self.window_scale = 1
 
-    def isClickedLeft(self):
+    def is_clicked_left(self):
         if pygame.mouse.get_pressed()[0] == 0:
             TileButton.clickedLeft = False
-        elif self.isHovered() and not TileButton.clickedLeft:
+        elif self.is_hovered() and not TileButton.clickedLeft:
             TileButton.clickedLeft = True
             return True
         else:
             return False
 
-    def isClickedRight(self):
+    def is_clicked_right(self):
         if pygame.mouse.get_pressed()[2] == 0:
             TileButton.clickedRight = False
-        elif self.isHovered() and not TileButton.clickedRight:
+        elif self.is_hovered() and not TileButton.clickedRight:
             TileButton.clickedRight = True
             return True
         else:
             return False
 
-    def isHovered(self):
+    def is_hovered(self):
         position = pygame.mouse.get_pos()
         if self.polygon.collidepoint((position[0] / self.window_scale, position[1] / self.window_scale)):
             return True
