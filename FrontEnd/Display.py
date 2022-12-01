@@ -56,12 +56,12 @@ class Display:
         info = pygame.display.Info()
         if self.DEFAULT_WIDTH > info.current_w:
             self.width = info.current_w * 4 / 5
-            self.scale = self.width / self.DEFAULT_WIDTH
-            self.height = self.DEFAULT_HEIGHT * self.scale
+            self.window_scale = self.width / self.DEFAULT_WIDTH
+            self.height = self.DEFAULT_HEIGHT * self.window_scale
         if self.height > info.current_h:
             self.height = info.current_h * 4 / 5
-            self.scale = self.height / self.DEFAULT_HEIGHT
-            self.width = self.DEFAULT_WIDTH * self.scale
+            self.window_scale = self.height / self.DEFAULT_HEIGHT
+            self.width = self.DEFAULT_WIDTH * self.window_scale
 
         self.screen = pygame.display.set_mode((self.width, self.height), HWSURFACE | DOUBLEBUF | RESIZABLE)
         pygame.display.set_caption(caption)

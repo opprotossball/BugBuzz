@@ -41,7 +41,7 @@ class Player(ABC):
             self.gm.get_armies(self.side)
         return True
 
-    def perform_hatch(self, bug_type, tile):
+    def perform_hatch(self, bug_type, tile, update_armies=False):
         if self.side == "B":
             if not tile.is_white_hatchery:
                 return False
@@ -61,6 +61,8 @@ class Player(ABC):
         self.bugs_available[bug.short_name] -= 1
         self.bugList.append(bug)
         bug.moveBugTo(tile)
+        if update_armies:
+            self.gm.get_armies(self.side)
         return True
 
     def perform_attack(self, opponent_army):

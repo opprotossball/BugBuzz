@@ -39,7 +39,7 @@ class UI:
         end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
         end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
 
-        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2)
+        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, selected_for_time=0.2, keyboard_key=pygame.K_SPACE)
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -94,12 +94,12 @@ class UI:
     def getInput(self):
         if self.mode == PlayerState.HATCH:
             for hatchButton in self.hatch_buttons:
-                hatchButton.isClickedLeft()
-                if hatchButton.isSelected():
+                hatchButton.is_clicked_left()
+                if hatchButton.is_selected():
                     self.chosen_to_hatch = hatchButton.bugShortName
 
         for tile_button in self.tile_buttons:
-            if tile_button.isClickedLeft():
+            if tile_button.is_clicked_left():
                 tile = tile_button.tile
                 bug = tile.bug
 
@@ -131,7 +131,7 @@ class UI:
 
                 elif self.mode == PlayerState.HATCH:
                     if self.chosen_to_hatch is not None:
-                        if self.player.perform_hatch(self.chosen_to_hatch, tile):
+                        if self.player.perform_hatch(self.chosen_to_hatch, tile, update_armies=True):
                             self.chosen_to_hatch = None
                             return
 
@@ -147,7 +147,7 @@ class UI:
             self.selected_tile = None
 
         if self.mode != PlayerState.INACTIVE:
-            if self.end_phase_button.isClickedLeft():
+            if self.end_phase_button.is_clicked_left():
                 self.game_master.display.highlightedTiles = []
                 self.attacking = False
                 self.player.end_phase()
