@@ -9,7 +9,8 @@ class Robal(ABC):
     def __init__(self, side):
         self.move = 0
         self.attack = 0
-        self.toughness = 0
+        self.toughness = []
+        self.cost = 0
         self.army = None
         self.side = side
         self.field = None
@@ -32,13 +33,10 @@ class Robal(ABC):
         self.field = field
 
     def moveBugTo(self, field):
-        if field.bug is not None:
-            return False
         if self.field is not None:
             self.field.bug = None
         self.field = field
         self.field.bug = self
-        return True
 
     def clone(self):
         clone = self.__class__(self.side)
@@ -64,10 +62,11 @@ class Robal(ABC):
 class Konik(Robal):
 
     def __init__(self, side):
+        self.cost = 1
         self.max_move = 3
         self.move = 3
         self.attack = 0
-        self.toughness = array('i', [1])
+        self.toughness = [1]
         self.side = side
         self.army = None
         self.field = None
@@ -81,10 +80,11 @@ class Konik(Robal):
 class Mrowka(Robal):
 
     def __init__(self, side):
+        self.cost = 1
         self.max_move = 4
         self.move = 4
         self.attack = 1
-        self.toughness = array('i', [3, 4])
+        self.toughness = [3, 4]
         self.side = side
         self.army = None
         self.field = None
@@ -98,10 +98,11 @@ class Mrowka(Robal):
 class Pajak(Robal):
 
     def __init__(self, side):
+        self.cost = 2
         self.max_move = 4
         self.move = 4
         self.attack = 3
-        self.toughness = array('i', [1, 2, 3])
+        self.toughness = [1, 2, 3]
         self.side = side
         self.army = None
         self.field = None
@@ -115,10 +116,11 @@ class Pajak(Robal):
 class Zuk(Robal):
 
     def __init__(self, side):
+        self.cost = 3
         self.max_move = 2
         self.move = 2
         self.attack = 5
-        self.toughness = array('i', [4, 5, 6])
+        self.toughness = [4, 5, 6]
         self.side = side
         self.army = None
         self.field = None

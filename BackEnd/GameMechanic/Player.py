@@ -38,7 +38,9 @@ class Player(ABC):
             return False
         army.performMove(direction)
         if update_armies:
-            self.gm.get_armies(self.side)
+            armies = self.gm.get_armies(self.side)
+            for a in armies:
+                a.setMoves()
         return True
 
     def perform_hatch(self, bug_type, tile, update_armies=False):
@@ -70,7 +72,7 @@ class Player(ABC):
         if opponent_army.was_attacked:
             return False, 0, None
         attack_power, attacked_bugs = self.gm.get_attack_power_and_bugs_attacked(opponent_army)
-        toughness = opponent_army.getToughnessArray()
+        toughness = opponent_army.get_toughness_array()
         damage = 0
         rolls = self.gm.rollDice(attack_power)
         for result in rolls:

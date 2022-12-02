@@ -75,16 +75,19 @@ class Display:
                 self.resize(event.size)
         self.main_surface.fill(self.backgroundColor)
         self.draw_tiles()
+
         if self.gameMaster.ui is not None:
+            self.gameMaster.ui.getInput()
             self.highlight()
             self.draw_selected()
             self.draw_buttons()
             self.show_phase_title()
             self.show_number_of_bugs_available()
             self.show_number_of_resources()
-            self.gameMaster.ui.getInput()
+            self.show_combat_results()
+            self.show_stats()
+
         self.drawBugs()
-        self.show_combat_results()
         if self.window_scale != 1:
             surface = pygame.transform.smoothscale(self.main_surface, (self.width, self.height))
         else:
@@ -124,9 +127,7 @@ class Display:
         tile_buttons = []
         for pole in self.gameMaster.board.iterList:
             coordinates = self.transform_to_real_coordinates(pole)
-            if pole.is_white_hatchery or pole.is_black_hatchery:
-                color = self.hatcheryColor
-            elif pole.resources:
+            if pole.resources:
                 color = self.resourcesColor
             else:
                 color = self.tileColor
@@ -192,7 +193,6 @@ class Display:
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.selectedColor)
 
     def show_phase_title(self):
-        turn = self.gameMaster.turn
         text, color = self.gameMaster.ui.get_phase_title()
         title = self.font40.render(text, True, color)
         self.main_surface.blit(title, (int(1350 - title.get_width() / 2), int(75 - title.get_height() / 2)))
@@ -225,3 +225,16 @@ class Display:
             text = self.font30.render(line, True, color)
             self.main_surface.blit(text, (int(x - text.get_width() / 2), int(y - text.get_height() / 2)))
             y += int(text.get_height() * 1.3)
+
+    def show_stats(self):
+        message, color = self.gameMaster.ui.get_stats()
+        if message is None:
+            return
+        lines = message.split("\n")
+        x = 1350
+        y = 175
+        for line in lines:
+            text = self.font30.render(line, True, color)
+            self.main_surface.blit(text, (int(x - text.get_width() / 2), int(y - text.get_height() / 2)))
+            y += int(text.get_height() * 1.3)
+

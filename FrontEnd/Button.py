@@ -61,7 +61,7 @@ class Button:
             self.last_clicked_time = pygame.time.get_ticks()
         elif not self.rect.collidepoint(position):
             self.selected = False
-            action = False
+            self.clickedLeft = False
         return action
 
     def is_selected(self):

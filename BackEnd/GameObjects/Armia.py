@@ -54,15 +54,15 @@ class Armia:
         self.attack = 0
         return 0
 
-    def getToughnessArray(self):
+    def get_toughness_array(self):
         toughnessInterval = []
         for bug in self.bugList:
-            newElement = bug.toughness
-            if newElement in toughnessInterval:
-                continue
-            else:
-                toughnessInterval += newElement
-        return toughnessInterval
+            for newElement in bug.toughness:
+                if newElement in toughnessInterval:
+                    continue
+                else:
+                    toughnessInterval.append(newElement)
+        return sorted(toughnessInterval)
 
     def performMove(self, direction):
         for bug in self.bugList:
