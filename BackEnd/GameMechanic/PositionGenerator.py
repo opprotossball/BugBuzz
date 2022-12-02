@@ -112,12 +112,12 @@ if __name__ == "__main__":  # TEST
     pg = PositionGenerator()
     b = Plansza(Information.board_size)
     i = 0
-    for t in b.iterList:
-        if t.resources and i < 3:
-            i += 1
-            bug = Mrowka("B")
-            bug.moveBugTo(t)
-
+    bug = Zuk('C')
+    bug.moveBugTo(b.iterList[60])
+    bug = Zuk('B')
+    bug.moveBugTo(b.iterList[54])
+    bug = Konik('B')
+    bug.moveBugTo(b.iterList[47])
     start = time.time()
     result = pg.get_moves(b, 'B')
     t = time.time() - start

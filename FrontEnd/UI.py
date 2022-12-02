@@ -6,6 +6,8 @@ from FrontEnd.Button import Button
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
+from Util import Information
+
 
 class UI:
     def __init__(self, game_master):
@@ -19,6 +21,8 @@ class UI:
         self.player = None
         self.rolls = None
         self.attacking = False
+        self.highlighting_hatchery = False
+        self.selected_army = None
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
         self.grasshooper_white_hatch_button = pygame.image.load(
@@ -76,6 +80,15 @@ class UI:
             "Wait for opponent to play"
         ]
 
+        self.bug_names = {
+            'K': 'Grasshopper',
+            'M': 'Ant',
+            'P': 'Spider',
+            'Z': 'Beetle'
+        }
+
+
+
     def setMode(self, mode, side):
         self.mode = mode
         self.side = side
@@ -116,11 +129,6 @@ class UI:
         return tiles
 
     def getInput(self):
-        if self.mode == PlayerState.HATCH:
-            for hatchButton in self.hatch_buttons:
-                hatchButton.is_clicked_left()
-                if hatchButton.is_selected():
-                    self.chosen_to_hatch = hatchButton.bugShortName
 
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
@@ -143,38 +151,59 @@ class UI:
                                 self.rolls = rolls
                                 return
                     elif self.player.kills > 0 and self.player.attacked_bugs.__len__() > 0:
-                        return  # killing is compulsory for now
+                        return  # killing is compulsory for now unless you end phase xd
                     else:
                         self.attacking = False
 
-                elif self.mode == PlayerState.MOVE:
+                elif self.mode == PlayerState.MOVE:  # make move to chosen tile if possible
                     if bug is None:
                         if self.makeMove(tile):
                             return
                     self.selected_tile = None
 
-                elif self.mode == PlayerState.HATCH:
+                elif self.mode == PlayerState.HATCH:  # hatch bug on chosen tile if possible
                     if self.chosen_to_hatch is not None:
                         if self.player.perform_hatch(self.chosen_to_hatch, tile, update_armies=True):
                             self.chosen_to_hatch = None
+                            self.game_master.display.highlightedTiles = []
                             return
 
-                selected_army_tiles = self.selectArmy(tile)
+                selected_army_tiles = self.selectArmy(tile)  # select clicked army
+                if len(selected_army_tiles) > 0:
+                    self.selected_army = selected_army_tiles[0].bug.army
+                else:
+                    self.selected_army = None
                 self.game_master.display.highlightedTiles = selected_army_tiles
                 self.game_master.display.highlightedColor = (81, 210, 252)
 
-                if self.mode == PlayerState.MOVE:
+                if self.mode == PlayerState.MOVE:  # select army leader
                     if tile is not None and bug is not None and bug.side == self.side:
                         self.selected_tile = tile
 
         if self.mode != PlayerState.MOVE:
             self.selected_tile = None
 
-        if self.mode != PlayerState.INACTIVE:
+        if self.mode != PlayerState.INACTIVE:  # end turn if ordered
             if self.end_phase_button.is_clicked_left():
                 self.game_master.display.highlightedTiles = []
                 self.attacking = False
+                self.selected_army = None
                 self.player.end_phase()
+
+        if self.mode == PlayerState.HATCH:  # check hatch buttons
+            self.chosen_to_hatch = None
+            for hatchButton in self.hatch_buttons:
+                hatchButton.is_clicked_left()
+                if hatchButton.is_selected():
+                    self.chosen_to_hatch = hatchButton.bugShortName
+            if self.chosen_to_hatch is not None:
+                self.game_master.display.highlightedTiles = self.game_master.getAvailableSpaceForHatch(self.side)
+                self.game_master.display.highlightedColor = self.game_master.display.hatcheryColor
+                self.highlighting_hatchery = True
+            else:
+                if self.highlighting_hatchery:
+                    self.game_master.display.highlightedTiles = []
+                    self.highlighting_hatchery = False
 
     def makeMove(self, tile):
         if self.selected_tile is None:
@@ -192,6 +221,7 @@ class UI:
         self.player.perform_move(leader.army, direction)
         move_performed = self.game_master.display.highlightedTiles = self.selectArmy(tile)
         self.selected_tile = leader.field
+        self.selected_army = leader.army
         return move_performed
 
     def get_count_of_bugs_available(self):
@@ -224,7 +254,39 @@ class UI:
             color = self.WHITE
         else:
             color = self.BLACK
-        text = "Your rolls were: {}\n Kill {} bug".format(self.rolls, self.player.kills)
+        text = "Your rolls were: {}\nKill {} bug".format(self.rolls, self.player.kills)
         if self.player.kills != 1:
             text += "s"
+        return text, color
+
+    def get_stats(self):
+        if self.selected_army is not None:
+            text = ''
+            if self.selected_army.bugList[0].side == 'B':
+                color = self.WHITE
+                text += 'White '
+            else:
+                color = self.BLACK
+                text += 'Black '
+            attack = self.selected_army.calculate_attack()
+            toughness = self.selected_army.get_toughness_array()
+            moves = self.selected_army.numberOfMoves
+            text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
+
+        elif self.chosen_to_hatch is not None:
+            if self.side == 'B':
+                color = self.WHITE
+            else:
+                color = self.BLACK
+            text = ''
+            text += self.bug_names[self.chosen_to_hatch]
+            bug_instance = Information.bug_classes[self.chosen_to_hatch](self.side)
+            cost = bug_instance.cost
+            attack = bug_instance.attack
+            toughness = bug_instance.toughness
+            move = bug_instance.max_move
+            del bug_instance
+            text += '\ncost: {}\nattack: {}\ntoughness: {}\nmove: {}'.format(cost, attack, toughness, move)
+        else:
+            return None, None
         return text, color

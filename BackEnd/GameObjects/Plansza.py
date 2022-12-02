@@ -126,6 +126,12 @@ class Plansza:
                 bug.moveBugTo(clone.iterList[i])
         return clone
 
+    def get_hatchery(self, side):
+        if side == 'B':
+            return self.whitesHatchery
+        else:
+            return self.blacksHatchery
+
     def getPositionWithoutToMoveNorResourcesInfo(self):
         position = ''
         for i in self.iterList:
