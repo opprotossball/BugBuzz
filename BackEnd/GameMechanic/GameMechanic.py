@@ -2,6 +2,7 @@ from random import randint
 
 from BackEnd.GameObjects.Armia import Armia
 from BackEnd.GameObjects.Plansza import Plansza
+from BackEnd.GameObjects.Pole import Pole
 from FrontEnd.Display import Display
 from FrontEnd.UI import UI
 from Util import Information
@@ -27,16 +28,52 @@ class GameMechanic:
         for bug in player.bugList:
             bug.army = None
 
+
         for bug in player.bugList:
-            if bug.army is not None:
-                continue
-            army = Armia()
-            army.addBug(bug)
-            bug.recruitNeighbours()
-            army.setMoves()
-            armies.append(army)
+            if bug.army not in armies:
+                army1 = self.get_cluster_army(bug.field)
+                armies.append(army1)
 
         return armies
+
+    def updateArmy(self, pole):
+        army = pole.bug.army
+        if army is None:
+            self.getArmies(pole.bug.side)
+            return
+
+        armies = []
+        for bug in army.bugList:
+            if bug.army not in armies:
+                army1 = self.get_cluster_army(pole)
+                armies.append(army1)
+
+    def get_cluster_army(self, pole):
+        if pole.bug is None:
+            return
+
+        org_side = pole.bug.side
+
+        army = Armia(self.board)
+
+        claster = []
+        self._add_to_claster(claster, pole, org_side)
+
+        claster.append(pole)
+        for pole in claster:
+            army.addBug(pole.bug)
+
+        return army
+
+
+    def _add_to_claster(self, claster, pole, side):
+        pola = self.board.get_field_neighs(pole)
+
+        for pole_x in pola:
+            if pole_x is not None and pole_x not in claster:
+                if pole_x.bug is not None and pole_x.bug.side == side:
+                    claster.append(pole_x)
+                    self._add_to_claster(claster, pole_x, side)
 
     def getResourcesForSide(self, side):
         resources = self.board.resources
