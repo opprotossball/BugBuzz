@@ -19,34 +19,15 @@ class GameMechanic:
         armies = []
 
         if side == PlayerEnum.B:
-            player = self.WhitePlayer
+            bugs = self.WhitePlayer.bugList
         elif side == PlayerEnum.C:
-            player = self.BlackPlayer
+            bugs = self.BlackPlayer.bugList
         else:
             return
 
-        for bug in player.bugList:
-            bug.army = None
-
-
-        for bug in player.bugList:
+        for bug in bugs:
             if bug.army not in armies:
-                army1 = self.get_cluster_army(bug.field)
-                armies.append(army1)
-
-        return armies
-
-    def updateArmy(self, pole):
-        army = pole.bug.army
-        if army is None:
-            self.getArmies(pole.bug.side)
-            return
-
-        armies = []
-        for bug in army.bugList:
-            if bug.army not in armies:
-                army1 = self.get_cluster_army(pole)
-                armies.append(army1)
+                armies.append(self.get_cluster_army(bug.field))
 
     def get_cluster_army(self, pole):
         if pole.bug is None:
@@ -56,28 +37,38 @@ class GameMechanic:
 
         army = Armia(self.board)
 
-        claster = []
-        self._add_to_claster(claster, pole, org_side)
+        claster = [pole]
+        self.__add_to_claster(claster, pole, org_side)
 
-        claster.append(pole)
         for pole in claster:
             army.addBug(pole.bug)
 
-        return army
-
-
-    def _add_to_claster(self, claster, pole, side):
+    def __add_to_claster(self, claster, pole, side):
         pola = self.board.get_field_neighs(pole)
 
         for pole_x in pola:
             if pole_x is not None and pole_x not in claster:
                 if pole_x.bug is not None and pole_x.bug.side == side:
                     claster.append(pole_x)
-                    self._add_to_claster(claster, pole_x, side)
+                    self.__add_to_claster(claster, pole_x, side)
+
+    def reset_moves_for_bugs(self, side):
+        if side == PlayerEnum.B:
+            player = self.WhitePlayer
+        elif side == PlayerEnum.C:
+            player = self.BlackPlayer
+        else:
+            print(side + "is not a valid side")
+            return False
+
+        for bug in player.bugList:
+            bug.setMove(bug.max_move)
 
     def getResourcesForSide(self, side):
         resources = self.board.resources
-        self.getArmies(side)
+        for pole in self.board.resources:
+            self.get_cluster_army(pole)
+
         n = 1
         for field in resources:
             if field.bug is not None and field.bug.side == side:
@@ -106,17 +97,6 @@ class GameMechanic:
             if hatch.bug is not None:
                 option.append(hatch)
         return option
-
-    def resetMove(self, side):
-        if side == PlayerEnum.B:
-            player = self.WhitePlayer
-        elif side == PlayerEnum.C:
-            player = self.BlackPlayer
-        else:
-            print(side + "is not a valid side")
-            return False
-        for bug in player.bugList:
-            bug.setMove(bug.max_move)
 
     def setGUI(self):
         self.ui = UI(self)
