@@ -19,15 +19,11 @@ class Plansza:
 
         self.plane = [[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)]
 
-        for q in range(-size, size + 1):
-            for r in range(max(-size, -size - q), min(size + 1, size + 1 - q)):
-                s = - q - r
-                pole = Pole(q, r, s, self.size)
-                self.setField (q, r, s, pole)
+        for x in range(-size, size + 1):
+            for y in range(max(-size, -size - x), min(size + 1, size + 1 - x)):
+                pole = Pole(x, y, - x - y, self.size, self)
+                self.setField(pole, x, y)
                 self.iterList.append(pole)
-
-        for pole in self.iterList:
-            self.addNeighbours(pole)
 
         self.root = self.getField(0, 0, 0)
 
@@ -36,42 +32,83 @@ class Plansza:
 
         sorted(self.iterList, key=getKeyFor)
 
-    def setField(self, q, r, s, field):
-        self.plane[q + self.size][r + self.size] = field
+    def setField(self,  field, x, y, s=0):
+        try:
+            self.plane[y + self.size][x + self.size] = field
+        except IndexError:
+            return None
 
-    def getField(self, q, r, s):
-        return self.plane[q + self.size][r + self.size]
+    def getField(self, x, y, s=0):
+        try:
+            val = self.plane[y + self.size][x + self.size]
+            if val == 0:
+                return None
+            return val
+        except IndexError:
+            return None
 
-    def addNeighbours(self, pole):
-        if pole.r - 1 >= -self.size and pole.s < self.size:
-            pole.setES(self.getField(pole.q, pole.r - 1, pole.s + 1))
-        if pole.r - 1 >= -self.size and pole.q < self.size:
-            pole.setWS(self.getField(pole.q + 1, pole.r - 1, pole.s))
-        if pole.s - 1 >= -self.size and pole.r < self.size:
-            pole.setWN(self.getField(pole.q, pole.r + 1, pole.s - 1))
-        if pole.s - 1 >= -self.size and pole.q < self.size:
-            pole.setW(self.getField(pole.q + 1, pole.r, pole.s - 1))
-        if pole.q - 1 >= -self.size and pole.r < self.size:
-            pole.setEN(self.getField(pole.q - 1, pole.r + 1, pole.s))
-        if pole.q - 1 >= -self.size and pole.s < self.size:
-            pole.setE(self.getField(pole.q - 1, pole.r, pole.s + 1))
+    def is_valid_neigh(self, pole, dir):
+        if dir == "ES":
+            return pole.y + 1 <= self.size
+        elif dir == "WS":
+            return pole.x - 1 >= -self.size and pole.y + 1 <= self.size
+        elif dir == "WN":
+            return pole.y - 1 >= -self.size
+        elif dir == "W":
+            return pole.x - 1 >= -self.size
+        elif dir == "EN":
+            return pole.x + 1 <= self.size and pole.y - 1 >= -self.size
+        elif dir == "E":
+            return pole.x + 1 <= self.size
+        return False
+
+    def get_field_neighs(self, pole):
+        neighs = []
+        for dir in Information.directionOptions:
+            neighs.append(self.get_field_neigh(pole, dir))
+
+        return neighs
+
+    def get_field_neigh(self, pole, dir):
+        if dir == "ES":
+            return self.getField(pole.x, pole.y + 1)
+        elif dir == "WS":
+            return self.getField(pole.x - 1, pole.y + 1)
+        elif dir == "WN":
+            return self.getField(pole.x, pole.y - 1)
+        elif dir == "W":
+            return self.getField(pole.x - 1, pole.y)
+        elif dir == "EN":
+            return self.getField(pole.x + 1, pole.y - 1)
+        elif dir == "E":
+            return self.getField(pole.x + 1, pole.y)
+        return None
+
 
     def setHatchery(self):
-        pole = self.root
-        while pole.E is not None:
-            pole = pole.E
-        pole.setHatchery(True, 2, PlayerEnum.B)
-        pole.WS.setHatchery(True, 1, PlayerEnum.B)
-        pole.WN.setHatchery(True, 3, PlayerEnum.B)
-        self.whitesHatchery = [pole, pole.WS, pole.WN]
+        pole = self.getField(0, 0, 0)
+        while self.is_valid_neigh(pole, "E"):
+            pole = self.get_field_neigh(pole, "E")
+        pole2 = pole
+        pole1 = self.get_field_neigh(pole, "WS")
+        pole3 = self.get_field_neigh(pole, "WN")
 
-        pole = self.root
-        while pole.W is not None:
-            pole = pole.W
-        pole.setHatchery(True, 2, PlayerEnum.C)
-        pole.ES.setHatchery(True, 3, PlayerEnum.C)
-        pole.EN.setHatchery(True, 1, PlayerEnum.C)
-        self.blacksHatchery = [pole, pole.ES, pole.EN]
+        pole2.setHatchery(2, PlayerEnum.C)
+        pole3.setHatchery(3, PlayerEnum.C)
+        pole1.setHatchery(1, PlayerEnum.C)
+        self.blacksHatchery = [pole1, pole2, pole3]
+
+        pole = self.getField(0, 0, 0)
+        while self.is_valid_neigh(pole, "W"):
+            pole = self.get_field_neigh(pole, "W")
+        pole2 = pole
+        pole1 = self.get_field_neigh(pole, "ES")
+        pole3 = self.get_field_neigh(pole, "EN")
+
+        pole2.setHatchery(2, PlayerEnum.B)
+        pole1.setHatchery(1, PlayerEnum.B)
+        pole3.setHatchery(3, PlayerEnum.B)
+        self.whitesHatchery = [pole3, pole1, pole2]
 
     def setResources(self):
         fields_cor = Information.resourceFieldCoordinates
@@ -127,11 +164,10 @@ class Plansza:
 
     def __hash__(self):
         input = 0
-        power = 0
         for index, field in enumerate(self.iterList):
             input += field.__hash__() + index * 3
         return input
 
 
 def getKeyFor(Pole):
-    return Pole.r * 60 - Pole.q
+    return Pole.y * 60 - Pole.x

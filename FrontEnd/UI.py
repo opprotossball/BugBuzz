@@ -3,6 +3,7 @@ import pygame
 from BackEnd.GameMechanic.Player import PlayerState
 from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
+from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
 
@@ -177,16 +178,17 @@ class UI:
 
     def makeMove(self, tile):
         if self.selected_tile is None:
-            self.selected_tile = None
             return False
-        dictionary = self.selected_tile.getDictionary()
-        directions = [d for d, n in dictionary.items() if n == tile]
+        dictionary = self.game_master.board.get_field_neighs(self.selected_tile)
+        directions = [Information.directionOptions[n] for n, d in enumerate(dictionary) if d == tile]
+
         if directions.__len__() == 0:
             self.selected_tile = None
             return False
         direction = directions[0]
         leader = self.selected_tile.bug
         self.selected_tile = leader.field
+        self.game_master.get_cluster_army(leader.field)
         self.player.perform_move(leader.army, direction)
         move_performed = self.game_master.display.highlightedTiles = self.selectArmy(tile)
         self.selected_tile = leader.field

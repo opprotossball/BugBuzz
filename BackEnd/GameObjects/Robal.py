@@ -29,12 +29,6 @@ class Robal(ABC):
 
         self.state = "moved"  # "to move", "won't move"
 
-    def recruitNeighbours(self):
-        for field in self.field.getNeighbours():
-            if field is not None and field.bug is not None and field.bug.side == self.side and field.bug.army is None:
-                self.army.addBug(field.bug)
-                field.bug.recruitNeighbours()
-
     def setField(self, field):
         self.field = field
 
@@ -49,7 +43,8 @@ class Robal(ABC):
         return clone
 
     def hasEnemyInSurrounding(self):
-        for field in self.field.getNeighbours():
+        fields = self.field.board.get_field_neighs(self.field)
+        for field in fields:
             if field is not None and field.bug is not None and field.bug.side != self.side:
                 return True
         return False

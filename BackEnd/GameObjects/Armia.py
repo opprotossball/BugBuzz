@@ -6,12 +6,14 @@ from Util import Information
 
 
 class Armia:
-    def __init__(self):
+    def __init__(self, board):
         self.numberOfMoves = 0
         self.bugList = []
         self.numberOfGrassHoppers = 0
         self.attack = 0
         self.was_attacked = False
+
+        self.board = board
 
     def addBug(self, bug):
         if bug.short_name == RobalEnum.K:
@@ -34,7 +36,7 @@ class Armia:
             priority, bug = queue.get()
             move_to_examine = bug.moveToExamine.copy()
             for name_of_direction in bug.moveToExamine:
-                neighbour = bug.field.getDictionary()[name_of_direction]
+                neighbour = self.board.get_field_neigh(bug.field, name_of_direction)
                 if neighbour is None:  # Pole nie istnieje
                     move_to_examine.remove(name_of_direction)
                     bug.invalidMoves.append(name_of_direction)
@@ -122,15 +124,14 @@ class Armia:
         for bug in self.bugList:
             bug.setMove(bug.move - 1)
             if bug.state == "to move":
-                dict = bug.field.getDictionary()
+                field = self.board.get_field_neigh(bug.field, direction)
                 if bug.hasEnemyInSurrounding():
                     bug.state = "won't move"
-                elif dict[direction] is not None:
-                    if dict[direction].bug is None:
-                        field = dict[direction]
+                elif field is not None:
+                    if field.bug is None:
                         bug.moveBugTo(field)
                         bug.state = "moved"
-                    elif dict[direction].bug.state == "won't move":
+                    elif field.bug.state == "won't move":
                         bug.state = "won't move"
                 else:
                     bug.state = "won't move"
