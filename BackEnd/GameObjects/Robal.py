@@ -9,6 +9,10 @@ class RobalEnum(Enum):
     P = 2
     Z = 3
 
+class States(Enum):
+    Moved = 0
+    ToMove = 1
+    WontMove = 2
 
 class Robal(ABC):
     lastID = 0
@@ -27,7 +31,7 @@ class Robal(ABC):
         self.invalidMoves = []
         self.moveToExamine = []
 
-        self.state = "moved"  # "to move", "won't move"
+        self.state = States.Moved
 
     def setField(self, field):
         self.field = field

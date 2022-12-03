@@ -3,6 +3,7 @@ from numpy.core.defchararray import upper, lower
 from BackEnd.GameObjects.Pole import Pole
 from BackEnd.GameObjects.Robal import *
 from Util import Information
+from Util.Information import Direction
 from Util.PlayerEnum import PlayerEnum
 
 
@@ -48,17 +49,17 @@ class Plansza:
             return None
 
     def is_valid_neigh(self, pole, dir):
-        if dir == "ES":
+        if dir == Direction.ES:
             return pole.y + 1 <= self.size
-        elif dir == "WS":
+        elif dir == Direction.WS:
             return pole.x - 1 >= -self.size and pole.y + 1 <= self.size
-        elif dir == "WN":
+        elif dir == Direction.WN:
             return pole.y - 1 >= -self.size
-        elif dir == "W":
+        elif dir == Direction.W:
             return pole.x - 1 >= -self.size
-        elif dir == "EN":
+        elif dir == Direction.EN:
             return pole.x + 1 <= self.size and pole.y - 1 >= -self.size
-        elif dir == "E":
+        elif dir == Direction.E:
             return pole.x + 1 <= self.size
         return False
 
@@ -70,28 +71,28 @@ class Plansza:
         return neighs
 
     def get_field_neigh(self, pole, dir):
-        if dir == "ES":
+        if dir == Direction.ES:
             return self.getField(pole.x, pole.y + 1)
-        elif dir == "WS":
+        elif dir == Direction.WS:
             return self.getField(pole.x - 1, pole.y + 1)
-        elif dir == "WN":
+        elif dir == Direction.WN:
             return self.getField(pole.x, pole.y - 1)
-        elif dir == "W":
+        elif dir == Direction.W:
             return self.getField(pole.x - 1, pole.y)
-        elif dir == "EN":
+        elif dir == Direction.EN:
             return self.getField(pole.x + 1, pole.y - 1)
-        elif dir == "E":
+        elif dir == Direction.E:
             return self.getField(pole.x + 1, pole.y)
         return None
 
 
     def setHatchery(self):
         pole = self.getField(0, 0, 0)
-        while self.is_valid_neigh(pole, "E"):
-            pole = self.get_field_neigh(pole, "E")
+        while self.is_valid_neigh(pole, Direction.E):
+            pole = self.get_field_neigh(pole, Direction.E)
         pole2 = pole
-        pole1 = self.get_field_neigh(pole, "WS")
-        pole3 = self.get_field_neigh(pole, "WN")
+        pole1 = self.get_field_neigh(pole, Direction.WS)
+        pole3 = self.get_field_neigh(pole, Direction.WN)
 
         pole2.setHatchery(2, PlayerEnum.C)
         pole3.setHatchery(3, PlayerEnum.C)
@@ -99,11 +100,11 @@ class Plansza:
         self.blacksHatchery = [pole1, pole2, pole3]
 
         pole = self.getField(0, 0, 0)
-        while self.is_valid_neigh(pole, "W"):
-            pole = self.get_field_neigh(pole, "W")
+        while self.is_valid_neigh(pole, Direction.W):
+            pole = self.get_field_neigh(pole, Direction.W)
         pole2 = pole
-        pole1 = self.get_field_neigh(pole, "ES")
-        pole3 = self.get_field_neigh(pole, "EN")
+        pole1 = self.get_field_neigh(pole, Direction.ES)
+        pole3 = self.get_field_neigh(pole, Direction.EN)
 
         pole2.setHatchery(2, PlayerEnum.B)
         pole1.setHatchery(1, PlayerEnum.B)
