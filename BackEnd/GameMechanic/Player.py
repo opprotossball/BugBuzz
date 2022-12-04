@@ -23,8 +23,8 @@ class Player(ABC):
         self.bugList = []
         self.state = PlayerState.INACTIVE
         self.bugs_available = {
-            'M': 3,
             'K': 3,
+            'M': 3,
             'P': 2,
             'Z': 2
         }
@@ -32,15 +32,18 @@ class Player(ABC):
     def end_phase(self):
         self.gm.next_phase()
 
-    def perform_move(self, army, direction):
+    def perform_move(self, army, direction, update_armies=False):
         army.setMoves()
         if army.numberOfMoves < 1:
             return False
         army.performMove(direction)
-        self.gm.getArmies(self.side)
+        if update_armies:
+            armies = self.gm.get_armies(self.side)
+            for a in armies:
+                a.setMoves()
         return True
 
-    def perform_hatch(self, bug_type, tile):
+    def perform_hatch(self, bug_type, tile, update_armies=False):
         if self.side == "B":
             if not tile.is_white_hatchery:
                 return False
@@ -60,7 +63,8 @@ class Player(ABC):
         self.bugs_available[bug.short_name] -= 1
         self.bugList.append(bug)
         bug.moveBugTo(tile)
-        self.gm.getArmies(self.side)
+        if update_armies:
+            self.gm.get_armies(self.side)
         return True
 
     def perform_attack(self, opponent_army):
@@ -68,7 +72,7 @@ class Player(ABC):
         if opponent_army.was_attacked:
             return False, 0, None
         attack_power, attacked_bugs = self.gm.get_attack_power_and_bugs_attacked(opponent_army)
-        toughness = opponent_army.getToughnessArray()
+        toughness = opponent_army.get_toughness_array()
         damage = 0
         rolls = self.gm.rollDice(attack_power)
         for result in rolls:

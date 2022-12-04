@@ -73,4 +73,10 @@ class Pole:
         return "[" + str(self.q - self.size) + "," + str(self.r - self.size) + "," + str(self.s - self.size) + "]"
 
     def cor(self):
-        return [self.q,self.r,self.s]
+        return [self.q, self.r, self.s]
+
+    def coordinates_to_string(self):
+        return "(" + str(self.q) + "," + str(self.r) + "," + str(self.s) + ")"
+
+    def get_key_for(self):
+        return self.r * 60 - self.q

@@ -29,6 +29,7 @@ class Display:
         self.width = self.DEFAULT_WIDTH
         self.height = self.DEFAULT_HEIGHT
         self.font40 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 40)
+        self.font35 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 35)
         self.font30 = pygame.font.Font("./FrontEnd/Assets/Fonts/ANTQUAB.TTF", 30)
 
         self.main_surface = pygame.Surface((self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT))
@@ -56,12 +57,12 @@ class Display:
         info = pygame.display.Info()
         if self.DEFAULT_WIDTH > info.current_w:
             self.width = info.current_w * 4 / 5
-            self.scale = self.width / self.DEFAULT_WIDTH
-            self.height = self.DEFAULT_HEIGHT * self.scale
+            self.window_scale = self.width / self.DEFAULT_WIDTH
+            self.height = self.DEFAULT_HEIGHT * self.window_scale
         if self.height > info.current_h:
             self.height = info.current_h * 4 / 5
-            self.scale = self.height / self.DEFAULT_HEIGHT
-            self.width = self.DEFAULT_WIDTH * self.scale
+            self.window_scale = self.height / self.DEFAULT_HEIGHT
+            self.width = self.DEFAULT_WIDTH * self.window_scale
 
         self.screen = pygame.display.set_mode((self.width, self.height), HWSURFACE | DOUBLEBUF | RESIZABLE)
         pygame.display.set_caption(caption)
@@ -75,16 +76,19 @@ class Display:
                 self.resize(event.size)
         self.main_surface.fill(self.backgroundColor)
         self.draw_tiles()
+
         if self.gameMaster.ui is not None:
+            self.gameMaster.ui.get_input()
             self.highlight()
             self.draw_selected()
             self.draw_buttons()
             self.show_phase_title()
             self.show_number_of_bugs_available()
             self.show_number_of_resources()
-            self.gameMaster.ui.getInput()
+            self.show_combat_results()
+            self.show_stats()
+
         self.drawBugs()
-        self.show_combat_results()
         if self.window_scale != 1:
             surface = pygame.transform.smoothscale(self.main_surface, (self.width, self.height))
         else:
@@ -124,9 +128,7 @@ class Display:
         tile_buttons = []
         for pole in self.gameMaster.board.iterList:
             coordinates = self.transform_to_real_coordinates(pole)
-            if pole.is_white_hatchery or pole.is_black_hatchery:
-                color = self.hatcheryColor
-            elif pole.resources:
+            if pole.resources:
                 color = self.resourcesColor
             else:
                 color = self.tileColor
@@ -192,7 +194,6 @@ class Display:
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.selectedColor)
 
     def show_phase_title(self):
-        turn = self.gameMaster.turn
         text, color = self.gameMaster.ui.get_phase_title()
         title = self.font40.render(text, True, color)
         self.main_surface.blit(title, (int(1350 - title.get_width() / 2), int(75 - title.get_height() / 2)))
@@ -216,12 +217,32 @@ class Display:
 
     def show_combat_results(self):
         message, color = self.gameMaster.ui.get_combat_results()
+        self.write_multiline_text_30(message, color, 1350, 175)
+
+    def show_stats(self):
+        message, color = self.gameMaster.ui.get_stats()
+        self.write_multiline_text_30(message, color, 1350, 175, align=True, title=True)
+
+    def write_multiline_text_30(self, message, color, x, y, space_height_ratio=1.3, align=False, title=False):
         if message is None:
             return
         lines = message.split("\n")
-        x = 1350
-        y = 175
-        for line in lines:
-            text = self.font30.render(line, True, color)
+        if title:
+            text = self.font35.render(lines[0], True, color)
             self.main_surface.blit(text, (int(x - text.get_width() / 2), int(y - text.get_height() / 2)))
-            y += int(text.get_height() * 1.3)
+            y += int(text.get_height() * space_height_ratio)
+            del lines[0]
+        if align:
+            text = self.font30.render(lines[0], True, color)
+            x = int(x - text.get_width() / 2)
+            self.main_surface.blit(text, (x, int(y - text.get_height() / 2)))
+            y += int(text.get_height() * space_height_ratio)
+            for line in lines[1:]:
+                text = self.font30.render(line, True, color)
+                self.main_surface.blit(text, (x, int(y - text.get_height() / 2)))
+                y += int(text.get_height() * space_height_ratio)
+        else:
+            for line in lines:
+                text = self.font30.render(line, True, color)
+                self.main_surface.blit(text, (int(x - text.get_width() / 2), int(y - text.get_height() / 2)))
+                y += int(text.get_height() * space_height_ratio)

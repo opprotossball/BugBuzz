@@ -1,6 +1,8 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
+from BackEnd.GameObjects.Plansza import Plansza
 from BackEnd.GameObjects.Robal import Konik
+from Util import Information
 
 
 class GameMaster(GameMechanic):
@@ -12,18 +14,21 @@ class GameMaster(GameMechanic):
 
         self.winner_side = None
 
-    def newGame(self, player_white, player_black):
-        self.BlackPlayer = player_black
-        self.WhitePlayer = player_white
+    def new_game(self, player_white, player_black):
+        self.set_board(Plansza(Information.board_size))
+        self.set_player(player_white)
+        self.set_player(player_black)
         self.next_phase()
 
         while True:
             self.updateWindow()
-            if self.gameIsOver():
+            if self.game_is_over():
                 print("Player " + self.winner_side + " has won!")
                 return
 
     def next_phase(self):
+        self.get_armies("B")
+        self.get_armies("C")
         self.turn += 1
         if self.turn == 6:
             self.turn = 0
@@ -31,24 +36,22 @@ class GameMaster(GameMechanic):
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 1:
-            self.getArmies("C")
-            self.resetMove("B")
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
-            self.WhitePlayer.resources = self.getResourcesForSide("B")
+            self.reset_move("B")
+            self.WhitePlayer.resources = self.get_resources_for_side("B")
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 4:
-            self.getArmies("B")
-            self.resetMove("C")
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
-            self.BlackPlayer.resources = self.getResourcesForSide("C")
+            self.reset_move("C")
+            self.BlackPlayer.resources = self.get_resources_for_side("C")
             self.BlackPlayer.set_state(PlayerState.HATCH)
 
-    def gameIsOver(self):
+    def game_is_over(self):
         bug = self.board.resources[0].bug
         if bug is not None:
             side = bug.side

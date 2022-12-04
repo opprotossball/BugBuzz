@@ -9,7 +9,8 @@ class Robal(ABC):
     def __init__(self, side):
         self.move = 0
         self.attack = 0
-        self.toughness = 0
+        self.toughness = []
+        self.cost = 0
         self.army = None
         self.side = side
         self.field = None
@@ -19,7 +20,8 @@ class Robal(ABC):
         self.invalidMoves = []
         self.moveToExamine = []
 
-        self.state = "moved"  # "to move", "won't move"
+        self.moved = False
+
 
     def recruitNeighbours(self):
         for field in self.field.getNeighbours():
@@ -37,7 +39,14 @@ class Robal(ABC):
         self.field.bug = self
 
     def clone(self):
-        clone = self.__class__.__init__(self.side)
+        clone = self.__class__(self.side)
+        clone.move = self.move
+        return clone
+
+    def clone_with_field(self):
+        clone = self.__class__(self.side)
+        clone.field = self.field
+        clone.move = self.move
         return clone
 
     def hasEnemyInSurrounding(self):
@@ -53,10 +62,11 @@ class Robal(ABC):
 class Konik(Robal):
 
     def __init__(self, side):
+        self.cost = 1
         self.max_move = 3
         self.move = 3
         self.attack = 0
-        self.toughness = array('i', [1])
+        self.toughness = [1]
         self.side = side
         self.army = None
         self.field = None
@@ -64,15 +74,17 @@ class Konik(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
 
 
 class Mrowka(Robal):
 
     def __init__(self, side):
+        self.cost = 1
         self.max_move = 4
         self.move = 4
         self.attack = 1
-        self.toughness = array('i', [3, 4])
+        self.toughness = [3, 4]
         self.side = side
         self.army = None
         self.field = None
@@ -80,15 +92,17 @@ class Mrowka(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
 
 
 class Pajak(Robal):
 
     def __init__(self, side):
+        self.cost = 2
         self.max_move = 4
         self.move = 4
         self.attack = 3
-        self.toughness = array('i', [1, 2, 3])
+        self.toughness = [1, 2, 3]
         self.side = side
         self.army = None
         self.field = None
@@ -96,15 +110,17 @@ class Pajak(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False
 
 
 class Zuk(Robal):
 
     def __init__(self, side):
+        self.cost = 3
         self.max_move = 2
         self.move = 2
         self.attack = 5
-        self.toughness = array('i', [4, 5, 6])
+        self.toughness = [4, 5, 6]
         self.side = side
         self.army = None
         self.field = None
@@ -112,3 +128,4 @@ class Zuk(Robal):
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
+        self.moved = False

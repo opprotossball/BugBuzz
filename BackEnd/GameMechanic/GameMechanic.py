@@ -9,19 +9,31 @@ from Util import Information
 
 class GameMechanic:
     def __init__(self):
-        self.board = Plansza(Information.board_size)
+        self.board = None
         self.BlackPlayer = None
         self.WhitePlayer = None
 
-    def getArmies(self, side):
+    def set_player(self, player):
+        if player.side == 'B':
+            self.WhitePlayer = player
+        else:
+            self.BlackPlayer = player
+
+    def set_board(self, board):
+        self.board = board
+
+    def get_armies(self, side, player=None):
         armies = []
 
-        if side == "B":
-            player = self.WhitePlayer
-        elif side == "C":
-            player = self.BlackPlayer
+        if player is not None:
+            player = player
         else:
-            return
+            if side == "B":
+                player = self.WhitePlayer
+            elif side == "C":
+                player = self.BlackPlayer
+            else:
+                return
 
         for bug in player.bugList:
             bug.army = None
@@ -37,9 +49,26 @@ class GameMechanic:
 
         return armies
 
-    def getResourcesForSide(self, side):
+    def set_army_on_tile(self, tile):
+        bug = tile.bug
+        if bug is not None:
+            army = Armia()
+            army.addBug(bug)
+            bug.recruitNeighbours()
+            army.setMoves()
+            return army
+        else:
+            return None
+    def set_player_bugs(self, board, player):
+        player.bugList = []
+        for tile in board.iterList:
+            bug = tile.bug
+            if bug is not None and bug.side == player.side:
+                player.bugList.append(bug)
+
+    def get_resources_for_side(self, side):
         resources = self.board.resources
-        self.getArmies(side)
+        self.get_armies(side)
         n = 1
         for field in resources:
             if field.bug is not None and field.bug.side == side:
@@ -65,11 +94,11 @@ class GameMechanic:
             hatchery = self.board.blacksHatchery
         option = []
         for hatch in hatchery:
-            if hatch.bug is not None:
+            if hatch.bug is None:
                 option.append(hatch)
         return option
 
-    def resetMove(self, side):
+    def reset_move(self, side):
         if side == "B":
             player = self.WhitePlayer
         elif side == "C":
@@ -112,3 +141,17 @@ class GameMechanic:
         for army in attacking_armies:
             power += army.calculate_attack()
         return power, attacked_bugs
+
+    def set_position_for_player(self, board, player, delete_others=True):  # bugs controlled by other player are unchanged
+        if delete_others:
+            for tile in board.iterList:
+                if tile.bug is not None and tile.bug.side == player.side:
+                    tile.bug = None
+        for bug in player.bugList:
+            bug.field.bug = bug
+
+    def change_position_for_player(self, old_player, new_player):
+        for bug in old_player.bugList:
+            bug.field.bug = None
+        for bug in new_player.bugList:
+            bug.field.bug = bug
