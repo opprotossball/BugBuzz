@@ -60,7 +60,7 @@ def __get_layer(code, size, am):
         return FullyConnected(size, activation_model=am)
     elif code == "I":
         return InputLayer(size, activation_model=am)
-    elif code == "C":
+    elif code == PlayerEnum.C:
         return Convolutional(size, activation_model=am)
 
 def __validate(series):

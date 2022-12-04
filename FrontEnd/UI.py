@@ -1,6 +1,10 @@
 from BackEnd.GameMechanic.Player import PlayerState
+from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
 import pygame
+
+from Util import Information
+from Util.PlayerEnum import PlayerEnum
 
 
 class UI:
@@ -15,6 +19,8 @@ class UI:
         self.player = None
         self.rolls = None
         self.attacking = False
+        self.selected_army = None
+        self.highlighting_hatchery = False
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
         self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
@@ -61,6 +67,15 @@ class UI:
             "Wait for opponent to play"
             "Wait for opponent to play"
         ]
+
+        self.bug_names = {
+            RobalEnum.K: 'Grasshopper',
+            RobalEnum.M: 'Ant',
+            RobalEnum.P: 'Spider',
+            RobalEnum.Z: 'Beetle'
+        }
+
+
 
     def setMode(self, mode, side):
         self.mode = mode
@@ -239,19 +254,20 @@ class UI:
     def get_stats(self):
         if self.selected_army is not None:
             text = ''
-            if self.selected_army.bugList[0].side == 'B':
+            if self.selected_army.bugList[0].side == PlayerEnum.B:
                 color = self.WHITE
                 text += 'White '
             else:
                 color = self.BLACK
                 text += 'Black '
-            attack = self.selected_army.calculate_attack()
-            toughness = self.selected_army.get_toughness_array()
+
+            attack = self.game_master.calculate_attack(self.selected_army)
+            toughness = self.game_master.get_toughness_array(self.selected_army)
             moves = self.selected_army.numberOfMoves
             text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
 
         elif self.chosen_to_hatch is not None:
-            if self.side == 'B':
+            if self.side == PlayerEnum.B:
                 color = self.WHITE
             else:
                 color = self.BLACK

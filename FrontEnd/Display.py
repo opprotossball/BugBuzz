@@ -1,7 +1,11 @@
 import pygame
 import math
+
+from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.TileButton import TileButton
 from pygame.locals import *
+
+from Util.PlayerEnum import PlayerEnum
 
 
 class Display:
@@ -158,24 +162,24 @@ class Display:
         coordinates = self.transform_to_real_coordinates(tile)
         image = None
         if bug.short_name == RobalEnum.K:
-            if bug.side == s.PlayerEnum.B:
+            if bug.side == PlayerEnum.B:
                 image = self.grasshooperWhite
-            elif bug.side == s.PlayerEnum.C:
+            elif bug.side == PlayerEnum.C:
                 image = self.grasshooperBlack
         elif bug.short_name == RobalEnum.M:
-            if bug.side == s.PlayerEnum.B:
+            if bug.side == PlayerEnum.B:
                 image = self.antWhite
-            elif bug.side == s.PlayerEnum.C:
+            elif bug.side == PlayerEnum.C:
                 image = self.antBlack
         elif bug.short_name == RobalEnum.P:
-            if bug.side == s.PlayerEnum.B:
+            if bug.side == PlayerEnum.B:
                 image = self.spiderWhite
-            elif bug.side == s.PlayerEnum.C:
+            elif bug.side == PlayerEnum.C:
                 image = self.spiderBlack
         elif bug.short_name == RobalEnum.Z:
-            if bug.side == s.PlayerEnum.B:
+            if bug.side == PlayerEnum.B:
                 image = self.beetleWhite
-            elif bug.side == s.PlayerEnum.C:
+            elif bug.side == PlayerEnum.C:
                 image = self.beetleBlack
         if image is None:
             print("there is no image for ", type(bug), "bug, or bug doesn't have valid side assigned")

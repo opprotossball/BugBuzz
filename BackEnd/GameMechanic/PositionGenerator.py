@@ -6,6 +6,7 @@ from BackEnd.GameObjects.Plansza import Plansza
 from BackEnd.GameMechanic.GeneratorPlayer import GeneratorPlayer
 from BackEnd.GameObjects.Robal import Mrowka, Zuk, Konik
 from Util import Information
+from Util.PlayerEnum import PlayerEnum
 
 factorials = [1, 1]
 
@@ -112,14 +113,14 @@ if __name__ == "__main__":  # TEST
     pg = PositionGenerator()
     b = Plansza(Information.board_size)
     i = 0
-    bug = Zuk('C')
+    bug = Zuk(PlayerEnum.C)
     bug.moveBugTo(b.iterList[60])
-    bug = Zuk('B')
+    bug = Zuk(PlayerEnum.B)
     bug.moveBugTo(b.iterList[54])
-    bug = Konik('B')
+    bug = Konik(PlayerEnum.B)
     bug.moveBugTo(b.iterList[47])
     start = time.time()
-    result = pg.get_moves(b, 'B')
+    result = pg.get_moves(b, PlayerEnum.B)
     t = time.time() - start
     print("unique positions: ", len(result))
     print("time: ", t, "s")

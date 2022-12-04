@@ -2,7 +2,9 @@ import math
 from abc import ABC, abstractmethod
 from enum import Enum
 
+from BackEnd.GameObjects.Robal import RobalEnum
 from BackEnd.GameObjects.Trader import Trader
+from Util.PlayerEnum import PlayerEnum
 
 
 class PlayerState(Enum):
@@ -23,31 +25,31 @@ class Player(ABC):
         self.bugList = []
         self.state = PlayerState.INACTIVE
         self.bugs_available = {
-            'K': 3,
-            'M': 3,
-            'P': 2,
-            'Z': 2
+            RobalEnum.K: 3,
+            RobalEnum.M: 3,
+            RobalEnum.P: 2,
+            RobalEnum.Z: 2
         }
 
     def end_phase(self):
         self.gm.next_phase()
 
     def perform_move(self, army, direction, update_armies=False):
-        army.setMoves()
+        self.gm.set_moves(army)
         if army.numberOfMoves < 1:
             return False
-        army.performMove(direction)
+        self.gm.perform_move(army, direction)
         if update_armies:
             armies = self.gm.get_armies(self.side)
             for a in armies:
-                a.setMoves()
+                self.gm.set_moves(a)
         return True
 
     def perform_hatch(self, bug_type, tile, update_armies=False):
-        if self.side == "B":
+        if self.side == PlayerEnum.B:
             if not tile.is_white_hatchery:
                 return False
-        elif self.side == "C":
+        elif self.side == PlayerEnum.C:
             if not tile.is_black_hatchery:
                 return False
 
@@ -72,7 +74,7 @@ class Player(ABC):
         if opponent_army.was_attacked:
             return False, 0, None
         attack_power, attacked_bugs = self.gm.get_attack_power_and_bugs_attacked(opponent_army)
-        toughness = opponent_army.get_toughness_array()
+        toughness = self.gm.get_toughness_array(opponent_army)
         damage = 0
         rolls = self.gm.rollDice(attack_power)
         for result in rolls:
@@ -88,7 +90,7 @@ class Player(ABC):
 
     def kill_bug(self, bug):
         if self.kills > 0 and bug in self.attacked_bugs:
-            if self.side == "B":
+            if self.side == PlayerEnum.B:
                 other_player = self.gm.BlackPlayer
             else:
                 other_player = self.gm.WhitePlayer

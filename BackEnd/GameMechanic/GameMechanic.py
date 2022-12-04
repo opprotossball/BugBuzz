@@ -27,7 +27,7 @@ class GameMechanic:
             return
 
     def set_player(self, player):
-        if player.side == 'B':
+        if player.side == PlayerEnum.B:
             self.WhitePlayer = player
         else:
             self.BlackPlayer = player
@@ -71,7 +71,7 @@ class GameMechanic:
         for bug in player.bugList:
             bug.setMove(bug.max_move)
 
-    def setMoves(self, army):
+    def set_moves(self, army):
         moves = 20
         for bug in army.bugList:
             if moves > bug.move:
@@ -131,7 +131,7 @@ class GameMechanic:
                     return armyValidMoves
         return armyValidMoves
 
-    def performeMove(self, army, direction):
+    def perform_move(self, army, direction):
         bug_list = army.bugList
 
         for bug in bug_list:
@@ -196,7 +196,8 @@ class GameMechanic:
     def rollDice(self, diceCount):
         rollArray = [randint(1, 10) for i in range(diceCount)]
         return rollArray
-    def getToughnessArray(self, army):
+
+    def get_toughness_array(self, army):
         toughnessInterval = []
         for bug in army.bugList:
             newElement = bug.toughness
@@ -209,10 +210,10 @@ class GameMechanic:
     def set_army_on_tile(self, tile):
         bug = tile.bug
         if bug is not None:
-            army = Armia()
+            army = Armia(self.board)
             army.addBug(bug)
             bug.recruitNeighbours()
-            army.setMoves()
+            self.set_moves(army)
             return army
         else:
             return None
@@ -252,10 +253,11 @@ class GameMechanic:
     def updateWindow(self):
         if self.display is not None:
             self.display.update_window()
+
     def reset_move(self, side):
-        if side == "B":
+        if side == PlayerEnum.B:
             player = self.WhitePlayer
-        elif side == "C":
+        elif side == PlayerEnum.C:
             player = self.BlackPlayer
         else:
             print(side + "is not a valid side")
@@ -270,31 +272,8 @@ class GameMechanic:
     def setDisplay(self):
         self.display = Display(self)
 
-    def rollDice(self, diceCount):
-        rollArray = [randint(1, 10) for i in range(diceCount)]
-        return rollArray
-
-    def updateWindow(self):
-        if self.display is not None:
-            self.display.update_window()
-
     def isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(self, ourSide, neighbourField):
         return neighbourField is not None and neighbourField.bug is not None and neighbourField.bug.side is not ourSide
-
-    def get_attack_power_and_bugs_attacked(self, attacked_army):
-        attacking_bugs = set()
-        attacking_armies = set()
-        attacked_bugs = set()
-        for bug in attacked_army.bugList:
-            for neighbour in bug.field.getNeighbours():
-                if self.isNotNoneAndHasABugAndThisBugIsNotOnThissBugSide(bug.side, neighbour):
-                    attacking_bugs.add(neighbour.bug)
-                    attacking_armies.add(neighbour.bug.army)
-                    attacked_bugs.add(bug)
-        power = len(attacking_bugs)
-        for army in attacking_armies:
-            power += army.calculate_attack()
-        return power, attacked_bugs
 
     def set_position_for_player(self, board, player, delete_others=True):  # bugs controlled by other player are unchanged
         if delete_others:

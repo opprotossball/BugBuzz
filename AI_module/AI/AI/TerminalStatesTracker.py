@@ -10,9 +10,9 @@ class TerminalStatesTracker:
     def add_state(self, coded_position, winning_player):
         if self.counter == self.buffer_size:
             self.save_buffer()
-        if winning_player == "B":
+        if winning_player == PlayerEnum.B:
             self.df = pd.concat([self.df, pd.DataFrame({"position": [coded_position], "eval": [1]})], ignore_index=True)
-        elif winning_player == "C":
+        elif winning_player == PlayerEnum.C:
             self.df = pd.concat([self.df, pd.DataFrame({"position": [coded_position], "eval": [0]})], ignore_index=True)
 
     def close(self):

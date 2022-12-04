@@ -127,7 +127,7 @@ class Plansza:
         return clone
 
     def get_hatchery(self, side):
-        if side == 'B':
+        if side == PlayerEnum.B:
             return self.whitesHatchery
         else:
             return self.blacksHatchery
