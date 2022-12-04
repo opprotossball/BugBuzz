@@ -98,7 +98,7 @@ class GameMechanic:
                 option.append(hatch)
         return option
 
-    def resetMove(self, side):
+    def reset_move(self, side):
         if side == "B":
             player = self.WhitePlayer
         elif side == "C":

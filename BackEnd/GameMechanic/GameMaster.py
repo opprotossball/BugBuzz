@@ -36,18 +36,18 @@ class GameMaster(GameMechanic):
             self.BlackPlayer.set_state(PlayerState.INACTIVE)
             self.WhitePlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 1:
-            self.resetMove("B")
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
+            self.reset_move("B")
             self.WhitePlayer.resources = self.get_resources_for_side("B")
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
             self.BlackPlayer.set_state(PlayerState.COMBAT)
         elif self.turn == 4:
-            self.resetMove("C")
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
+            self.reset_move("C")
             self.BlackPlayer.resources = self.get_resources_for_side("C")
             self.BlackPlayer.set_state(PlayerState.HATCH)
 

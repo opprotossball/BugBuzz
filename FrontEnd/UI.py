@@ -81,14 +81,14 @@ class UI:
         hatch_buttons = []
         if side == "B":
             self.player = self.game_master.WhitePlayer
-            hatch_buttons.append(Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, "M"))
             hatch_buttons.append(Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None, "K"))
+            hatch_buttons.append(Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, "M"))
             hatch_buttons.append(Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, "P"))
             hatch_buttons.append(Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, "Z"))
         elif side == "C":
             self.player = self.game_master.BlackPlayer
-            hatch_buttons.append(Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, "M"))
             hatch_buttons.append(Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None, "K"))
+            hatch_buttons.append(Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, "M"))
             hatch_buttons.append(Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, "P"))
             hatch_buttons.append(Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, "Z"))
         self.hatch_buttons = hatch_buttons
@@ -104,7 +104,7 @@ class UI:
                 tiles.append(anotherBug.field)
         return tiles
 
-    def getInput(self):
+    def get_input(self):
 
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
@@ -115,8 +115,9 @@ class UI:
                     if bug is not None and bug.side != self.side:
                         if self.player.kills > 0:
                             self.player.kill_bug(bug)
-                            if self.player.kills == 0:
+                            if self.player.kills == 0 or self.player.attacked_bugs.__len__() == 0:
                                 self.game_master.display.highlightedTiles = []
+                                self.attacking = False
                             return
                         else:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
@@ -129,11 +130,13 @@ class UI:
                     elif self.player.kills > 0 and self.player.attacked_bugs.__len__() > 0:
                         return  # killing is compulsory for now unless you end phase xd
                     else:
+                        self.player.attacked_bugs = []
+                        self.player.kills = 0
                         self.attacking = False
 
                 elif self.mode == PlayerState.MOVE:  # make move to chosen tile if possible
                     if bug is None:
-                        if self.makeMove(tile):
+                        if self.make_move(tile):
                             return
                     self.selected_tile = None
 
@@ -164,6 +167,7 @@ class UI:
                 self.game_master.display.highlightedTiles = []
                 self.attacking = False
                 self.selected_army = None
+                self.chosen_to_hatch = None
                 self.player.end_phase()
 
         if self.mode == PlayerState.HATCH:  # check hatch buttons
@@ -181,7 +185,7 @@ class UI:
                     self.game_master.display.highlightedTiles = []
                     self.highlighting_hatchery = False
 
-    def makeMove(self, tile):
+    def make_move(self, tile):
         if self.selected_tile is None:
             self.selected_tile = None
             return False

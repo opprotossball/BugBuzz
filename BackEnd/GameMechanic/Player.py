@@ -23,8 +23,8 @@ class Player(ABC):
         self.bugList = []
         self.state = PlayerState.INACTIVE
         self.bugs_available = {
-            'M': 3,
             'K': 3,
+            'M': 3,
             'P': 2,
             'Z': 2
         }
