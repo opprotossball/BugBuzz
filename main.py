@@ -6,3 +6,4 @@ if __name__ == "__main__":
     gm = GameMaster()
     gm.setGUI()
     gm.newGame(HumanPlayer(gm, PlayerEnum.B), HumanPlayer(gm, PlayerEnum.C))
+    gm.new_game(HumanPlayer(gm, "B"), HumanPlayer(gm, "C"))

@@ -1,12 +1,6 @@
-import pygame
-
 from BackEnd.GameMechanic.Player import PlayerState
-from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
-from Util import Information
-from Util.PlayerEnum import PlayerEnum
-
-from Util import Information
+import pygame
 
 
 class UI:
@@ -21,43 +15,31 @@ class UI:
         self.player = None
         self.rolls = None
         self.attacking = False
-        self.highlighting_hatchery = False
-        self.selected_army = None
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
-        self.grasshooper_white_hatch_button = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
+        self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
         self.spider_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteHatchButton.png")
         self.beetle_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteHatchButton.png")
 
-        self.ant_white_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/antWhiteSelectedHatchButton.png")
-        self.grasshooper_white_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/grasshooperWhiteSelectedHatchButton.png")
-        self.spider_white_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/spiderWhiteSelectedHatchButton.png")
-        self.beetle_white_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/beetleWhiteSelectedHatchButton.png")
+        self.ant_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteSelectedHatchButton.png")
+        self.grasshooper_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteSelectedHatchButton.png")
+        self.spider_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderWhiteSelectedHatchButton.png")
+        self.beetle_white_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleWhiteSelectedHatchButton.png")
 
         self.ant_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antBlackHatchButton.png")
-        self.grasshooper_black_hatch_button = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/grasshooperBlackHatchButton.png")
+        self.grasshooper_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperBlackHatchButton.png")
         self.spider_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackHatchButton.png")
         self.beetle_black_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackHatchButton.png")
 
-        self.ant_black_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/antBlackSelectedHatchButton.png")
-        self.grasshooper_black_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/grasshooperBlackSelectedHatchButton.png")
-        self.spider_black_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/spiderBlackSelectedHatchButton.png")
-        self.beetle_black_hatch_button_selected = pygame.image.load(
-            "./FrontEnd/Assets/Buttons/beetleBlackSelectedHatchButton.png")
+        self.ant_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/antBlackSelectedHatchButton.png")
+        self.grasshooper_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperBlackSelectedHatchButton.png")
+        self.spider_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackSelectedHatchButton.png")
+        self.beetle_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackSelectedHatchButton.png")
 
         end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
         end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
 
-        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, selected_for_time=0.2, keyboard_key=pygame.K_SPACE)
+        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2)
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -79,15 +61,6 @@ class UI:
             "Wait for opponent to play"
             "Wait for opponent to play"
         ]
-
-        self.bug_names = {
-            'K': 'Grasshopper',
-            'M': 'Ant',
-            'P': 'Spider',
-            'Z': 'Beetle'
-        }
-
-
 
     def setMode(self, mode, side):
         self.mode = mode
@@ -128,7 +101,7 @@ class UI:
                 tiles.append(anotherBug.field)
         return tiles
 
-    def getInput(self):
+    def get_input(self):
 
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
@@ -139,8 +112,9 @@ class UI:
                     if bug is not None and bug.side != self.side:
                         if self.player.kills > 0:
                             self.player.kill_bug(bug)
-                            if self.player.kills == 0:
+                            if self.player.kills == 0 or self.player.attacked_bugs.__len__() == 0:
                                 self.game_master.display.highlightedTiles = []
+                                self.attacking = False
                             return
                         else:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
@@ -153,11 +127,13 @@ class UI:
                     elif self.player.kills > 0 and self.player.attacked_bugs.__len__() > 0:
                         return  # killing is compulsory for now unless you end phase xd
                     else:
+                        self.player.attacked_bugs = []
+                        self.player.kills = 0
                         self.attacking = False
 
                 elif self.mode == PlayerState.MOVE:  # make move to chosen tile if possible
                     if bug is None:
-                        if self.makeMove(tile):
+                        if self.make_move(tile):
                             return
                     self.selected_tile = None
 
@@ -188,6 +164,7 @@ class UI:
                 self.game_master.display.highlightedTiles = []
                 self.attacking = False
                 self.selected_army = None
+                self.chosen_to_hatch = None
                 self.player.end_phase()
 
         if self.mode == PlayerState.HATCH:  # check hatch buttons
@@ -205,7 +182,7 @@ class UI:
                     self.game_master.display.highlightedTiles = []
                     self.highlighting_hatchery = False
 
-    def makeMove(self, tile):
+    def make_move(self, tile):
         if self.selected_tile is None:
             return False
         dictionary = self.game_master.board.get_field_neighs(self.selected_tile)
