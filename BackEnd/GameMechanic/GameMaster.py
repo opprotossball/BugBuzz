@@ -1,8 +1,8 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
 from BackEnd.GameObjects.Plansza import Plansza
-from BackEnd.GameObjects.Robal import Konik
 from Util import Information
+from Util.PlayerEnum import PlayerEnum
 
 
 class GameMaster(GameMechanic):
@@ -27,8 +27,8 @@ class GameMaster(GameMechanic):
                 return
 
     def next_phase(self):
-        self.get_armies("B")
-        self.get_armies("C")
+        self.get_armies(PlayerEnum.B)
+        self.get_armies(PlayerEnum.C)
         self.turn += 1
         if self.turn == 6:
             self.turn = 0
@@ -38,8 +38,8 @@ class GameMaster(GameMechanic):
         elif self.turn == 1:
             self.WhitePlayer.set_state(PlayerState.MOVE)
         elif self.turn == 2:
-            self.reset_move("B")
-            self.WhitePlayer.resources = self.get_resources_for_side("B")
+            self.reset_move(PlayerEnum.B)
+            self.WhitePlayer.resources = self.get_resources_for_side(PlayerEnum.B)
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
@@ -47,8 +47,8 @@ class GameMaster(GameMechanic):
         elif self.turn == 4:
             self.BlackPlayer.set_state(PlayerState.MOVE)
         elif self.turn == 5:
-            self.reset_move("C")
-            self.BlackPlayer.resources = self.get_resources_for_side("C")
+            self.reset_move(PlayerEnum.C)
+            self.BlackPlayer.resources = self.get_resources_for_side(PlayerEnum.C)
             self.BlackPlayer.set_state(PlayerState.HATCH)
 
     def game_is_over(self):

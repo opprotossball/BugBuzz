@@ -1,6 +1,18 @@
 from abc import ABC, abstractmethod
 from array import *
+from enum import Enum
 
+
+class RobalEnum(Enum):
+    K = 0
+    M = 1
+    P = 2
+    Z = 3
+
+class States(Enum):
+    Moved = 0
+    ToMove = 1
+    WontMove = 2
 
 class Robal(ABC):
     lastID = 0
@@ -28,6 +40,7 @@ class Robal(ABC):
             if field is not None and field.bug is not None and field.bug.side == self.side and field.bug.army is None:
                 self.army.addBug(field.bug)
                 field.bug.recruitNeighbours()
+        self.state = States.Moved
 
     def setField(self, field):
         self.field = field
@@ -50,7 +63,8 @@ class Robal(ABC):
         return clone
 
     def hasEnemyInSurrounding(self):
-        for field in self.field.getNeighbours():
+        fields = self.field.board.get_field_neighs(self.field)
+        for field in fields:
             if field is not None and field.bug is not None and field.bug.side != self.side:
                 return True
         return False
@@ -70,7 +84,7 @@ class Konik(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "K"
+        self.short_name = RobalEnum.K
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
@@ -88,7 +102,7 @@ class Mrowka(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "M"
+        self.short_name = RobalEnum.M
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
@@ -106,7 +120,7 @@ class Pajak(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "P"
+        self.short_name = RobalEnum.P
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []
@@ -124,7 +138,7 @@ class Zuk(Robal):
         self.side = side
         self.army = None
         self.field = None
-        self.short_name = "Z"
+        self.short_name = RobalEnum.Z
         self.validMoves = []
         self.invalidMoves = []
         self.moveToExamine = []

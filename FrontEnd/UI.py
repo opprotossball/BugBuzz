@@ -1,8 +1,10 @@
 from BackEnd.GameMechanic.Player import PlayerState
+from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
 import pygame
 
 from Util import Information
+from Util.PlayerEnum import PlayerEnum
 
 
 class UI:
@@ -17,8 +19,8 @@ class UI:
         self.player = None
         self.rolls = None
         self.attacking = False
-        self.highlighting_hatchery = False
         self.selected_army = None
+        self.highlighting_hatchery = False
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
         self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
@@ -43,7 +45,7 @@ class UI:
         end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
         end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
 
-        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, selected_for_time=0.2, keyboard_key=pygame.K_SPACE)
+        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2)
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -67,10 +69,10 @@ class UI:
         ]
 
         self.bug_names = {
-            'K': 'Grasshopper',
-            'M': 'Ant',
-            'P': 'Spider',
-            'Z': 'Beetle'
+            RobalEnum.K: 'Grasshopper',
+            RobalEnum.M: 'Ant',
+            RobalEnum.P: 'Spider',
+            RobalEnum.Z: 'Beetle'
         }
 
 
@@ -79,18 +81,28 @@ class UI:
         self.mode = mode
         self.side = side
         hatch_buttons = []
-        if side == "B":
+        if side == PlayerEnum.B:
             self.player = self.game_master.WhitePlayer
-            hatch_buttons.append(Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None, "K"))
-            hatch_buttons.append(Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, "M"))
-            hatch_buttons.append(Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, "P"))
-            hatch_buttons.append(Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, "Z"))
-        elif side == "C":
+            hatch_buttons.append(
+                Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, RobalEnum.M))
+            hatch_buttons.append(
+                Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None,
+                       RobalEnum.K))
+            hatch_buttons.append(
+                Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, RobalEnum.P))
+            hatch_buttons.append(
+                Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, RobalEnum.Z))
+        elif side == PlayerEnum.C:
             self.player = self.game_master.BlackPlayer
-            hatch_buttons.append(Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None, "K"))
-            hatch_buttons.append(Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, "M"))
-            hatch_buttons.append(Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, "P"))
-            hatch_buttons.append(Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, "Z"))
+            hatch_buttons.append(
+                Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, RobalEnum.M))
+            hatch_buttons.append(
+                Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None,
+                       RobalEnum.K))
+            hatch_buttons.append(
+                Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, RobalEnum.P))
+            hatch_buttons.append(
+                Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, RobalEnum.Z))
         self.hatch_buttons = hatch_buttons
 
     def setTileButtons(self, tilebutons):
@@ -187,31 +199,32 @@ class UI:
 
     def make_move(self, tile):
         if self.selected_tile is None:
-            self.selected_tile = None
             return False
-        dictionary = self.selected_tile.getDictionary()
-        directions = [d for d, n in dictionary.items() if n == tile]
+        dictionary = self.game_master.board.get_field_neighs(self.selected_tile)
+        directions = [Information.directionOptions[n] for n, d in enumerate(dictionary) if d == tile]
+
         if directions.__len__() == 0:
             self.selected_tile = None
             return False
         direction = directions[0]
         leader = self.selected_tile.bug
         self.selected_tile = leader.field
-        self.player.perform_move(leader.army, direction, update_armies=True)
+        self.game_master.get_cluster_army(leader.field)
+        self.player.perform_move(leader.army, direction)
         move_performed = self.game_master.display.highlightedTiles = self.selectArmy(tile)
         self.selected_tile = leader.field
         self.selected_army = leader.army
         return move_performed
 
     def get_count_of_bugs_available(self):
-        if self.side == "B":
+        if self.side == PlayerEnum.B:
             color = self.WHITE
         else:
             color = self.BLACK
         return self.player.bugs_available, color
 
     def get_number_of_resources(self):
-        if self.side == "B":
+        if self.side == PlayerEnum.B:
             color = self.WHITE
         else:
             color = self.BLACK
@@ -241,19 +254,20 @@ class UI:
     def get_stats(self):
         if self.selected_army is not None:
             text = ''
-            if self.selected_army.bugList[0].side == 'B':
+            if self.selected_army.bugList[0].side == PlayerEnum.B:
                 color = self.WHITE
                 text += 'White '
             else:
                 color = self.BLACK
                 text += 'Black '
-            attack = self.selected_army.calculate_attack()
-            toughness = self.selected_army.get_toughness_array()
+
+            attack = self.game_master.calculate_attack(self.selected_army)
+            toughness = self.game_master.get_toughness_array(self.selected_army)
             moves = self.selected_army.numberOfMoves
             text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
 
         elif self.chosen_to_hatch is not None:
-            if self.side == 'B':
+            if self.side == PlayerEnum.B:
                 color = self.WHITE
             else:
                 color = self.BLACK

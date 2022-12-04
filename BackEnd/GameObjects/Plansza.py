@@ -1,9 +1,10 @@
 from numpy.core.defchararray import upper, lower
 
-from BackEnd.GameObjects.Robal import Konik, Mrowka, Pajak, Zuk
-
 from BackEnd.GameObjects.Pole import Pole
+from BackEnd.GameObjects.Robal import *
 from Util import Information
+from Util.Information import Direction
+from Util.PlayerEnum import PlayerEnum
 
 
 class Plansza:
@@ -19,15 +20,11 @@ class Plansza:
 
         self.plane = [[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)]
 
-        for q in range(-size, size + 1):
-            for r in range(max(-size, -size-q), min(size + 1, size + 1 - q)):
-                s = - q - r
-                pole = Pole(q, r, s, self.size)
-                self.setField (q, r, s, pole)
+        for x in range(-size, size + 1):
+            for y in range(max(-size, -size - x), min(size + 1, size + 1 - x)):
+                pole = Pole(x, y, - x - y, self.size, self)
+                self.setField(pole, x, y)
                 self.iterList.append(pole)
-
-        for pole in self.iterList:
-            self.addNeighbours(pole)
 
         self.root = self.getField(0, 0, 0)
 
@@ -36,42 +33,83 @@ class Plansza:
 
         sorted(self.iterList, key=getKeyFor)
 
-    def setField(self, q, r, s, field):
-        self.plane[q + self.size][r + self.size] = field
+    def setField(self,  field, x, y, s=0):
+        try:
+            self.plane[y + self.size][x + self.size] = field
+        except IndexError:
+            return None
 
-    def getField(self, q, r, s):
-        return self.plane[q + self.size][r + self.size]
+    def getField(self, x, y, s=0):
+        try:
+            val = self.plane[y + self.size][x + self.size]
+            if val == 0:
+                return None
+            return val
+        except IndexError:
+            return None
 
-    def addNeighbours(self, pole):
-        if pole.r - 1 >= -self.size and pole.s < self.size:
-            pole.setES(self.getField(pole.q, pole.r - 1, pole.s + 1))
-        if pole.r - 1 >= -self.size and pole.q < self.size:
-            pole.setWS(self.getField(pole.q + 1, pole.r - 1, pole.s))
-        if pole.s - 1 >= -self.size and pole.r < self.size:
-            pole.setWN(self.getField(pole.q, pole.r + 1, pole.s - 1))
-        if pole.s - 1 >= -self.size and pole.q < self.size:
-            pole.setW(self.getField(pole.q + 1, pole.r, pole.s - 1))
-        if pole.q - 1 >= -self.size and pole.r < self.size:
-            pole.setEN(self.getField(pole.q - 1, pole.r + 1, pole.s))
-        if pole.q - 1 >= -self.size and pole.s < self.size:
-            pole.setE(self.getField(pole.q - 1, pole.r, pole.s + 1))
+    def is_valid_neigh(self, pole, dir):
+        if dir == Direction.ES:
+            return pole.y + 1 <= self.size
+        elif dir == Direction.WS:
+            return pole.x - 1 >= -self.size and pole.y + 1 <= self.size
+        elif dir == Direction.WN:
+            return pole.y - 1 >= -self.size
+        elif dir == Direction.W:
+            return pole.x - 1 >= -self.size
+        elif dir == Direction.EN:
+            return pole.x + 1 <= self.size and pole.y - 1 >= -self.size
+        elif dir == Direction.E:
+            return pole.x + 1 <= self.size
+        return False
+
+    def get_field_neighs(self, pole):
+        neighs = []
+        for dir in Information.directionOptions:
+            neighs.append(self.get_field_neigh(pole, dir))
+
+        return neighs
+
+    def get_field_neigh(self, pole, dir):
+        if dir == Direction.ES:
+            return self.getField(pole.x, pole.y + 1)
+        elif dir == Direction.WS:
+            return self.getField(pole.x - 1, pole.y + 1)
+        elif dir == Direction.WN:
+            return self.getField(pole.x, pole.y - 1)
+        elif dir == Direction.W:
+            return self.getField(pole.x - 1, pole.y)
+        elif dir == Direction.EN:
+            return self.getField(pole.x + 1, pole.y - 1)
+        elif dir == Direction.E:
+            return self.getField(pole.x + 1, pole.y)
+        return None
+
 
     def setHatchery(self):
-        pole = self.root
-        while pole.E is not None:
-            pole = pole.E
-        pole.setHatchery(True, 2, "B")
-        pole.WS.setHatchery(True, 1, "B")
-        pole.WN.setHatchery(True, 3, "B")
-        self.whitesHatchery = [pole, pole.WS, pole.WN]
+        pole = self.getField(0, 0, 0)
+        while self.is_valid_neigh(pole, Direction.E):
+            pole = self.get_field_neigh(pole, Direction.E)
+        pole2 = pole
+        pole1 = self.get_field_neigh(pole, Direction.WS)
+        pole3 = self.get_field_neigh(pole, Direction.WN)
 
-        pole = self.root
-        while pole.W is not None:
-            pole = pole.W
-        pole.setHatchery(True, 2, "C")
-        pole.ES.setHatchery(True, 3, "C")
-        pole.EN.setHatchery(True, 1, "C")
-        self.blacksHatchery = [pole, pole.ES, pole.EN]
+        pole2.setHatchery(2, PlayerEnum.C)
+        pole3.setHatchery(3, PlayerEnum.C)
+        pole1.setHatchery(1, PlayerEnum.C)
+        self.blacksHatchery = [pole1, pole2, pole3]
+
+        pole = self.getField(0, 0, 0)
+        while self.is_valid_neigh(pole, Direction.W):
+            pole = self.get_field_neigh(pole, Direction.W)
+        pole2 = pole
+        pole1 = self.get_field_neigh(pole, Direction.ES)
+        pole3 = self.get_field_neigh(pole, Direction.EN)
+
+        pole2.setHatchery(2, PlayerEnum.B)
+        pole1.setHatchery(1, PlayerEnum.B)
+        pole3.setHatchery(3, PlayerEnum.B)
+        self.whitesHatchery = [pole3, pole1, pole2]
 
     def setResources(self):
         fields_cor = Information.resourceFieldCoordinates
@@ -89,7 +127,7 @@ class Plansza:
         return clone
 
     def get_hatchery(self, side):
-        if side == 'B':
+        if side == PlayerEnum.B:
             return self.whitesHatchery
         else:
             return self.blacksHatchery
@@ -100,94 +138,43 @@ class Plansza:
             if i.bug is None:
                 position += '.'
             else:
-                if i.bug.side == "B":
+                if i.bug.side == PlayerEnum.B:
                     position += upper(i.bug.short_name)
-                elif i.bug.side == "C":
+                elif i.bug.side == PlayerEnum.C:
                     position += lower(i.bug.short_name)
         return position
 
     def loadPosition(self, position):
         for actual_field, position_content in zip(self.iterList, position):
             if position_content == "K":
-                actual_field.bug = Konik("B")
+                actual_field.bug = Konik(PlayerEnum.B)
             elif position_content == "M":
-                actual_field.bug = Mrowka("B")
+                actual_field.bug = Mrowka(PlayerEnum.B)
             elif position_content == "P":
-                actual_field.bug = Pajak("B")
+                actual_field.bug = Pajak(PlayerEnum.B)
             elif position_content == "Z":
-                actual_field.bug = Zuk("B")
+                actual_field.bug = Zuk(PlayerEnum.B)
             elif position_content == "k":
-                actual_field.bug = Konik("C")
+                actual_field.bug = Konik(PlayerEnum.C)
             elif position_content == "m":
-                actual_field.bug = Mrowka("C")
+                actual_field.bug = Mrowka(PlayerEnum.C)
             elif position_content == "p":
-                actual_field.bug = Pajak("C")
+                actual_field.bug = Pajak(PlayerEnum.C)
             elif position_content == "z":
-                actual_field.bug = Zuk("C")
+                actual_field.bug = Zuk(PlayerEnum.C)
 
     def getInput(self):
         input = []
         for field in self.iterList:
-            if field.bug is None:
-                input += [0, 0, 0, 0]
-            elif field.bug.short_name == 'k' and field.bug.side == "B":
-                input += [0, 0, 0, 1]
-            elif field.bug.short_name == 'm' and field.bug.side == "B":
-                input += [0, 0, 1, 0]
-            elif field.bug.short_name == 'p' and field.bug.side == "B":
-                input += [0, 0, 1, 1]
-            elif field.bug.short_name == 'z' and field.bug.side == "B":
-                input += [0, 1, 0, 0]
-            elif field.bug.short_name == 'k' and field.bug.side == "C":
-                input += [1, 0, 0, 1]
-            elif field.bug.short_name == 'm' and field.bug.side == "C":
-                input += [1, 0, 1, 0]
-            elif field.bug.short_name == 'p' and field.bug.side == "C":
-                input += [1, 0, 1, 1]
-            elif field.bug.short_name == 'z' and field.bug.side == "C":
-                input += [1, 1, 0, 0]
+            input += field.toCode()
         return input
 
     def __hash__(self):
         input = 0
-        power = 0
-        for field in self.iterList:
-            if field.bug is None:
-                input += 0
-            elif field.bug.short_name == 'K' and field.bug.side == "B":
-                input += 1*pow(16, power)
-            elif field.bug.short_name == 'M' and field.bug.side == "B":
-                input += 2*pow(16, power)
-            elif field.bug.short_name == 'P' and field.bug.side == "B":
-                input += 3*pow(16, power)
-            elif field.bug.short_name == 'Z' and field.bug.side == "B":
-                input += 4*pow(16, power)
-            elif field.bug.short_name == 'K' and field.bug.side == "C":
-                input += 9*pow(16, power)
-            elif field.bug.short_name == 'M' and field.bug.side == "C":
-                input += 10*pow(16, power)
-            elif field.bug.short_name == 'P' and field.bug.side == "C":
-                input += 11*pow(16, power)
-            elif field.bug.short_name == 'Z' and field.bug.side == "C":
-                input += 12*pow(16, power)
-            power += 1
+        for index, field in enumerate(self.iterList):
+            input += field.__hash__() + index * 3
         return input
 
-    def get_hash_2(self):
-        empty_count = 0
-        code = ""
-        for t in self.iterList:
-            if t.bug is None:
-                empty_count += 1
-            else:
-                if empty_count != 0:
-                    code += str(empty_count)
-                    empty_count = 0
-                name = t.bug.short_name
-                if t.bug.side == "C":
-                    name = name.lower()
-                code += name
-        return code.__hash__()
 
 def getKeyFor(Pole):
-    return Pole.get_key_for()
+    return Pole.y * 60 - Pole.x

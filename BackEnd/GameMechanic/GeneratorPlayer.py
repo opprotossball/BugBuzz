@@ -26,11 +26,11 @@ class GeneratorPlayer(Player):
     #     code = ""
     #     tiles = [[] for _ in range(4)]
     #     for bug in self.bugList:
-    #         if bug.short_name == 'K':
+    #         if bug.short_name == RobalEnum.K:
     #             i = 0
-    #         elif bug.short_name == 'M':
+    #         elif bug.short_name == RobalEnum.M:
     #             i = 1
-    #         elif bug.short_name == 'P':
+    #         elif bug.short_name == RobalEnum.P:
     #             i = 2
     #         else:
     #             i = 3
