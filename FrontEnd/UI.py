@@ -98,6 +98,8 @@ class UI:
 
     def selectArmy(self, tile):
         tiles = []
+        if tile is None:
+            return tiles
         bug = tile.bug
         if bug is not None and bug.army is not None:
             for anotherBug in bug.army.bugList:
@@ -105,7 +107,7 @@ class UI:
         return tiles
 
     def get_input(self):
-
+        tile = None
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
                 tile = tile_button.tile
@@ -119,6 +121,10 @@ class UI:
                                 self.game_master.display.highlightedTiles = []
                                 self.attacking = False
                             return
+                        elif len(self.player.attacked_bugs) != 0:
+                            self.player.attacked_bugs = []
+                            self.player.kills = 0
+                            self.attacking = False
                         else:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
                             if was_attacked:
@@ -182,7 +188,7 @@ class UI:
                 self.highlighting_hatchery = True
             else:
                 if self.highlighting_hatchery:
-                    self.game_master.display.highlightedTiles = []
+                    self.game_master.display.highlightedTiles = self.selectArmy(tile)
                     self.highlighting_hatchery = False
 
     def make_move(self, tile):
@@ -239,20 +245,7 @@ class UI:
         return text, color
 
     def get_stats(self):
-        if self.selected_army is not None:
-            text = ''
-            if self.selected_army.bugList[0].side == 'B':
-                color = self.WHITE
-                text += 'White '
-            else:
-                color = self.BLACK
-                text += 'Black '
-            attack = self.selected_army.calculate_attack()
-            toughness = self.selected_army.get_toughness_array()
-            moves = self.selected_army.numberOfMoves
-            text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
-
-        elif self.chosen_to_hatch is not None:
+        if self.chosen_to_hatch is not None:
             if self.side == 'B':
                 color = self.WHITE
             else:
@@ -266,6 +259,18 @@ class UI:
             move = bug_instance.max_move
             del bug_instance
             text += '\ncost: {}\nattack: {}\ntoughness: {}\nmove: {}'.format(cost, attack, toughness, move)
+        elif self.selected_army is not None:
+            text = ''
+            if self.selected_army.bugList[0].side == 'B':
+                color = self.WHITE
+                text += 'White '
+            else:
+                color = self.BLACK
+                text += 'Black '
+            attack = self.selected_army.calculate_attack()
+            toughness = self.selected_army.get_toughness_array()
+            moves = self.selected_army.numberOfMoves
+            text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
         else:
             return None, None
         return text, color
