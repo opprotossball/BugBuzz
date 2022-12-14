@@ -20,37 +20,27 @@ class Pole:
 
         self.bug = None
 
-
-    def setHatchery(self, hatcheryID, side):
+    def set_hatchery(self, hatcheryID, side):
         if side == PlayerEnum.B:
             self.is_white_hatchery = True
         elif side == PlayerEnum.C:
             self.is_black_hatchery = True
         self.hatcheryID = hatcheryID
 
-    def setBug(self, bug):
+    def set_resources(self, is_res):
+        self.resources = is_res
+
+    def set_bug(self, bug):
         self.bug = bug
-        bug.setField(self)
+        bug.set_field(self)
 
-    def resetBug(self):
+    def reset_bug(self):
         if self.bug is not None:
-            self.bug.setField(None)
+            self.bug.set_field(None)
             self.bug = None
-
-    def setResources(self, isRes):
-        self.resources = isRes
-
-    def toString(self):
-        return "[" + str(self.q - self.size) + "," + str(self.r - self.size) + "," + str(self.s - self.size) + "]"
 
     def cor(self):
         return [self.q, self.r, self.s]
 
-    def __str__(self):
-        return "[" + str(self.x) + "," + str(self.y) + "]"
-
     def coordinates_to_string(self):
         return "(" + str(self.q) + "," + str(self.r) + "," + str(self.s) + ")"
-
-    def get_key_for(self):
-        return self.r * 60 - self.q

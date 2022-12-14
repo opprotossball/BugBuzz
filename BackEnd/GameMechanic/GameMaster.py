@@ -21,7 +21,7 @@ class GameMaster(GameMechanic):
         self.next_phase()
 
         while True:
-            self.updateWindow()
+            self.update_window()
             if self.game_is_over():
                 print("Player " + self.winner_side + " has won!")
                 return

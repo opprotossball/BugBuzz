@@ -57,14 +57,14 @@ class Player(ABC):
             return False
 
         trader = Trader()
-        bug, price = trader.buyBug(bug_type, self)
+        bug, price = trader.buy_bug(bug_type, self)
         if bug is None:
             return False
 
         self.resources -= price
         self.bugs_available[bug.short_name] -= 1
         self.bugList.append(bug)
-        bug.moveBugTo(tile)
+        bug.move_bug_to(tile)
         if update_armies:
             self.gm.get_armies(self.side)
         return True
@@ -76,7 +76,7 @@ class Player(ABC):
         attack_power, attacked_bugs = self.gm.get_attack_power_and_bugs_attacked(opponent_army)
         toughness = self.gm.get_toughness_array(opponent_army)
         damage = 0
-        rolls = self.gm.rollDice(attack_power)
+        rolls = self.gm.roll_dice(attack_power)
         for result in rolls:
             if result not in toughness:
                 damage += 1
@@ -98,7 +98,7 @@ class Player(ABC):
             other_player.bugs_available[bug.short_name] += 1
             bug.army.bugList.remove(bug)
             self.attacked_bugs.remove(bug)
-            bug.field.resetBug()
+            bug.field.reset_bug()
             self.kills -= 1
             return True
         return False

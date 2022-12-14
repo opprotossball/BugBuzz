@@ -8,4 +8,4 @@ class HumanPlayer(Player):
 
     def set_state(self, state):
         self.state = state
-        self.gm.ui.setMode(state, self.side)
+        self.gm.ui.set_mode(state, self.side)

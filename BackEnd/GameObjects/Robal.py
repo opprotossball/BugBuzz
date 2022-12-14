@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from array import *
 from enum import Enum
 
 
@@ -9,13 +8,14 @@ class RobalEnum(Enum):
     P = 2
     Z = 3
 
+
 class States(Enum):
     Moved = 0
     ToMove = 1
     WontMove = 2
 
+
 class Robal(ABC):
-    lastID = 0
 
     @abstractmethod
     def __init__(self, side):
@@ -26,26 +26,19 @@ class Robal(ABC):
         self.army = None
         self.side = side
         self.field = None
+        self.state = None
 
-        self.short_name = ""
-        self.validMoves = []
-        self.invalidMoves = []
-        self.moveToExamine = []
-
-        self.moved = False
-
-
-    def recruitNeighbours(self):
+    def recruit_neighbours(self):
         for field in self.field.getNeighbours():
             if field is not None and field.bug is not None and field.bug.side == self.side and field.bug.army is None:
                 self.army.addBug(field.bug)
-                field.bug.recruitNeighbours()
+                field.bug.recruit_neighbours()
         self.state = States.Moved
 
-    def setField(self, field):
+    def set_field(self, field):
         self.field = field
 
-    def moveBugTo(self, field):
+    def move_bug_to(self, field):
         if self.field is not None:
             self.field.bug = None
         self.field = field
@@ -62,14 +55,14 @@ class Robal(ABC):
         clone.move = self.move
         return clone
 
-    def hasEnemyInSurrounding(self):
+    def has_enemy_in_surrounding(self):
         fields = self.field.board.get_field_neighs(self.field)
         for field in fields:
             if field is not None and field.bug is not None and field.bug.side != self.side:
                 return True
         return False
 
-    def setMove(self, move):
+    def has_move(self, move):
         self.move = move
 
 
@@ -85,10 +78,6 @@ class Konik(Robal):
         self.army = None
         self.field = None
         self.short_name = RobalEnum.K
-        self.validMoves = []
-        self.invalidMoves = []
-        self.moveToExamine = []
-        self.moved = False
 
 
 class Mrowka(Robal):
@@ -103,10 +92,6 @@ class Mrowka(Robal):
         self.army = None
         self.field = None
         self.short_name = RobalEnum.M
-        self.validMoves = []
-        self.invalidMoves = []
-        self.moveToExamine = []
-        self.moved = False
 
 
 class Pajak(Robal):
@@ -121,10 +106,6 @@ class Pajak(Robal):
         self.army = None
         self.field = None
         self.short_name = RobalEnum.P
-        self.validMoves = []
-        self.invalidMoves = []
-        self.moveToExamine = []
-        self.moved = False
 
 
 class Zuk(Robal):
@@ -139,7 +120,3 @@ class Zuk(Robal):
         self.army = None
         self.field = None
         self.short_name = RobalEnum.Z
-        self.validMoves = []
-        self.invalidMoves = []
-        self.moveToExamine = []
-        self.moved = False

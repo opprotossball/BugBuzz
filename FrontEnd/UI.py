@@ -45,7 +45,7 @@ class UI:
         end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
         end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
 
-        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2)
+        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2, keyboard_key=pygame.K_SPACE)
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -59,15 +59,6 @@ class UI:
             5: "Black's hatch phase"
         }
 
-        self.tip_texts = [
-            "Select opponent's army to attack"
-            "Select and move your army"
-            "Hatch bug in your hatchery"
-            "Wait for opponent to play"
-            "Wait for opponent to play"
-            "Wait for opponent to play"
-        ]
-
         self.bug_names = {
             RobalEnum.K: 'Grasshopper',
             RobalEnum.M: 'Ant',
@@ -75,9 +66,7 @@ class UI:
             RobalEnum.Z: 'Beetle'
         }
 
-
-
-    def setMode(self, mode, side):
+    def set_mode(self, mode, side):
         self.mode = mode
         self.side = side
         hatch_buttons = []
@@ -105,11 +94,13 @@ class UI:
                 Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, RobalEnum.Z))
         self.hatch_buttons = hatch_buttons
 
-    def setTileButtons(self, tilebutons):
+    def set_tile_buttons(self, tilebutons):
         self.tile_buttons = tilebutons
 
-    def selectArmy(self, tile):
+    def select_army(self, tile):
         tiles = []
+        if tile is None:
+            return tiles
         bug = tile.bug
         if bug is not None and bug.army is not None:
             for anotherBug in bug.army.bugList:
@@ -117,7 +108,7 @@ class UI:
         return tiles
 
     def get_input(self):
-
+        tile = None
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
                 tile = tile_button.tile
@@ -135,7 +126,7 @@ class UI:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
                             if was_attacked:
                                 self.attacking = True
-                                self.game_master.display.highlightedTiles = self.selectArmy(tile)
+                                self.game_master.display.highlightedTiles = self.select_army(tile)
                                 self.game_master.display.highlightedColor = (150, 45, 45)
                                 self.rolls = rolls
                                 return
@@ -159,7 +150,7 @@ class UI:
                             self.game_master.display.highlightedTiles = []
                             return
 
-                selected_army_tiles = self.selectArmy(tile)  # select clicked army
+                selected_army_tiles = self.select_army(tile)  # select clicked army
                 if len(selected_army_tiles) > 0:
                     self.selected_army = selected_army_tiles[0].bug.army
                 else:
@@ -189,12 +180,12 @@ class UI:
                 if hatchButton.is_selected():
                     self.chosen_to_hatch = hatchButton.bugShortName
             if self.chosen_to_hatch is not None:
-                self.game_master.display.highlightedTiles = self.game_master.getAvailableSpaceForHatch(self.side)
+                self.game_master.display.highlightedTiles = self.game_master.get_available_space_for_hatch(self.side)
                 self.game_master.display.highlightedColor = self.game_master.display.hatcheryColor
                 self.highlighting_hatchery = True
             else:
                 if self.highlighting_hatchery:
-                    self.game_master.display.highlightedTiles = []
+                    self.game_master.display.highlightedTiles = self.select_army(tile)
                     self.highlighting_hatchery = False
 
     def make_move(self, tile):
@@ -211,7 +202,7 @@ class UI:
         self.selected_tile = leader.field
         self.game_master.get_cluster_army(leader.field)
         self.player.perform_move(leader.army, direction)
-        move_performed = self.game_master.display.highlightedTiles = self.selectArmy(tile)
+        move_performed = self.game_master.display.highlightedTiles = self.select_army(tile)
         self.selected_tile = leader.field
         self.selected_army = leader.army
         return move_performed

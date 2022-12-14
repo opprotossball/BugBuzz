@@ -4,7 +4,6 @@ import math
 from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.TileButton import TileButton
 from pygame.locals import *
-
 from Util.PlayerEnum import PlayerEnum
 
 
@@ -92,7 +91,7 @@ class Display:
             self.show_combat_results()
             self.show_stats()
 
-        self.drawBugs()
+        self.draw_bugs()
         if self.window_scale != 1:
             surface = pygame.transform.smoothscale(self.main_surface, (self.width, self.height))
         else:
@@ -140,9 +139,9 @@ class Display:
             tile_button.set_window_scale(self.window_scale)
             tile_buttons.append(tile_button)
         if self.gameMaster.ui is not None:
-            self.gameMaster.ui.setTileButtons(tile_buttons)
+            self.gameMaster.ui.set_tile_buttons(tile_buttons)
 
-    def drawBugs(self):
+    def draw_bugs(self):
         for bug in self.gameMaster.BlackPlayer.bugList:
             self.draw_bug(bug, bug.field)
         for bug in self.gameMaster.WhitePlayer.bugList:
