@@ -8,7 +8,7 @@ from Util.PlayerEnum import PlayerEnum
 
 
 class UI:
-    def __init__(self, game_master):
+    def __init__(self, game_master, debug=False):
         self.tile_buttons = []
         self.hatch_buttons = []
         self.game_master = game_master
@@ -21,6 +21,7 @@ class UI:
         self.attacking = False
         self.selected_army = None
         self.highlighting_hatchery = False
+        self.debug = debug
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
         self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")
@@ -102,6 +103,8 @@ class UI:
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
                 tile = tile_button.tile
+                if self.debug:
+                    print(tile.coordinates_to_string())
                 bug = tile.bug
 
                 if self.mode == PlayerState.COMBAT:
@@ -116,6 +119,7 @@ class UI:
                             self.player.attacked_bugs = []
                             self.player.kills = 0
                             self.attacking = False
+                            return
                         else:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
                             if was_attacked:

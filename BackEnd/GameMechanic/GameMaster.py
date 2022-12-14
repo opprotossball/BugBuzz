@@ -14,8 +14,15 @@ class GameMaster(GameMechanic):
 
         self.winner_side = None
 
-    def new_game(self, player_white, player_black):
-        self.set_board(Plansza(Information.board_size))
+    def new_game(self, player_white, player_black, board=None, start_at_turn=None):
+        if board is not None:
+            self.set_board(board)
+        else:
+            self.set_board(Plansza(Information.board_size))
+
+        if start_at_turn is not None:
+            self.turn = start_at_turn
+
         self.set_player(player_white)
         self.set_player(player_black)
         self.next_phase()

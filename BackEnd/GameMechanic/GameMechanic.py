@@ -32,7 +32,7 @@ class GameMechanic:
     def set_board(self, board):
         self.board = board
 
-    def get_armies(self, side, player=None):
+    def get_armies(self, side):
         armies = []
         bugs = self.get_player(side).bugList
         for bug in bugs:
@@ -212,6 +212,9 @@ class GameMechanic:
 
     def set_display(self):
         self.display = Display(self)
+
+    def set_new_debug_ui(self):
+        self.ui = UI(self, debug=True)
 
     def set_position_for_player(self, board, player, delete_others=True):  # bugs controlled by other player are unchanged
         if delete_others:
