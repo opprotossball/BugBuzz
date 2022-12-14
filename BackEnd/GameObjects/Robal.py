@@ -62,7 +62,7 @@ class Robal(ABC):
                 return True
         return False
 
-    def has_move(self, move):
+    def set_move(self, move):
         self.move = move
 
 

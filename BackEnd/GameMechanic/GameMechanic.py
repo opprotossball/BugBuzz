@@ -39,6 +39,8 @@ class GameMechanic:
             if bug.army not in armies:
                 self.get_cluster_army(bug.field)
                 armies.append(bug.army)
+        for army in armies:
+            self.set_moves(army)
         return armies
 
     def get_cluster_army(self, pole):
@@ -64,12 +66,6 @@ class GameMechanic:
                     claster.append(pole_x)
                     self.__add_to_claster(claster, pole_x, side)
 
-    def reset_moves_for_bugs(self, side):
-        player = self.get_player(side)
-
-        for bug in player.bugList:
-            bug.has_move(bug.max_move)
-
     def set_moves(self, army):
         moves = 20
         for bug in army.bugList:
@@ -84,7 +80,7 @@ class GameMechanic:
             bug.state = States.ToMove
 
         for bug in bug_list:
-            bug.has_move(bug.move - 1)
+            bug.set_move(bug.move - 1)
             if bug.state == States.ToMove:
                 field = self.board.get_field_neigh(bug.field, direction)
                 if bug.has_enemy_in_surrounding():
@@ -208,7 +204,7 @@ class GameMechanic:
             print(side + "is not a valid side")
             return False
         for bug in player.bugList:
-            bug.has_move(bug.max_move)
+            bug.set_move(bug.max_move)
 
     def set_new_ui_and_display(self):
         self.ui = UI(self)

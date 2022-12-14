@@ -12,7 +12,6 @@ class Armia:
         self.numberOfGrassHoppers = 0
         self.attack = 0
         self.was_attacked = False
-
         self.board = board
 
     def addBug(self, bug):

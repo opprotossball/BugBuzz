@@ -72,26 +72,16 @@ class UI:
         hatch_buttons = []
         if side == PlayerEnum.B:
             self.player = self.game_master.WhitePlayer
-            hatch_buttons.append(
-                Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, RobalEnum.M))
-            hatch_buttons.append(
-                Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None,
-                       RobalEnum.K))
-            hatch_buttons.append(
-                Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, RobalEnum.P))
-            hatch_buttons.append(
-                Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, RobalEnum.Z))
+            hatch_buttons.append(Button(self.grasshooper_white_hatch_button, self.grasshooper_white_hatch_button_selected, None, RobalEnum.K))
+            hatch_buttons.append(Button(self.ant_white_hatch_button, self.ant_white_hatch_button_selected, None, RobalEnum.M))
+            hatch_buttons.append(Button(self.spider_white_hatch_button, self.spider_white_hatch_button_selected, None, RobalEnum.P))
+            hatch_buttons.append(Button(self.beetle_white_hatch_button, self.beetle_white_hatch_button_selected, None, RobalEnum.Z))
         elif side == PlayerEnum.C:
             self.player = self.game_master.BlackPlayer
-            hatch_buttons.append(
-                Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, RobalEnum.M))
-            hatch_buttons.append(
-                Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None,
-                       RobalEnum.K))
-            hatch_buttons.append(
-                Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, RobalEnum.P))
-            hatch_buttons.append(
-                Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, RobalEnum.Z))
+            hatch_buttons.append(Button(self.grasshooper_black_hatch_button, self.grasshooper_black_hatch_button_selected, None, RobalEnum.K))
+            hatch_buttons.append(Button(self.ant_black_hatch_button, self.ant_black_hatch_button_selected, None, RobalEnum.M))
+            hatch_buttons.append(Button(self.spider_black_hatch_button, self.spider_black_hatch_button_selected, None, RobalEnum.P))
+            hatch_buttons.append(Button(self.beetle_black_hatch_button, self.beetle_black_hatch_button_selected, None, RobalEnum.Z))
         self.hatch_buttons = hatch_buttons
 
     def set_tile_buttons(self, tilebutons):
@@ -204,11 +194,11 @@ class UI:
         leader = self.selected_tile.bug
         self.selected_tile = leader.field
         self.game_master.get_cluster_army(leader.field)
-        self.player.perform_move(leader.army, direction)
+        moved = self.player.perform_move(leader.army, direction, update_armies=True)
         self.game_master.display.highlightedTiles = self.select_army(tile)
         self.selected_tile = leader.field
         self.selected_army = leader.army
-        return True
+        return moved
 
     def get_count_of_bugs_available(self):
         if self.side == PlayerEnum.B:

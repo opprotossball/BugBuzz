@@ -40,9 +40,7 @@ class Player(ABC):
             return False
         self.gm.perform_move(army, direction)
         if update_armies:
-            armies = self.gm.get_armies(self.side)
-            for a in armies:
-                self.gm.set_moves(a)
+            self.gm.get_armies(self.side)
         return True
 
     def perform_hatch(self, bug_type, tile, update_armies=False):
