@@ -37,7 +37,9 @@ class GameMechanic:
         bugs = self.get_player(side).bugList
         for bug in bugs:
             if bug.army not in armies:
-                armies.append(self.get_cluster_army(bug.field))
+                self.get_cluster_army(bug.field)
+                armies.append(bug.army)
+        return armies
 
     def get_cluster_army(self, pole):
         if pole.bug is None:

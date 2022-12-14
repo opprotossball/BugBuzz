@@ -122,6 +122,10 @@ class UI:
                                 self.game_master.display.highlightedTiles = []
                                 self.attacking = False
                             return
+                        elif len(self.player.attacked_bugs) != 0:
+                            self.player.attacked_bugs = []
+                            self.player.kills = 0
+                            self.attacking = False
                         else:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
                             if was_attacked:
@@ -243,21 +247,7 @@ class UI:
         return text, color
 
     def get_stats(self):
-        if self.selected_army is not None:
-            text = ''
-            if self.selected_army.bugList[0].side == PlayerEnum.B:
-                color = self.WHITE
-                text += 'White '
-            else:
-                color = self.BLACK
-                text += 'Black '
-
-            attack = self.game_master.calculate_attack(self.selected_army)
-            toughness = self.game_master.get_toughness_array(self.selected_army)
-            moves = self.selected_army.numberOfMoves
-            text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
-
-        elif self.chosen_to_hatch is not None:
+        if self.chosen_to_hatch is not None:
             if self.side == PlayerEnum.B:
                 color = self.WHITE
             else:
@@ -271,6 +261,19 @@ class UI:
             move = bug_instance.max_move
             del bug_instance
             text += '\ncost: {}\nattack: {}\ntoughness: {}\nmove: {}'.format(cost, attack, toughness, move)
+        elif self.selected_army is not None:
+            text = ''
+            if self.selected_army.bugList[0].side == PlayerEnum.B:
+                color = self.WHITE
+                text += 'White '
+            else:
+                color = self.BLACK
+                text += 'Black '
+
+            attack = self.game_master.calculate_attack(self.selected_army)
+            toughness = self.game_master.get_toughness_array(self.selected_army)
+            moves = self.selected_army.numberOfMoves
+            text += 'army\nattack: {}\ntoughness: {}\nmoves left: {}'.format(attack, toughness, moves)
         else:
             return None, None
         return text, color

@@ -200,7 +200,7 @@ class Display:
     def show_phase_title(self):
         text, color = self.gameMaster.ui.get_phase_title()
         title = self.font40.render(text, True, color)
-        self.main_surface.blit(title, (int(1350 - title.get_width() / 2), int(75 - title.get_height() / 2)))
+        self.main_surface.blit(title, (int(1300 - title.get_width() / 2), int(75 - title.get_height() / 2)))
 
     def show_number_of_bugs_available(self):
         x = 170
@@ -221,11 +221,11 @@ class Display:
 
     def show_combat_results(self):
         message, color = self.gameMaster.ui.get_combat_results()
-        self.write_multiline_text_30(message, color, 1350, 175)
+        self.write_multiline_text_30(message, color, 1310, 175)
 
     def show_stats(self):
         message, color = self.gameMaster.ui.get_stats()
-        self.write_multiline_text_30(message, color, 1350, 175, align=True, title=True)
+        self.write_multiline_text_30(message, color, 1312, 175, align=True, title=True)
 
     def write_multiline_text_30(self, message, color, x, y, space_height_ratio=1.3, align=False, title=False):
         if message is None:
