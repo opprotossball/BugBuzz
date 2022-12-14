@@ -101,15 +101,15 @@ class GameMechanic:
         army.numberOfMoves -= 1
 
     def get_attacks(self, army):
-        attaattack_array = []
+        attack_array = []
         for bug in army.bugList:
             for neighbour in bug.field.getNeighbours():
                 if self.has_opponents_neighbour(bug.side, neighbour):
-                    if neighbour.bug.army in attaattack_array:
+                    if neighbour.bug.army in attack_array:
                         continue
                     else:
-                        attaattack_array.append(neighbour.bug.army)
-        return attaattack_array
+                        attack_array.append(neighbour.bug.army)
+        return attack_array
 
     def get_attack_power_and_bugs_attacked(self, attacked_army):
         attacking_bugs = set()
@@ -128,15 +128,13 @@ class GameMechanic:
         return power, attacked_bugs
 
     def calculate_attack(self, army):
-        attack_values = [0 for i in range(6)]
+        attack_values = [0 for _ in range(6)]
         for bug in army.bugList:
             attack_values[bug.attack] += 1
         for i in range(len(attack_values) - 1, 0, -1):
             if attack_values[i] >= math.ceil(len(army.bugList) / 2):
-                self.attack = i
                 return i
             attack_values[i - 1] += attack_values[i]
-        self.attack = 0
         return 0
 
     def roll_dice(self, dice_count):
@@ -146,12 +144,12 @@ class GameMechanic:
     def get_toughness_array(self, army):
         toughness_interval = []
         for bug in army.bugList:
-            new_element = bug.toughness
-            if new_element in toughness_interval:
-                continue
-            else:
-                toughness_interval += new_element
-        return toughness_interval
+            for newElement in bug.toughness:
+                if newElement in toughness_interval:
+                    continue
+                else:
+                    toughness_interval.append(newElement)
+        return sorted(toughness_interval)
 
     def set_army_on_tile(self, tile):
         bug = tile.bug

@@ -197,7 +197,6 @@ class UI:
             return False
         dictionary = self.game_master.board.get_field_neighs(self.selected_tile)
         directions = [Information.directionOptions[n] for n, d in enumerate(dictionary) if d == tile]
-
         if directions.__len__() == 0:
             self.selected_tile = None
             return False
@@ -206,10 +205,10 @@ class UI:
         self.selected_tile = leader.field
         self.game_master.get_cluster_army(leader.field)
         self.player.perform_move(leader.army, direction)
-        move_performed = self.game_master.display.highlightedTiles = self.select_army(tile)
+        self.game_master.display.highlightedTiles = self.select_army(tile)
         self.selected_tile = leader.field
         self.selected_army = leader.army
-        return move_performed
+        return True
 
     def get_count_of_bugs_available(self):
         if self.side == PlayerEnum.B:
