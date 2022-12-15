@@ -246,6 +246,8 @@ class UI:
         return text, color
 
     def get_stats(self):
+        if self.attacking:
+            self.selected_army = None
         if self.chosen_to_hatch is not None:
             if self.side == PlayerEnum.B:
                 color = self.WHITE
