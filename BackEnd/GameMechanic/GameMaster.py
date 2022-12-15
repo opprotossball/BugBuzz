@@ -1,6 +1,7 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
 from BackEnd.GameObjects.Plansza import Plansza
+from FrontEnd.VictoryScene import VictoryScene
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
@@ -22,16 +23,19 @@ class GameMaster(GameMechanic):
 
         if start_at_turn is not None:
             self.turn = start_at_turn
+        else:
+            self.turn = -1
 
         self.set_player(player_white)
         self.set_player(player_black)
+        self.set_new_ui()
         self.next_phase()
 
         while True:
             self.update_window()
             if self.game_is_over():
-                print("Player " + self.winner_side + " has won!")
-                return
+                self.board = Plansza(Information.board_size)
+                self.display.set_scene(VictoryScene(self, self.winner_side))
 
     def next_phase(self):
         self.get_armies(PlayerEnum.B)

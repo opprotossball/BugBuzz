@@ -8,8 +8,8 @@ board_size = 4
 
 bug_types = [RobalEnum.K, RobalEnum.M, RobalEnum.P, RobalEnum.Z]
 bug_classes = {
-            RobalEnum.K: Konik,
-            RobalEnum.M: Mrowka,
-            RobalEnum.P: Pajak,
-            RobalEnum.Z: Zuk
+    RobalEnum.K: Konik,
+    RobalEnum.M: Mrowka,
+    RobalEnum.P: Pajak,
+    RobalEnum.Z: Zuk
 }

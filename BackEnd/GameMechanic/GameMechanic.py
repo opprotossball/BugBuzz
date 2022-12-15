@@ -3,6 +3,7 @@ from random import randint
 from BackEnd.GameObjects.Armia import Armia
 from BackEnd.GameObjects.Robal import States
 from FrontEnd.Display import Display
+from FrontEnd.GameScene import GameScene
 from FrontEnd.UI import UI
 from Util.PlayerEnum import PlayerEnum
 
@@ -208,13 +209,16 @@ class GameMechanic:
 
     def set_new_ui_and_display(self):
         self.ui = UI(self)
-        self.display = Display(self)
+        self.display = Display()
 
     def set_display(self):
-        self.display = Display(self)
+        self.display = Display()
 
     def set_new_debug_ui(self):
         self.ui = UI(self, debug=True)
+
+    def set_new_ui(self):
+        self.ui = UI(self)
 
     def set_position_for_player(self, board, player, delete_others=True):  # bugs controlled by other player are unchanged
         if delete_others:

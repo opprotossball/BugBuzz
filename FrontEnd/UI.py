@@ -3,6 +3,7 @@ from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
 import pygame
 
+from FrontEnd.MenuScene import MenuScene
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
@@ -43,10 +44,13 @@ class UI:
         self.spider_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/spiderBlackSelectedHatchButton.png")
         self.beetle_black_hatch_button_selected = pygame.image.load("./FrontEnd/Assets/Buttons/beetleBlackSelectedHatchButton.png")
 
+        resign_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/ResignButton.png")
+
         end_phase_button_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseButton.png")
         end_phase_button_selected_image = pygame.image.load("./FrontEnd/Assets/Buttons/endPhaseSelectedButton.png")
 
-        self.end_phase_button = Button(end_phase_button_image, end_phase_button_selected_image, 0.2, keyboard_key=pygame.K_SPACE)
+        self.end_phase_button = Button(end_phase_button_image, image_selected=end_phase_button_selected_image, selected_for_time=0.2, keyboard_key=pygame.K_SPACE)
+        self.resign_button = Button(resign_button_image)
 
         self.BLACK = (0, 0, 0)
         self.WHITE = (255, 255, 255)
@@ -112,7 +116,7 @@ class UI:
                         if self.player.kills > 0:
                             self.player.kill_bug(bug)
                             if self.player.kills == 0 or self.player.attacked_bugs.__len__() == 0:
-                                self.game_master.display.highlightedTiles = []
+                                self.game_master.display.scene.highlightedTiles = []
                                 self.attacking = False
                             return
                         elif len(self.player.attacked_bugs) != 0:
@@ -124,8 +128,8 @@ class UI:
                             was_attacked, kills, rolls = self.player.perform_attack(bug.army)
                             if was_attacked:
                                 self.attacking = True
-                                self.game_master.display.highlightedTiles = self.select_army(tile)
-                                self.game_master.display.highlightedColor = (150, 45, 45)
+                                self.game_master.display.scene.highlightedTiles = self.select_army(tile)
+                                self.game_master.display.scene.highlightedColor = (150, 45, 45)
                                 self.rolls = rolls
                                 return
                     elif self.player.kills > 0 and self.player.attacked_bugs.__len__() > 0:
@@ -145,7 +149,7 @@ class UI:
                     if self.chosen_to_hatch is not None:
                         if self.player.perform_hatch(self.chosen_to_hatch, tile, update_armies=True):
                             self.chosen_to_hatch = None
-                            self.game_master.display.highlightedTiles = []
+                            self.game_master.display.scene.highlightedTiles = []
                             return
 
                 selected_army_tiles = self.select_army(tile)  # select clicked army
@@ -153,8 +157,8 @@ class UI:
                     self.selected_army = selected_army_tiles[0].bug.army
                 else:
                     self.selected_army = None
-                self.game_master.display.highlightedTiles = selected_army_tiles
-                self.game_master.display.highlightedColor = (81, 210, 252)
+                self.game_master.display.scene.highlightedTiles = selected_army_tiles
+                self.game_master.display.scene.highlightedColor = (81, 210, 252)
 
                 if self.mode == PlayerState.MOVE:  # select army leader
                     if tile is not None and bug is not None and bug.side == self.side:
@@ -164,8 +168,10 @@ class UI:
             self.selected_tile = None
 
         if self.mode != PlayerState.INACTIVE:  # end turn if ordered
+            if self.resign_button.is_clicked_left():
+                self.game_master.display.set_scene(MenuScene(self.game_master))
             if self.end_phase_button.is_clicked_left():
-                self.game_master.display.highlightedTiles = []
+                self.game_master.display.scene.highlightedTiles = []
                 self.attacking = False
                 self.selected_army = None
                 self.chosen_to_hatch = None
@@ -178,12 +184,12 @@ class UI:
                 if hatchButton.is_selected():
                     self.chosen_to_hatch = hatchButton.bugShortName
             if self.chosen_to_hatch is not None:
-                self.game_master.display.highlightedTiles = self.game_master.get_available_space_for_hatch(self.side)
-                self.game_master.display.highlightedColor = self.game_master.display.hatcheryColor
+                self.game_master.display.scene.highlightedTiles = self.game_master.get_available_space_for_hatch(self.side)
+                self.game_master.display.scene.highlightedColor = self.game_master.display.scene.hatcheryColor
                 self.highlighting_hatchery = True
             else:
                 if self.highlighting_hatchery:
-                    self.game_master.display.highlightedTiles = self.select_army(tile)
+                    self.game_master.display.scene.highlightedTiles = self.select_army(tile)
                     self.highlighting_hatchery = False
 
     def make_move(self, tile):
@@ -199,7 +205,7 @@ class UI:
         self.selected_tile = leader.field
         self.game_master.get_cluster_army(leader.field)
         moved = self.player.perform_move(leader.army, direction, update_armies=True)
-        self.game_master.display.highlightedTiles = self.select_army(tile)
+        self.game_master.display.scene.highlightedTiles = self.select_army(tile)
         self.selected_tile = leader.field
         self.selected_army = leader.army
         return moved

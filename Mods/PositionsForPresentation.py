@@ -3,6 +3,8 @@ from BackEnd.GameMechanic.HumanPlayer import HumanPlayer
 from BackEnd.GameObjects.Armia import Armia
 from BackEnd.GameObjects.Plansza import Plansza
 from BackEnd.GameObjects.Robal import *
+from FrontEnd.GameScene import GameScene
+from FrontEnd.MenuScene import MenuScene
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
@@ -43,6 +45,7 @@ def launch_combat_demo():
 
     gm.set_display()
     gm.set_new_debug_ui()
+    gm.display.set_scene(GameScene(gm))
     gm.new_game(white_player, black_player, board=board, start_at_turn=5)
 
 
@@ -61,6 +64,7 @@ def launch_move_demo():
 
     gm.set_display()
     gm.set_new_debug_ui()
+    gm.display.set_scene(GameScene(gm))
     gm.new_game(white_player, black_player, board=board, start_at_turn=0)
 
 
@@ -77,4 +81,5 @@ def launch_hatch_demo():
 
     gm.set_display()
     gm.set_new_debug_ui()
+    gm.display.set_scene(GameScene(gm))
     gm.new_game(white_player, black_player, board=board, start_at_turn=0)

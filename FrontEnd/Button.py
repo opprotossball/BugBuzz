@@ -3,9 +3,9 @@ import pygame
 
 class Button:
 
-    def __init__(self, image, imageSelected=None, selected_for_time=None, bugShortName=None, keyboard_key=None):  #selected_for_time should be in seconds
+    def __init__(self, image, image_selected=None, selected_for_time=None, bugShortName=None, keyboard_key=None):  #selected_for_time should be in seconds
         self.image = image
-        self.imageSelected = imageSelected
+        self.imageSelected = image_selected
         self.bugShortName = bugShortName
         self.keyboard_key = keyboard_key
         self.selected = False
