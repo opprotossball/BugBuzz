@@ -39,7 +39,7 @@ def launch_combat_demo():
     white_player = HumanPlayer(gm, PlayerEnum.B)
     set_position(whites_position, board, white_player)
 
-    blacks_position = [('M', (1, 0)), ('P', (0, 1)), ('K', (1, -1)), ('K', (0, -1)), ('Z', (0, 0))]
+    blacks_position = [('M', (1, 0)), ('P', (0, 1)), ('K', (1, -1)), ('K', (0, -1)), ('Z', (0, 0)), ('M', (-1, 3)), ('Z', (1, -3))]
     black_player = HumanPlayer(gm, PlayerEnum.C)
     set_position(blacks_position, board, black_player)
 
