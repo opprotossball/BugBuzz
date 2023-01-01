@@ -36,31 +36,30 @@ class Client(GameMaster):
 
     def run_game(self):
         self.display.set_scene(MenuScene(self))
-        changed_active = False
         while True:
+            if self.playing_online:
+                if self.socket is None:  # initialize game
+                    self.play_online()
+                    if self.online_player_side == PlayerEnum.B:
+                        self.new_game(HumanPlayer(self, PlayerEnum.B), OnlinePlayer(self, PlayerEnum.C))
+                    else:
+                        self.new_game(OnlinePlayer(self, PlayerEnum.B), HumanPlayer(self, PlayerEnum.C))
+
+                is_active = self.get_active_player() == self.online_player_side
+
             self.update_window()
+
             if self.display.scene == GameScene and self.game_is_over():
                 self.board = Plansza(Information.board_size)
                 self.display.set_scene(VictoryScene(self, self.winner_side))
                 self.playing_online = False
 
-            elif self.playing_online and self.socket is None:  # initialize game
-                self.play_online()
-                if self.online_player_side == PlayerEnum.B:
-                    self.new_game(HumanPlayer(self, PlayerEnum.B), OnlinePlayer(self, PlayerEnum.C))
-                else:
-                    self.new_game(OnlinePlayer(self, PlayerEnum.B), HumanPlayer(self, PlayerEnum.C))
-
-            elif self.playing_online:
+            elif self.playing_online and self.socket is not None:
                 game = GameState(self.board, self.turn, self.winner_side)
-                game.set_active(self.get_active_player())
-                game.set_change_active(changed_active)
-                changed_active = False
+                #game.set_active(self.get_active_player())
+                game.valid = is_active
 
                 received_game = self.exchange_data(game)
-
-                if received_game.active_player != self.get_active_player():
-                    changed_active = True
 
                 if self.get_player(self.online_player_side).state == PlayerState.INACTIVE:
                     self.board = received_game.board

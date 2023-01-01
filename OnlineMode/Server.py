@@ -31,8 +31,7 @@ class Server:
                     break
                 if not (game_id in self.games):
                     break
-                if self.games[game_id].is_active(player_side) or clients_game.change_active:
-                    print(clients_game.change_active)
+                if clients_game.valid:
                     self.games[game_id] = clients_game
                 connection.sendall(pickle.dumps(self.games[game_id]))
             except error as e:
