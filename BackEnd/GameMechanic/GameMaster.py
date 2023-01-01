@@ -1,6 +1,7 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
 from BackEnd.GameObjects.Plansza import Plansza
+from FrontEnd.GameScene import GameScene
 from FrontEnd.VictoryScene import VictoryScene
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
@@ -10,10 +11,18 @@ class GameMaster(GameMechanic):
     def __init__(self):
         super().__init__()
         self.turn = -1
+        self.playing_online = False
         self.ui = None
         self.display = None
-
         self.winner_side = None
+        self.active = None
+
+    def run(self):
+        while True:
+            self.update_window()
+            if self.display.scene == GameScene and self.game_is_over():
+                self.board = Plansza(Information.board_size)
+                self.display.set_scene(VictoryScene(self, self.winner_side))
 
     def new_game(self, player_white, player_black, board=None, start_at_turn=None):
         if board is not None:
@@ -30,12 +39,6 @@ class GameMaster(GameMechanic):
         self.set_player(player_black)
         self.set_new_ui()
         self.next_phase()
-
-        while True:
-            self.update_window()
-            if self.game_is_over():
-                self.board = Plansza(Information.board_size)
-                self.display.set_scene(VictoryScene(self, self.winner_side))
 
     def next_phase(self):
         self.get_armies(PlayerEnum.B)
@@ -62,6 +65,10 @@ class GameMaster(GameMechanic):
             self.BlackPlayer.resources = self.get_resources_for_side(PlayerEnum.C)
             self.BlackPlayer.set_state(PlayerState.HATCH)
 
+    def set_phase(self, turn):
+        self.turn = turn - 1
+        self.next_phase()
+
     def game_is_over(self):
         bug = self.board.resources[0].bug
         if bug is not None:
@@ -75,3 +82,9 @@ class GameMaster(GameMechanic):
 
         self.winner_side = side
         return True
+
+    def get_active_player(self):
+        if self.WhitePlayer.state != PlayerState.INACTIVE:
+            return PlayerEnum.B
+        elif self.BlackPlayer.state != PlayerState.INACTIVE:
+            return PlayerEnum.C

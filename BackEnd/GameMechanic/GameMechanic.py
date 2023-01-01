@@ -166,6 +166,25 @@ class GameMechanic:
             if bug is not None and bug.side == player.side:
                 player.bugList.append(bug)
 
+    def set_bugs_for_both_players(self, board=None, white_player=None, black_player=None):
+        if board is None:
+            board = self.board
+        if white_player is None:
+            white_player = self.WhitePlayer
+        if black_player is None:
+            black_player = self.BlackPlayer
+
+        white_player.bugList = []
+        black_player.bugList = []
+        for tile in board.iterList:
+            bug = tile.bug
+            if bug is None:
+                continue
+            elif bug.side == PlayerEnum.B:
+                white_player.bugList.append(bug)
+            else:
+                black_player.bugList.append(bug)
+
     def get_resources_for_side(self, side):
         resources = self.board.resources
         for pole in self.board.resources:
