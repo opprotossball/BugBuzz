@@ -6,17 +6,17 @@ from FrontEnd.Scene import Scene
 from Util.PlayerEnum import PlayerEnum
 
 
-class VictoryScene(Scene):
+class DefeatScene(Scene):
 
     def __init__(self, gm, side):
         self.gm = gm
         self.background = None
         self.button_image = None
         if side == PlayerEnum.B:
-            self.background = pygame.image.load("./FrontEnd/Assets/VictoryScene/WhiteVictory.png")
+            self.background = pygame.image.load("./FrontEnd/Assets/DefeatScene/DefeatWhite.png")
             button_image = pygame.image.load("./FrontEnd/Assets/Buttons/WhiteHomeButton.png")
         elif side == PlayerEnum.C:
-            self.background = pygame.image.load("./FrontEnd/Assets/VictoryScene/BlackVictory.png")
+            self.background = pygame.image.load("./FrontEnd/Assets/VictoryScene/DefeatBlack.png")
             button_image = pygame.image.load("./FrontEnd/Assets/Buttons/BlackHomeButton.png")
         self.home_button = Button(button_image)
 

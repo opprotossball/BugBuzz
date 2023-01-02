@@ -51,7 +51,6 @@ class Display:
         self.screen.blit(surface, (0, 0))
 
         pygame.display.flip()
-        self.clock.tick(self.max_fps)
 
     def resize(self, size):
         new_width, new_height = size

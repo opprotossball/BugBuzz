@@ -25,25 +25,33 @@ class Server:
         connection.sendall(pickle.dumps(player_side))
         while True:
             try:
-                clients_game = pickle.loads(connection.recv(self.data_chunk))
 
-                if clients_game is None:
+                clients_position = pickle.loads(connection.recv(self.data_chunk))
+
+                if clients_position is None:
                     break
+
                 if not (game_id in self.games):
                     break
-                if clients_game.valid:
-                    self.games[game_id] = clients_game
-                connection.sendall(pickle.dumps(self.games[game_id]))
-            except error as e:
-                print(e)
+
+                if clients_position.winner_side is not None:
+                    self.games[game_id].winner = clients_position.winner_side
+
+                if clients_position.valid and self.games[game_id].ready:
+                    self.games[game_id].position = clients_position
+
+                self.games[game_id].position.ready = self.games[game_id].ready
+                self.games[game_id].position.winner_side = self.games[game_id].winner
+                connection.sendall(pickle.dumps(self.games[game_id].position))
+
+            except:
                 break
 
-        print("Lost connection")
-        try:
-            del self.games[game_id]
-            print("Closing Game", game_id)
-        except:
-            pass
+        print("Lost connection with", connection.getpeername())
+        if self.game_count >= 0 and game_id in self.games:
+            self.games.pop(game_id)
+            print("Closing Game ", game_id)
+            self.game_count -= 1
         self.player_count -= 1
         connection.close()
 
@@ -51,19 +59,19 @@ class Server:
         self.socket.listen()
         while True:
             connection, address = self.socket.accept()
-            print(address, " connected")
+            print(address, "connected")
             self.player_count += 1
             player_side = PlayerEnum.B   # TODO change to give players random side
             if self.player_count % 2 == 1:
                 game = GameState()
-                game.set_starting_position()
+                game.position.set_starting_position()
                 self.games[self.game_count] = game
-                self.games[self.game_count].ready = False
                 self.game_count += 1
                 print("Creating a new game...")
             else:
                 self.games[self.game_count - 1].ready = True
                 player_side = PlayerEnum.C
+                print("Game ", self.game_count - 1, " is ready!")
 
             start_new_thread(self.threaded_client, (connection, player_side, self.game_count - 1))
 

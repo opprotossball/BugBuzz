@@ -47,7 +47,6 @@ class MenuScene(Scene):
             self.gm.new_game(HumanPlayer(self.gm, PlayerEnum.B), HumanPlayer(self.gm, PlayerEnum.C))
 
         if self.play_online_button.is_clicked_left():
-            self.gm.display.set_scene(GameScene(self.gm))
             self.gm.playing_online = True
 
         if self.how_to_play_button.is_clicked_left():

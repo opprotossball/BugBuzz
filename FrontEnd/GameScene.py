@@ -9,13 +9,14 @@ from Util.PlayerEnum import PlayerEnum
 
 class GameScene(Scene):
 
-    def __init__(self, game_master, background_color=(80, 80, 80), tile_color=(153, 153, 153), resources_color=(29, 122, 29), hatchery_color=(150, 45, 45), highlighted_color=(81, 210, 252), selected_color=(255, 225, 64)):
+    def __init__(self, game_master, background_color=(80, 80, 80), tile_color=(153, 153, 153), resources_color=(29, 122, 29), hatchery_color=(150, 45, 45), highlighted_color=(81, 210, 252), selected_color=(255, 225, 64), attacked_color=(150, 45, 45)):
         self.backgroundColor = background_color
         self.tileColor = tile_color
         self.resourcesColor = resources_color
         self.hatcheryColor = hatchery_color
         self.highlightedColor = highlighted_color
         self.selectedColor = selected_color
+        self.attacked_color = attacked_color
 
         self.TILE_RADIUS = 58
         self.TILE_MARGIN = 4
@@ -35,6 +36,13 @@ class GameScene(Scene):
         self.sin60 = math.sin(math.pi / 3)
         self.tileButtons = []
         self.highlightedTiles = []
+
+        self.highlighted_by_online_opponent = []
+        self.army_attacked_by_online_opponent = None
+        self.online_opponent_leader = None
+        self.online_opponent_rolls = []
+        self.online_opponent_kills = 0
+
         self.main_surface = None
         self.window_scale = None
 
@@ -61,9 +69,9 @@ class GameScene(Scene):
             self.show_phase_title()
             self.show_number_of_bugs_available()
             self.show_number_of_resources()
-            self.show_combat_results()
-            self.show_stats()
-
+            if not self.show_opponent_combat_results():
+                self.show_combat_results()
+                self.show_stats()
         self.draw_bugs()
 
     def draw_hex(self, x_center, y_center, radius, color):
@@ -144,10 +152,20 @@ class GameScene(Scene):
         for tile in self.highlightedTiles:
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
+        for tile in self.highlighted_by_online_opponent:
+            coordinates = self.transform_to_real_coordinates(tile)
+            self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
+        for tile in self.highlighted_by_online_opponent:
+            coordinates = self.transform_to_real_coordinates(tile)
+            self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.attacked_color)
 
     def draw_selected(self):
         tile = self.gameMaster.ui.selected_tile
         if tile is not None:
+            coordinates = self.transform_to_real_coordinates(tile)
+            self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.selectedColor)
+        if self.online_opponent_leader is not None:
+            tile = self.gameMaster.board.get_field(self.online_opponent_leader[0], self.online_opponent_leader[1])
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.selectedColor)
 
@@ -176,6 +194,19 @@ class GameScene(Scene):
     def show_combat_results(self):
         message, color = self.gameMaster.ui.get_combat_results()
         self.write_multiline_text_30(message, color, 1300, 175)
+
+    def show_opponent_combat_results(self):  # should be moved to ui maybe
+        if len(self.online_opponent_rolls) < 1:
+            return False
+        message = "Opponent rolled: {}\nThey may kill {} bug".format(self.online_opponent_rolls, self.online_opponent_kills)
+        if self.online_opponent_kills > 1:
+            message += "s"
+        if self.gameMaster.ui.side == PlayerEnum.B:
+            color = self.gameMaster.ui.BLACK
+        else:
+            color = self.gameMaster.ui.WHITE
+        self.write_multiline_text_30(message, color, 1300, 175, align=True, title=True)
+        return True
 
     def show_stats(self):
         message, color = self.gameMaster.ui.get_stats()

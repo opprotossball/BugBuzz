@@ -211,9 +211,6 @@ class GameMechanic:
     def has_opponents_neighbour(self, our_side, neighbour_field):
         return neighbour_field is not None and neighbour_field.bug is not None and neighbour_field.bug.side is not our_side
 
-    def update_window(self):
-        if self.display is not None:
-            self.display.update_window()
 
     def reset_move(self, side):
         if side == PlayerEnum.B:

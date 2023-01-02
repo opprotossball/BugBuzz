@@ -3,7 +3,6 @@ from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
 import pygame
 
-from FrontEnd.MenuScene import MenuScene
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
@@ -18,7 +17,7 @@ class UI:
         self.mode = None
         self.side = None
         self.player = None
-        self.rolls = None
+        self.rolls = []
         self.attacking = False
         self.selected_army = None
         self.highlighting_hatchery = False
@@ -117,11 +116,13 @@ class UI:
                             self.player.kill_bug(bug)
                             if self.player.kills == 0 or self.player.attacked_bugs.__len__() == 0:
                                 self.game_master.display.scene.highlightedTiles = []
+                                self.rolls = []
                                 self.attacking = False
                             return
                         elif len(self.player.attacked_bugs) != 0:
                             self.player.attacked_bugs = []
                             self.player.kills = 0
+                            self.rolls = []
                             self.attacking = False
                             return
                         else:
@@ -137,6 +138,7 @@ class UI:
                     else:
                         self.player.attacked_bugs = []
                         self.player.kills = 0
+                        self.rolls = []
                         self.attacking = False
 
                 elif self.mode == PlayerState.MOVE:  # make move to chosen tile if possible
@@ -167,9 +169,13 @@ class UI:
         if self.mode != PlayerState.MOVE:
             self.selected_tile = None
 
+        if self.resign_button.is_clicked_left():
+            if self.side == PlayerEnum.B:
+                self.game_master.winner_side = PlayerEnum.C
+            else:
+                self.game_master.winner_side = PlayerEnum.B
+
         if self.mode != PlayerState.INACTIVE:  # end turn if ordered
-            if self.resign_button.is_clicked_left():
-                self.game_master.display.set_scene(MenuScene(self.game_master))
             if self.end_phase_button.is_clicked_left():
                 self.game_master.display.scene.highlightedTiles = []
                 self.attacking = False

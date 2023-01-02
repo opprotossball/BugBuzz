@@ -1,8 +1,6 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
 from BackEnd.GameObjects.Plansza import Plansza
-from FrontEnd.GameScene import GameScene
-from FrontEnd.VictoryScene import VictoryScene
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
@@ -17,14 +15,13 @@ class GameMaster(GameMechanic):
         self.winner_side = None
         self.active = None
 
-    def run(self):
-        while True:
-            self.update_window()
-            if self.display.scene == GameScene and self.game_is_over():
-                self.board = Plansza(Information.board_size)
-                self.display.set_scene(VictoryScene(self, self.winner_side))
+    def update_window(self):
+        if self.display is not None:
+            self.display.update_window()
 
     def new_game(self, player_white, player_black, board=None, start_at_turn=None):
+        self.winner_side = None
+
         if board is not None:
             self.set_board(board)
         else:
