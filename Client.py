@@ -101,6 +101,8 @@ class Client(GameMaster):
             self.socket.connect(self.server_address)
             self.online_player_side = pickle.loads(self.socket.recv(self.data_chunk))
         except:
+            self.playing_online = False
+            self.display.set_scene(MenuScene(self))
             print("Connection failed")
 
     def exchange_data(self, data):
@@ -109,6 +111,7 @@ class Client(GameMaster):
             return pickle.loads(self.socket.recv(self.data_chunk))
         except:
             self.playing_online = False
+            self.display.set_scene(MenuScene(self))
             print("Lost connection")
 
     def play_online(self):
@@ -119,9 +122,3 @@ class Client(GameMaster):
             self.new_game(OnlinePlayer(self, PlayerEnum.B), HumanPlayer(self, PlayerEnum.C))
         self.display.set_scene(LoadingScene(self))
         print("My side is: " + str(self.online_player_side))
-
-
-if __name__ == "__main__":
-    client = Client()
-    client.configure("10.0.20.100", 5555)
-    client.run_game()

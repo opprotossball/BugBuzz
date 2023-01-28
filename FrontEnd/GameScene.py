@@ -72,6 +72,7 @@ class GameScene(Scene):
             if not self.show_opponent_combat_results():
                 self.show_combat_results()
                 self.show_stats()
+                self.show_tip()
         self.draw_bugs()
 
     def draw_hex(self, x_center, y_center, radius, color):
@@ -211,6 +212,10 @@ class GameScene(Scene):
     def show_stats(self):
         message, color = self.gameMaster.ui.get_stats()
         self.write_multiline_text_30(message, color, 1300, 175, align=True, title=True)
+
+    def show_tip(self):
+        message, color = self.gameMaster.ui.get_tip_text()
+        self.write_multiline_text_30(message, color, 1314, 700)
 
     def write_multiline_text_30(self, message, color, x, y, space_height_ratio=1.3, align=False, title=False):
         if message is None:

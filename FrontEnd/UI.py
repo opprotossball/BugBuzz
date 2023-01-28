@@ -63,6 +63,13 @@ class UI:
             5: "Black's hatch phase"
         }
 
+        self.tips = {
+            0: "Select an army to attack!",
+            1: "Select and move your armies!",
+            2: "Choose and hatch new bugs!",
+            3: "Wait for opponent to play"
+        }
+
         self.bug_names = {
             RobalEnum.K: 'Grasshopper',
             RobalEnum.M: 'Ant',
@@ -237,6 +244,22 @@ class UI:
         else:
             color = self.BLACK
         return self.phase_titles[turn], color
+
+    def get_tip_text(self):
+        turn = self.game_master.turn
+        if self.side == PlayerEnum.B:
+            color = self.WHITE
+            if turn < 3:
+                text = self.tips[turn]
+            else:
+                text = self.tips[3]
+        else:
+            color = self.BLACK
+            if turn >= 3:
+                text = self.tips[turn - 3]
+            else:
+                text = self.tips[3]
+        return text + '\n', color
 
     def get_combat_results(self):
         if not self.attacking:

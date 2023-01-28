@@ -16,7 +16,7 @@ class DefeatScene(Scene):
             self.background = pygame.image.load("./FrontEnd/Assets/DefeatScene/DefeatWhite.png")
             button_image = pygame.image.load("./FrontEnd/Assets/Buttons/WhiteHomeButton.png")
         elif side == PlayerEnum.C:
-            self.background = pygame.image.load("./FrontEnd/Assets/VictoryScene/DefeatBlack.png")
+            self.background = pygame.image.load("./FrontEnd/Assets/DefeatScene/DefeatBlack.png")
             button_image = pygame.image.load("./FrontEnd/Assets/Buttons/BlackHomeButton.png")
         self.home_button = Button(button_image)
 
