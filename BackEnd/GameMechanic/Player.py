@@ -101,6 +101,16 @@ class Player(ABC):
             return True
         return False
 
+    def set_bugs_available(self):
+        self.bugs_available = {
+            RobalEnum.K: 3,
+            RobalEnum.M: 3,
+            RobalEnum.P: 2,
+            RobalEnum.Z: 2
+        }
+        for bug in self.bugList:
+            self.bugs_available[bug.short_name] -= 1
+
     @abstractmethod
     def set_state(self, state):
         pass

@@ -10,6 +10,11 @@ class Position:
         self.board = board
         self.valid = False
         self.ready = False
+        self.highlighted_by_active = []
+        self.attacked_by_active = None
+        self.active_leader = None
+        self.active_rolls = []
+        self.active_kills = 0
 
     def set_starting_position(self):
         self.board = Plansza(Information.board_size)

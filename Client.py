@@ -39,6 +39,7 @@ class Client(GameMaster):
     def run_game(self):
         self.display.set_scene(MenuScene(self))
         while True:
+            self.clock.tick(self.fps)
             if self.playing_online:
                 if self.socket is None:  # initialize game
                     self.play_online()
@@ -76,8 +77,10 @@ class Client(GameMaster):
                     elif self.get_player(self.online_player_side).state == PlayerState.INACTIVE:
                         self.board = received_game.board
                         self.set_bugs_for_both_players()
+                        p = self.get_player(self.online_player_side)
+                        p.set_bugs_available()
                         self.set_phase(received_game.turn)
-
+                    if True:
                         self.display.scene.online_opponent_rolls = received_game.active_rolls
                         self.display.scene.online_opponent_kills = received_game.active_kills
                         self.display.scene.highlighted_by_online_opponent = []
@@ -91,8 +94,6 @@ class Client(GameMaster):
                 else:
                     self.display.set_scene(DefeatScene(self, self.online_player_side))
                 self.playing_online = False
-
-            self.clock.tick(self.fps)
 
     def connect_to_game(self):
         self.server_address = (self.server_ip, self.port)

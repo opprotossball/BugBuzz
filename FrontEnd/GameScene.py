@@ -153,9 +153,11 @@ class GameScene(Scene):
         for tile in self.highlightedTiles:
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
-        for tile in self.highlighted_by_online_opponent:
-            coordinates = self.transform_to_real_coordinates(tile)
-            self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
+        # for tile in self.highlighted_by_online_opponent:
+        #     coordinates = self.transform_to_real_coordinates(tile)
+        #     self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.highlightedColor)
+        if len(self.highlightedTiles) > 0:
+            return
         for tile in self.highlighted_by_online_opponent:
             coordinates = self.transform_to_real_coordinates(tile)
             self.draw_hex(coordinates[0], coordinates[1], self.TILE_RADIUS, self.attacked_color)
