@@ -21,23 +21,3 @@ class GeneratorPlayer(Player):
         for bug in self.bugList:
             new.bugList.append(bug.clone_with_field())
         return new
-
-    # def get_hash_for_move(self):
-    #     code = ""
-    #     tiles = [[] for _ in range(4)]
-    #     for bug in self.bugList:
-    #         if bug.short_name == RobalEnum.K:
-    #             i = 0
-    #         elif bug.short_name == RobalEnum.M:
-    #             i = 1
-    #         elif bug.short_name == RobalEnum.P:
-    #             i = 2
-    #         else:
-    #             i = 3
-    #         tiles[i].append(bug.field.get_key_for())
-    #     for type_list in tiles:
-    #         type_list.sort()
-    #     for type_list in tiles:
-    #         for c in type_list:
-    #             code += str(c)
-    #     return code

@@ -41,7 +41,7 @@ class PositionGenerator:
 
         positions_with_players.append((gm.board, player, ""))
 
-        hatchery = gm.getAvailableSpaceForHatch(player_side)
+        hatchery = gm.get_available_space_for_hatch(player_side)
         for tile in hatchery:
             for position in positions_with_players:
                 for key, value in player.bugs_available.items():
@@ -49,7 +49,7 @@ class PositionGenerator:
                     player = position[1].clone_for_hatch()
                     gm.set_player(player)
                     coordinates = tile.cor()
-                    actual_tile = gm.board.getField(coordinates[0], coordinates[1], coordinates[2])  # don't ask
+                    actual_tile = gm.board.get_field(coordinates[0], coordinates[1], coordinates[2])  # don't ask
                     if player.perform_hatch(key, actual_tile):
                         code = "" + player_side + "h" + actual_tile.coordinates_to_string() + key + "/"
                         positions_with_players.append((gm.board, player, position[2] + code))
@@ -114,11 +114,11 @@ if __name__ == "__main__":  # TEST
     b = Plansza(Information.board_size)
     i = 0
     bug = Zuk(PlayerEnum.C)
-    bug.moveBugTo(b.iterList[60])
+    bug.move_bug_to(b.iterList[60])
     bug = Zuk(PlayerEnum.B)
-    bug.moveBugTo(b.iterList[54])
+    bug.move_bug_to(b.iterList[54])
     bug = Konik(PlayerEnum.B)
-    bug.moveBugTo(b.iterList[47])
+    bug.move_bug_to(b.iterList[47])
     start = time.time()
     result = pg.get_moves(b, PlayerEnum.B)
     t = time.time() - start

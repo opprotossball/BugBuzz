@@ -8,7 +8,7 @@ class Trader:
         self.SpiderPrice = 2
         self.BeetlePrice = 3
 
-    def getOptions(self, available, bugs_available):
+    def get_options(self, available, bugs_available):
         options = []
         if available >= self.GrassHopperPrice and bugs_available[RobalEnum.K] > 0:
             options.append(RobalEnum.K)
@@ -20,11 +20,11 @@ class Trader:
             options.append(RobalEnum.Z)
         return options
 
-    def buyBug(self, option, player):
+    def buy_bug(self, option, player):
         side = player.side
         bug = None
         price = 0
-        if option in self.getOptions(player.resources, player.bugs_available):
+        if option in self.get_options(player.resources, player.bugs_available):
             if option == RobalEnum.K:
                 bug = Konik(side)
                 price = 1

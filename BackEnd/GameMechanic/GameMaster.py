@@ -9,22 +9,33 @@ class GameMaster(GameMechanic):
     def __init__(self):
         super().__init__()
         self.turn = -1
+        self.playing_online = False
         self.ui = None
         self.display = None
+        self.winner_side = None
+        self.active = None
 
+    def update_window(self):
+        if self.display is not None:
+            self.display.update_window()
+
+    def new_game(self, player_white, player_black, board=None, start_at_turn=None):
         self.winner_side = None
 
-    def new_game(self, player_white, player_black):
-        self.set_board(Plansza(Information.board_size))
+        if board is not None:
+            self.set_board(board)
+        else:
+            self.set_board(Plansza(Information.board_size))
+
+        if start_at_turn is not None:
+            self.turn = start_at_turn
+        else:
+            self.turn = -1
+
         self.set_player(player_white)
         self.set_player(player_black)
+        self.set_new_ui()
         self.next_phase()
-
-        while True:
-            self.updateWindow()
-            if self.game_is_over():
-                print("Player " + self.winner_side + " has won!")
-                return
 
     def next_phase(self):
         self.get_armies(PlayerEnum.B)
@@ -51,6 +62,10 @@ class GameMaster(GameMechanic):
             self.BlackPlayer.resources = self.get_resources_for_side(PlayerEnum.C)
             self.BlackPlayer.set_state(PlayerState.HATCH)
 
+    def set_phase(self, turn):
+        self.turn = turn - 1
+        self.next_phase()
+
     def game_is_over(self):
         bug = self.board.resources[0].bug
         if bug is not None:
@@ -64,3 +79,9 @@ class GameMaster(GameMechanic):
 
         self.winner_side = side
         return True
+
+    def get_active_player(self):
+        if self.WhitePlayer.state != PlayerState.INACTIVE:
+            return PlayerEnum.B
+        elif self.BlackPlayer.state != PlayerState.INACTIVE:
+            return PlayerEnum.C
