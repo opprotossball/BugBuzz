@@ -89,10 +89,11 @@ class Client(GameMaster):
                     self.game_is_over()
 
             if isinstance(self.display.scene, GameScene) and self.winner_side is not None:
-                if self.winner_side == self.online_player_side:
-                    self.display.set_scene(VictoryScene(self, self.online_player_side))
+                side = self.get_active_player()
+                if self.winner_side == side:
+                    self.display.set_scene(VictoryScene(self, side))
                 else:
-                    self.display.set_scene(DefeatScene(self, self.online_player_side))
+                    self.display.set_scene(DefeatScene(self, side))
                 self.playing_online = False
 
     def connect_to_game(self):

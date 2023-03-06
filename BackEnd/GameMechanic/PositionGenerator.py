@@ -51,7 +51,7 @@ class PositionGenerator:
                     coordinates = tile.cor()
                     actual_tile = gm.board.get_field(coordinates[0], coordinates[1], coordinates[2])  # don't ask
                     if player.perform_hatch(key, actual_tile):
-                        code = "" + player_side + "h" + actual_tile.coordinates_to_string() + key + "/"
+                        code = "" + str(player_side) + "h" + actual_tile.coordinates_to_string() + str(key) + "/"
                         positions_with_players.append((gm.board, player, position[2] + code))
 
         positions = []
@@ -91,7 +91,7 @@ class PositionGenerator:
                     if player.perform_move(army, direction):
                         position_hash = board.get_hash_2()
                         if not (position_hash in considered):
-                            code = "" + player_side + "m" + tile.coordinates_to_string() + direction + "/"
+                            code = "" + str(player_side) + "m" + tile.coordinates_to_string() + direction + "/"
                             army_tiles = []
                             for a in gm.get_armies(player_side, player):
                                 army_tiles.append(a.bugList[0].field)
@@ -112,18 +112,20 @@ class PositionGenerator:
 if __name__ == "__main__":  # TEST
     pg = PositionGenerator()
     b = Plansza(Information.board_size)
-    i = 0
-    bug = Zuk(PlayerEnum.C)
-    bug.move_bug_to(b.iterList[60])
-    bug = Zuk(PlayerEnum.B)
-    bug.move_bug_to(b.iterList[54])
-    bug = Konik(PlayerEnum.B)
-    bug.move_bug_to(b.iterList[47])
-    start = time.time()
-    result = pg.get_moves(b, PlayerEnum.B)
-    t = time.time() - start
-    print("unique positions: ", len(result))
-    print("time: ", t, "s")
+    positions = pg.get_hatches(b, PlayerEnum.B)
+    print(positions)
+    # i = 0
+    # bug = Zuk(PlayerEnum.C)
+    # bug.move_bug_to(b.iterList[60])
+    # bug = Zuk(PlayerEnum.B)
+    # bug.move_bug_to(b.iterList[54])
+    # bug = Konik(PlayerEnum.B)
+    # bug.move_bug_to(b.iterList[47])
+    # start = time.time()
+    # result = pg.get_moves(b, PlayerEnum.B)
+    # t = time.time() - start
+    # print("unique positions: ", len(result))
+    # print("time: ", t, "s")
 
     exit()
 

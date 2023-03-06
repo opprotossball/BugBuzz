@@ -19,7 +19,7 @@ class GameMaster(GameMechanic):
         if self.display is not None:
             self.display.update_window()
 
-    def new_game(self, player_white, player_black, board=None, start_at_turn=None):
+    def new_game(self, player_white, player_black, board=None, start_at_turn=None, ui=True):
         self.winner_side = None
 
         if board is not None:
@@ -34,7 +34,8 @@ class GameMaster(GameMechanic):
 
         self.set_player(player_white)
         self.set_player(player_black)
-        self.set_new_ui()
+        if ui:
+            self.set_new_ui()
         self.next_phase()
 
     def next_phase(self):

@@ -15,7 +15,7 @@ class Plansza:
 
         self.size = size
 
-        self.plane = [[0 for x in range(2 * size + 1)] for x in range(2 * size + 1)]
+        self.plane = [[0 for _ in range(2 * size + 1)] for _ in range(2 * size + 1)]
 
         for x in range(-size, size + 1):
             for y in range(max(-size, -size - x), min(size + 1, size + 1 - x)):
@@ -37,6 +37,8 @@ class Plansza:
             return None
 
     def get_field(self, x, y, s=0):
+        if y + self.size < 0 or x + self.size < 0:
+            return None
         try:
             val = self.plane[y + self.size][x + self.size]
             if val == 0:

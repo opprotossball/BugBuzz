@@ -34,11 +34,18 @@ class Player(ABC):
     def end_phase(self):
         self.gm.next_phase()
 
+    def get_opponent_side(self):
+        if self.side == PlayerEnum.B:
+            return PlayerEnum.C
+        else:
+            return PlayerEnum.B
+
     def perform_move(self, army, direction, update_armies=False):
         self.gm.set_moves(army)
         if army.numberOfMoves < 1:
             return False
         self.gm.perform_move(army, direction)
+        self.gm.game_is_over()
         if update_armies:
             self.gm.get_armies(self.side)
         return True
