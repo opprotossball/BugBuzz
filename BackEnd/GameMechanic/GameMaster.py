@@ -67,7 +67,7 @@ class GameMaster(GameMechanic):
         self.turn = turn - 1
         self.next_phase()
 
-    def game_is_over(self):
+    def check_game_over(self):
         bug = self.board.resources[0].bug
         if bug is not None:
             side = bug.side

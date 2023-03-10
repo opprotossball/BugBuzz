@@ -45,7 +45,7 @@ class Player(ABC):
         if army.numberOfMoves < 1:
             return False
         self.gm.perform_move(army, direction)
-        self.gm.game_is_over()
+        self.gm.check_game_over()
         if update_armies:
             self.gm.get_armies(self.side)
         return True

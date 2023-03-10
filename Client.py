@@ -86,7 +86,7 @@ class Client(GameMaster):
                         self.display.scene.highlighted_by_online_opponent = []
                         for tile in received_game.highlighted_by_active:
                             self.display.scene.highlighted_by_online_opponent.append(self.board.get_field(tile[0], tile[1]))
-                    self.game_is_over()
+                    self.check_game_over()
 
             if isinstance(self.display.scene, GameScene) and self.winner_side is not None:
                 side = self.get_active_player()

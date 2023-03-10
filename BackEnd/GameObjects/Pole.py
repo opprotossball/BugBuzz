@@ -44,3 +44,9 @@ class Pole:
 
     def coordinates_to_string(self):
         return "(" + str(self.q) + "," + str(self.r) + "," + str(self.s) + ")"
+
+    def __str__(self):
+        return self.coordinates_to_string()
+
+    def __repr__(self):
+        return self.coordinates_to_string()

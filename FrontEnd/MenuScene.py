@@ -1,6 +1,8 @@
 import pygame.image
 import webbrowser
 
+from AI_module import AproxBotDefaultWeights
+from AI_module.AproxBot import AproxBot
 from AI_module.RandomBot import RandomBot
 from BackEnd.GameMechanic.HumanPlayer import HumanPlayer
 from FrontEnd.Button import Button
@@ -45,7 +47,7 @@ class MenuScene(Scene):
 
         if self.new_game_button.is_clicked_left():
             self.gm.display.set_scene(GameScene(self.gm))
-            self.gm.new_game(HumanPlayer(self.gm, PlayerEnum.B), RandomBot(self.gm, PlayerEnum.C))
+            self.gm.new_game(HumanPlayer(self.gm, PlayerEnum.B), AproxBot(self.gm, PlayerEnum.C, AproxBotDefaultWeights.default_weights))
 
         if self.play_online_button.is_clicked_left():
             self.gm.playing_online = True
