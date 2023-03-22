@@ -1,3 +1,4 @@
+from AI_module.RewardMap import RewardMap
 from BackEnd.GameMechanic.Player import PlayerState
 from BackEnd.GameObjects.Robal import RobalEnum
 from FrontEnd.Button import Button
@@ -113,8 +114,6 @@ class UI:
         for tile_button in self.tile_buttons:
             if tile_button.is_clicked_left():
                 tile = tile_button.tile
-                print(tile.coordinates_to_string())
-
                 if self.debug:
                     print(tile.coordinates_to_string())
                 bug = tile.bug

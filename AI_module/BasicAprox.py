@@ -1,17 +1,20 @@
 import random
-from abc import abstractmethod
 
+from AI_module.AproxBot import AproxBot
+from AI_module.RewardMap import rewardMap
 from BackEnd.GameMechanic.Player import Player, PlayerState
 from BackEnd.GameMechanic.PositionGenerator import PositionGenerator
 from BackEnd.GameObjects.Trader import Trader
 from Util import Information
+from AproxBotDefaultWeights import default_weights
 
 
-class AproxBot(Player):
+class BasicAprox(AproxBot):
     def __init__(self, gm, side):
         super().__init__(gm, side)
         self.generator = PositionGenerator()
         self.trader = Trader()
+        self.weights = default_weights
 
     def set_state(self, state):
         self.state = state
@@ -27,9 +30,21 @@ class AproxBot(Player):
             self.random_hatch()
         self.end_phase()
 
-    @abstractmethod
     def get_score(self):
-        pass
+        score = 0
+        for bug in self.bugList:
+            score += self.weights['territory'] * rewardMap.get_reward(bug.field)
+        score += self.weights['attack'] * self.get_avg_attack()
+        score += self.weights['toughness'] * self.get_avg_toughness()
+        return score
+
+    def get_avg_attack(self):
+        attacks = [self.gm.calculate_attack(army) for army in self.gm.get_armies(self.side)]
+        return sum(attacks) / len(attacks)
+
+    def get_avg_toughness(self):
+        toughs = [len(self.gm.get_toughness_array(army)) for army in self.gm.get_armies(self.side)]
+        return sum(toughs) / len(toughs)
 
     def n_of_resources(self):
         return self.gm.get_resources_for_side(self.side)
@@ -68,7 +83,7 @@ class AproxBot(Player):
             return None
         return max(moves, key=lambda x: x[0])
 
-    def attack_and_kill_randomly(self):
+    def attack_each(self):
         for army in self.gm.get_armies(self.get_opponent_side()):
             if self.perform_attack(army) is None:
                 return
@@ -76,23 +91,10 @@ class AproxBot(Player):
                 if not self.attacked_bugs or not self.kill_bug(random.sample(self.attacked_bugs, 1)[0]):
                     break
 
-    def hatch(self, prefered=None):
+    def random_hatch(self):
         options = self.trader.get_options(self.resources, self.bugs_available)
         hatchery = self.gm.get_available_space_for_hatch(self.side)
         while options and hatchery:
-            if prefered is None:
-                to_hatch = random.choice(options)
-            else:
-                for bug_type in prefered:
-                    if bug_type in options:
-                        to_hatch = bug_type
-                        break
-            self.perform_hatch(to_hatch, random.choice(hatchery))
+            self.perform_hatch(random.choice(options), random.choice(hatchery))
             options = self.trader.get_options(self.resources, self.bugs_available)
             hatchery = self.gm.get_available_space_for_hatch(self.side)
-
-    def clone_for_move(self):
-        new = self.__class__(self.gm, self.side)
-        for bug in self.bugList:
-            new.bugList.append(bug.clone_with_field())
-        return new

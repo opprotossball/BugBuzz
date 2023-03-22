@@ -40,6 +40,4 @@ class RewardMap:
         self.reward[field.x + self.size][field.y + self.size] = value
 
 
-if __name__ == "__main__":
-    rwm = RewardMap(Plansza(4))
-    print(rwm.reward)
+rewardMap = RewardMap(Plansza(4))
