@@ -22,7 +22,7 @@ class Plansza:
                 pole = Pole(x, y, - x - y, self.size, self)
                 self.set_field(pole, x, y)
                 self.iterList.append(pole)
-
+        print(self.plane)
         self.root = self.get_field(0, 0, 0)
 
         self.set_hatchery()

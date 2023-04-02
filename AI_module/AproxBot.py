@@ -1,6 +1,7 @@
 import random
 from abc import abstractmethod
 
+from AI_module.AproxBotDefaultWeights import default_weights
 from BackEnd.GameMechanic.Player import Player, PlayerState
 from BackEnd.GameMechanic.PositionGenerator import PositionGenerator
 from BackEnd.GameObjects.Trader import Trader
@@ -12,6 +13,7 @@ class AproxBot(Player):
         super().__init__(gm, side)
         self.generator = PositionGenerator()
         self.trader = Trader()
+        self.weights = default_weights
 
     def set_state(self, state):
         self.state = state
@@ -20,11 +22,11 @@ class AproxBot(Player):
         if self.state == PlayerState.INACTIVE:
             return
         elif self.state == PlayerState.COMBAT:
-            self.attack_each()
+            self.hatch()
         elif self.state == PlayerState.MOVE:
             self.perform_moves()
         elif self.state == PlayerState.HATCH:
-            self.random_hatch()
+            self.attack_and_kill_randomly()
         self.end_phase()
 
     @abstractmethod
@@ -90,6 +92,14 @@ class AproxBot(Player):
             self.perform_hatch(to_hatch, random.choice(hatchery))
             options = self.trader.get_options(self.resources, self.bugs_available)
             hatchery = self.gm.get_available_space_for_hatch(self.side)
+
+    def get_avg_attack(self):
+        attacks = [self.gm.calculate_attack(army) for army in self.gm.get_armies(self.side)]
+        return sum(attacks) / len(attacks)
+
+    def get_avg_toughness(self):
+        toughs = [len(self.gm.get_toughness_array(army)) for army in self.gm.get_armies(self.side)]
+        return sum(toughs) / len(toughs)
 
     def clone_for_move(self):
         new = self.__class__(self.gm, self.side)

@@ -14,6 +14,8 @@ class GameMaster(GameMechanic):
         self.display = None
         self.winner_side = None
         self.active = None
+        self.win_after_kills = None
+        self.victory_points = None
 
     def update_window(self):
         if self.display is not None:
@@ -52,6 +54,8 @@ class GameMaster(GameMechanic):
         elif self.turn == 2:
             self.reset_move(PlayerEnum.B)
             self.WhitePlayer.resources = self.get_resources_for_side(PlayerEnum.B)
+            if self.victory_points is not None:
+                self.WhitePlayer.victory_points += self.WhitePlayer.resources
             self.WhitePlayer.set_state(PlayerState.HATCH)
         elif self.turn == 3:
             self.WhitePlayer.set_state(PlayerState.INACTIVE)
@@ -61,6 +65,8 @@ class GameMaster(GameMechanic):
         elif self.turn == 5:
             self.reset_move(PlayerEnum.C)
             self.BlackPlayer.resources = self.get_resources_for_side(PlayerEnum.C)
+            if self.victory_points is not None:
+                self.BlackPlayer.victory_points += self.BlackPlayer.resources
             self.BlackPlayer.set_state(PlayerState.HATCH)
 
     def set_phase(self, turn):
@@ -68,6 +74,24 @@ class GameMaster(GameMechanic):
         self.next_phase()
 
     def check_game_over(self):
+
+        if self.victory_points is not None:  # mod
+            if self.WhitePlayer.victory_points >= self.victory_points[0]:
+                self.winner_side = PlayerEnum.B
+                return True
+            if self.BlackPlayer.victory_points >= self.victory_points[1]:
+                self.winner_side = PlayerEnum.C
+                return True
+            return False
+
+        if self.win_after_kills is not None: # mod
+            if self.WhitePlayer.killed_bugs_count >= self.win_after_kills[0]:
+                self.winner_side = PlayerEnum.B
+                return True
+            if self.BlackPlayer.killed_bugs_count >= self.win_after_kills[1]:
+                self.winner_side = PlayerEnum.C
+                return True
+
         bug = self.board.resources[0].bug
         if bug is not None:
             side = bug.side

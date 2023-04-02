@@ -22,7 +22,7 @@ class UI:
         self.attacking = False
         self.selected_army = None
         self.highlighting_hatchery = False
-        self.debug = debug
+        self.debug = True
 
         self.ant_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/antWhiteHatchButton.png")
         self.grasshooper_white_hatch_button = pygame.image.load("./FrontEnd/Assets/Buttons/grasshooperWhiteHatchButton.png")

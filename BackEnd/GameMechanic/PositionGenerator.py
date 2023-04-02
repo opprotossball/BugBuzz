@@ -1,6 +1,9 @@
+import cProfile
+from Util.ProfilerUtils import prof_to_csv
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameObjects.Plansza import Plansza
 from BackEnd.GameMechanic.GeneratorPlayer import GeneratorPlayer
+from BackEnd.GameObjects.Robal import Zuk, Konik
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
 
@@ -108,20 +111,24 @@ class PositionGenerator:
 if __name__ == "__main__":  # TEST
     pg = PositionGenerator()
     b = Plansza(Information.board_size)
-    positions = pg.get_hatches(b, PlayerEnum.B)
-    print(positions)
-    # i = 0
-    # bug = Zuk(PlayerEnum.C)
-    # bug.move_bug_to(b.iterList[60])
-    # bug = Zuk(PlayerEnum.B)
-    # bug.move_bug_to(b.iterList[54])
-    # bug = Konik(PlayerEnum.B)
-    # bug.move_bug_to(b.iterList[47])
-    # start = time.time()
-    # result = pg.get_moves(b, PlayerEnum.B)
-    # t = time.time() - start
-    # print("unique positions: ", len(result))
-    # print("time: ", t, "s")
+    # positions = pg.get_hatches(b, PlayerEnum.B)
+    # print(positions)
+    i = 0
+    bug = Zuk(PlayerEnum.C)
+    bug.move_bug_to(b.iterList[60])
+    bug = Zuk(PlayerEnum.B)
+    bug.move_bug_to(b.iterList[54])
+    bug = Konik(PlayerEnum.B)
+    bug.move_bug_to(b.iterList[47])
+
+    pr = cProfile.Profile()
+    pr.enable()
+    result = pg.get_moves(b, PlayerEnum.B)
+    pr.disable()
+    with open('Data/CProfileResults.csv', 'w') as f:
+        f.write(prof_to_csv(pr))
+    print("unique positions: ", len(result))
+
 
     exit()
 

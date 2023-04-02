@@ -17,6 +17,8 @@ class PlayerState(Enum):
 class Player(ABC):
 
     def __init__(self, gm, side):
+        self.killed_bugs_count = 0
+        self.victory_points = 0
         self.gm = gm
         self.side = side
         self.resources = 0
@@ -30,6 +32,13 @@ class Player(ABC):
             RobalEnum.P: 2,
             RobalEnum.Z: 2
         }
+        if side == PlayerEnum.B:
+            self.bugs_available = {
+                RobalEnum.K: 2,
+                RobalEnum.M: 2,
+                RobalEnum.P: 2,
+                RobalEnum.Z: 2
+            }
 
     def end_phase(self):
         self.gm.next_phase()
@@ -45,7 +54,6 @@ class Player(ABC):
         if army.numberOfMoves < 1:
             return False
         self.gm.perform_move(army, direction)
-        self.gm.check_game_over()
         if update_armies:
             self.gm.get_armies(self.side)
         return True
@@ -105,6 +113,7 @@ class Player(ABC):
             self.attacked_bugs.remove(bug)
             bug.field.reset_bug()
             self.kills -= 1
+            self.killed_bugs_count += 1
             return True
         return False
 

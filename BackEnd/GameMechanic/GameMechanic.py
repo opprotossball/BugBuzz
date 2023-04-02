@@ -3,7 +3,6 @@ from random import randint
 from BackEnd.GameObjects.Armia import Armia
 from BackEnd.GameObjects.Robal import States
 from FrontEnd.Display import Display
-from FrontEnd.GameScene import GameScene
 from FrontEnd.UI import UI
 from Util.PlayerEnum import PlayerEnum
 
