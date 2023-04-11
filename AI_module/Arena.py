@@ -23,7 +23,7 @@ class Arena(GameMaster):
         super().__init__()
 
     def duel(self, white_bot, black_bot, max_rounds=None):
-        self.new_game(white_bot(self, PlayerEnum.B), black_bot(self, PlayerEnum.C), ui=False)
+        self.new_game(white_bot(self, PlayerEnum.B), black_bot(self, PlayerEnum.C), ui=False, banned_tiles=[(-1, 0)])
         self.win_after_kills = None #[15, 15]
         self.victory_points = None #[30, 30]
         counter = 0
@@ -66,6 +66,6 @@ class Arena(GameMaster):
 if __name__ == "__main__":
     start = time.time()
     a = Arena()
-    a.tournament([BasicAprox, Economic, Aggressor, Pacifist, DeathBall, Territorial], 80, 600, 8)
+    a.tournament([RandomBot], 1000, 600, 8)
     duration = time.time() - start
     print("Time elapsed: ", duration)

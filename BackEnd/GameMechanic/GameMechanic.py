@@ -85,7 +85,7 @@ class GameMechanic:
                 field = self.board.get_field_neigh(bug.field, direction)
                 if bug.has_enemy_in_surrounding():
                     bug.state = States.WontMove
-                elif field is not None:
+                elif field is not None and not field.banned:
                     if field.bug is None:
                         bug.move_bug_to(field)
                         bug.state = States.Moved
@@ -186,6 +186,7 @@ class GameMechanic:
 
     def get_resources_for_side(self, side):
         resources = self.board.resources
+        return 3
         for pole in self.board.resources:
             self.get_cluster_army(pole)
 

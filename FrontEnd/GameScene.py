@@ -91,6 +91,8 @@ class GameScene(Scene):
     def draw_tiles(self):
         tile_buttons = []
         for pole in self.gameMaster.board.iterList:
+            if pole.banned:
+                continue
             coordinates = self.transform_to_real_coordinates(pole)
             if pole.resources:
                 color = self.resourcesColor

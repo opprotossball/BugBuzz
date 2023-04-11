@@ -5,7 +5,7 @@ from Util.PlayerEnum import PlayerEnum
 
 
 class Plansza:
-    def __init__(self, size=4):
+    def __init__(self, size=4, banned_tiles=None):
         self.iterList = []
 
         self.resources = []
@@ -22,13 +22,16 @@ class Plansza:
                 pole = Pole(x, y, - x - y, self.size, self)
                 self.set_field(pole, x, y)
                 self.iterList.append(pole)
-        print(self.plane)
         self.root = self.get_field(0, 0, 0)
 
         self.set_hatchery()
         self.set_resources()
 
         sorted(self.iterList, key=get_key_for)
+
+        if banned_tiles is not None:
+            for b in banned_tiles:
+                self.get_field(b[0], b[1]).banned = True
 
     def set_field(self, field, x, y, s=0):
         try:

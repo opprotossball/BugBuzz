@@ -29,16 +29,9 @@ class Player(ABC):
         self.bugs_available = {
             RobalEnum.K: 3,
             RobalEnum.M: 3,
-            RobalEnum.P: 2,
-            RobalEnum.Z: 2
+            RobalEnum.P: 3,
+            RobalEnum.Z: 3
         }
-        if side == PlayerEnum.B:
-            self.bugs_available = {
-                RobalEnum.K: 2,
-                RobalEnum.M: 2,
-                RobalEnum.P: 2,
-                RobalEnum.Z: 2
-            }
 
     def end_phase(self):
         self.gm.next_phase()

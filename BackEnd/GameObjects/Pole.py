@@ -17,6 +17,7 @@ class Pole:
         self.is_black_hatchery = False
         self.hatcheryID = None
         self.size = size
+        self.banned = False
 
         self.bug = None
 

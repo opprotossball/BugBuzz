@@ -21,13 +21,13 @@ class GameMaster(GameMechanic):
         if self.display is not None:
             self.display.update_window()
 
-    def new_game(self, player_white, player_black, board=None, start_at_turn=None, ui=True):
+    def new_game(self, player_white, player_black, banned_tiles=None, board=None, start_at_turn=None, ui=True):
         self.winner_side = None
 
         if board is not None:
             self.set_board(board)
         else:
-            self.set_board(Plansza(Information.board_size))
+            self.set_board(Plansza(Information.board_size, banned_tiles=banned_tiles))
 
         if start_at_turn is not None:
             self.turn = start_at_turn

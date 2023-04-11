@@ -47,7 +47,7 @@ class MenuScene(Scene):
 
         if self.new_game_button.is_clicked_left():
             self.gm.display.set_scene(GameScene(self.gm))
-            self.gm.new_game(HumanPlayer(self.gm, PlayerEnum.B), HumanPlayer(self.gm, PlayerEnum.C))
+            self.gm.new_game(HumanPlayer(self.gm, PlayerEnum.B), HumanPlayer(self.gm, PlayerEnum.C), banned_tiles=[(-1, 0)])
 
         if self.play_online_button.is_clicked_left():
             self.gm.playing_online = True
