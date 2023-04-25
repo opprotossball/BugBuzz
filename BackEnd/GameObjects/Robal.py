@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, IntEnum
 
 
-class RobalEnum(Enum):
+class RobalEnum(IntEnum):
     K = 0
     M = 1
     P = 2

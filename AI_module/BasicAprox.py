@@ -1,5 +1,7 @@
 from AI_module.AproxBot import AproxBot
 from AI_module.RewardMap import rewardMap
+from BackEnd.GameMechanic.Player import PlayerState
+from BackEnd.GameObjects.Robal import RobalEnum
 
 
 class BasicAprox(AproxBot):

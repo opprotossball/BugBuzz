@@ -1,4 +1,5 @@
 import math
+import random
 from random import randint
 from BackEnd.GameObjects.Armia import Armia
 from BackEnd.GameObjects.Robal import States
@@ -186,10 +187,8 @@ class GameMechanic:
 
     def get_resources_for_side(self, side):
         resources = self.board.resources
-        return 3
         for pole in self.board.resources:
             self.get_cluster_army(pole)
-
         n = 1
         for field in resources:
             if field.bug is not None and field.bug.side == side:

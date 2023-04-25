@@ -1,5 +1,6 @@
 from BackEnd.GameMechanic.GameMechanic import GameMechanic
 from BackEnd.GameMechanic.Player import PlayerState
+from BackEnd.GameMechanic.Zobrist import Zobrist
 from BackEnd.GameObjects.Plansza import Plansza
 from Util import Information
 from Util.PlayerEnum import PlayerEnum
@@ -110,3 +111,15 @@ class GameMaster(GameMechanic):
             return PlayerEnum.B
         elif self.BlackPlayer.state != PlayerState.INACTIVE:
             return PlayerEnum.C
+
+    def pos_code(self):
+        code = ""
+        if self.active == PlayerEnum.B:
+            code += "W"
+        else:
+            code += "B"
+        for bug in self.WhitePlayer.bugList:
+            code += "-" + str(bug.short_name)[-1] + str(bug.field.x + 4) + str(bug.field.y + 4)
+        for bug in self.BlackPlayer.bugList:
+            code += "-" + str(bug.short_name)[-1].lower() + str(bug.field.x + 4) + str(bug.field.y + 4)
+        return code
