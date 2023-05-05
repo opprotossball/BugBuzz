@@ -4,7 +4,7 @@ import pygame
 
 from BackEnd.GameMechanic.GameMaster import GameMaster
 from BackEnd.GameMechanic.HumanPlayer import HumanPlayer
-from BackEnd.GameMechanic.OnlinePlayer import OnlinePlayer
+from BackEnd.GameMechanic.BasicPlayer import BasicPlayer
 from BackEnd.GameMechanic.Player import PlayerState
 from FrontEnd.DefeatScene import DefeatScene
 from FrontEnd.GameScene import GameScene
@@ -43,7 +43,7 @@ class Client(GameMaster):
             if self.playing_online:
                 if self.socket is None:  # initialize game
                     self.play_online()
-                is_active = self.get_active_player() == self.online_player_side
+                is_active = self.get_active_side() == self.online_player_side
 
             if not self.playing_online and self.socket is not None:
                 self.socket = None
@@ -89,7 +89,7 @@ class Client(GameMaster):
                     self.check_game_over()
 
             if isinstance(self.display.scene, GameScene) and self.winner_side is not None:
-                side = self.get_active_player()
+                side = self.get_active_side()
                 if self.winner_side == side:
                     self.display.set_scene(VictoryScene(self, side))
                 else:
@@ -119,8 +119,8 @@ class Client(GameMaster):
     def play_online(self):
         self.connect_to_game()
         if self.online_player_side == PlayerEnum.B:
-            self.new_game(HumanPlayer(self, PlayerEnum.B), OnlinePlayer(self, PlayerEnum.C))
+            self.new_game(HumanPlayer(self, PlayerEnum.B), BasicPlayer(self, PlayerEnum.C))
         else:
-            self.new_game(OnlinePlayer(self, PlayerEnum.B), HumanPlayer(self, PlayerEnum.C))
+            self.new_game(BasicPlayer(self, PlayerEnum.B), HumanPlayer(self, PlayerEnum.C))
         self.display.set_scene(LoadingScene(self))
         print("My side is: " + str(self.online_player_side))

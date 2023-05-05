@@ -32,14 +32,14 @@ class Arena(GameMaster):
             self.pos_path = path
 
     def duel(self, white_bot, black_bot, max_rounds=None):
-        self.new_game(white_bot(self, PlayerEnum.B), black_bot(self, PlayerEnum.C), ui=False, banned_tiles=[(-1, 0)])
+        self.new_game(white_bot(self, PlayerEnum.B), black_bot(self, PlayerEnum.C), ui=False)
         self.win_after_kills = None #[15, 15]
         self.victory_points = None #[30, 30]
         counter = 0
         positions = {}
         while self.winner_side is None:
             self.check_game_over()
-            self.get_player(self.get_active_player()).play()
+            self.get_player(self.get_active_side()).play()
             counter += 1
             if self.updt_pos_tbl and (self.turn == 2 or self.turn == 5):
                 pos_hash = self.zobrist.zobrist_hash(self)
@@ -124,14 +124,14 @@ def check():
     with open("./Data/PositionTable.txt", "rb") as f:
         data = pickle.load(f)
         print(len(data))
-        # n = 0
-        # for k, v in data.items():
-        #     if v[1] + v[2] + v[3] > 1:
-        #         n += 1
-        lst = list(data.items())
-        lst.sort(key=lambda x: x[1][1] + x[1][2] + x[1][3])
-        print(*lst, sep='\n')
-        exit(0)
+        n = 0
+        for k, v in data.items():
+            if v[1] + v[2] + v[3] > 1:
+                n += 1
+        # lst = list(data.items())
+        # lst.sort(key=lambda x: x[1][1] + x[1][2] + x[1][3])
+        # print(*lst, sep='\n')
+        # exit(0)
         print(n)
     #print(data)
     exit()

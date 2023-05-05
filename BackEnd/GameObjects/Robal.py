@@ -65,6 +65,10 @@ class Robal(ABC):
     def set_move(self, move):
         self.move = move
 
+    def __str__(self):
+        return "<" + str(self.side) + " " + str(self.short_name) + " moves left: " + str(self.move) + ">"
+
+
 
 class Konik(Robal):
 

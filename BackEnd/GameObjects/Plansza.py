@@ -1,11 +1,12 @@
 from BackEnd.GameObjects.Pole import Pole
 from Util import Information
 from Util.Information import Direction
+from Util.Information import banned_tiles
 from Util.PlayerEnum import PlayerEnum
 
 
 class Plansza:
-    def __init__(self, size=4, banned_tiles=None):
+    def __init__(self, size=4):
         self.iterList = []
 
         self.resources = []

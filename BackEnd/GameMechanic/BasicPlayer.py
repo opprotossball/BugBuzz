@@ -1,7 +1,7 @@
 from BackEnd.GameMechanic.Player import Player
 
 
-class OnlinePlayer(Player):
+class BasicPlayer(Player):
 
     def __init__(self, gm, side):
         super().__init__(gm, side)
